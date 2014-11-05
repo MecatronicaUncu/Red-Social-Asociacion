@@ -106,101 +106,15 @@ exports.getProfile = function (req, res, next) {
         return next();
     };
 
+    User.getProfile(id,function (err,results) {
+        if (err){
+            res.send(500,'Error');
+            return;
+        }
+        res.send(200, results);
+        return;
+    });
 
-
-    
-   /* var userProfile = {user:"",friends:"",friendsReq:"",friendsSug:"",friendsDem:""};
-    var i = 5;
-    User.getUsrProfile(id, function (err, user) {
-        if (err){
-            res.send(500,'Error');
-            return;
-        }
-        if (user){
-            userProfile['user'] = user;
-            i--;
-            if (i===0){
-                res.send(200,userProfile);
-                return;
-            }
-        }
-        else{
-            res.send(500,'Error');
-            return;
-        }
-    });
-    User.getFriends(id, function (err, users) {
-        if (err){
-            res.send(500,'Error');
-            return;
-        }
-        if (users){
-            userProfile['friends'] = users;
-            i--;
-            if (i===0){
-                res.send(200,userProfile);
-                return;
-            }
-        }
-        else{
-            res.send(500,'Error');
-            return;
-        }
-    });
-    User.getFriendsReq(id, function (err, users) {
-        if (err){
-            res.send(500,'Error');
-            return;
-        }
-        if (users){
-            userProfile['friendsReq'] = users;
-            i--;
-            if (i===0){
-                res.send(200,userProfile);
-                return;
-            }
-        }
-        else{
-            res.send(500,'Error');
-            return;
-        }
-    });
-    User.getSuggested(id,function(err,users){
-        if (err){
-            res.send(500,'Error');
-            return;
-        }
-        if (users){
-            userProfile['friendsSug'] = users;
-            i--;
-            if (i===0){
-                res.send(200,userProfile);
-                return;
-            }
-        }
-        else{
-            res.send(500,'Error');
-            return;
-        }
-    });
-    User.getDemandes(id,function(err,users){
-        if (err){
-            res.send(500,'Error');
-            return;
-        }
-        if (users){
-            userProfile['friendsDem'] = users;
-            i--;
-            if (i===0){
-                res.send(200,userProfile);
-                return;
-            }
-        }
-        else{
-            res.send(500,'Error');
-            return;
-        }
-    });*/
 };
 
 

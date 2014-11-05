@@ -91,12 +91,24 @@ User.getProfile = function(id,callback){
     var query = [
         'MATCH (user:User)',
         'WHERE ID(user)='+ id.toString(),
-        'OPTIONAL MATCH (user)-[:FRIENDS]->(friend) WHERE (friend)-[:FRIENDS]->(user)',
-        'OPTIONAL MATCH (requested)-[:FRIENDS]->(user) WHERE NOT (user)-[:FRIENDS]->(requested)',
-        'OPTIONAL MATCH (user)-[:FRIENDS]->(demanded) WHERE NOT (demanded)-[:FRIENDS]->(user)',
-        'OPTIONAL MATCH (user)-[:FRIENDS*2..3]-(suggested) WHERE NOT (user)-[:FRIENDS]-(suggested) AND ID(suggested)<>'+id.toString(),
-        'RETURN user, ID(user) AS userID, friend, ID(friend) AS friendID, demanded, ID(demanded) AS demandedID, requested, ID(requested) AS requestedID, suggested, COUNT(suggested), ID(suggested) AS suggestedID',
-        'ORDER BY COUNT(suggested) DESC'
+        'RETURN {user : user, id : ID(user)} AS NODES',
+        'UNION',
+        'MATCH (user)-[:FRIENDS]->(friend)',
+        'WHERE ID(user)='+ id.toString() +' AND (friend)-[:FRIENDS]->(user)',
+        'RETURN {friend : friend, id : ID(friend)} AS NODES',
+        'UNION',
+        'MATCH (requested)-[:FRIENDS]->(user)',
+        'WHERE ID(user)='+ id.toString() +' AND NOT (user)-[:FRIENDS]->(requested)',
+        'RETURN {requested : requested, id : ID(requested)} AS NODES',
+        'UNION',
+        'MATCH (user)-[:FRIENDS]->(demanded)',
+        'WHERE ID(user)='+ id.toString() +' AND NOT (demanded)-[:FRIENDS]->(user)',
+        'RETURN {demanded : demanded, id : ID(demanded)} AS NODES',
+        'UNION',
+        'MATCH (user)-[:FRIENDS*2..3]-(suggested)',
+        'WHERE ID(user)='+ id.toString() +' AND NOT (user)-[:FRIENDS]-(suggested) AND ID(suggested)<>'+ id.toString(),
+        'RETURN {suggested : suggested, id : ID(suggested), count : COUNT(suggested)} AS NODES',
+        'ORDER BY NODES.count DESC LIMIT 5'
     ].join('\n');
 
     db.query(query, null, function (err, results) {
@@ -105,8 +117,40 @@ User.getProfile = function(id,callback){
             console.log("err profile");
             return callback(err);
         }
-        console.log(results);
-        return callback(true);
+        var user = [];
+        var fri = [];
+        var req = [];
+        var dem = [];
+        var sug = [];
+        results.forEach(function(el){
+            if (el.NODES.hasOwnProperty('user')){
+                delete el.NODES.user._data.data['password'];
+                var tmp = {'data' : el.NODES.user._data.data, 'id' : el.NODES.id};
+                user.push(tmp);
+            }
+            else if (el.NODES.hasOwnProperty('friend')){
+                delete el.NODES.friend._data.data['password'];
+                var tmp = {'data' : el.NODES.friend._data.data, 'id' : el.NODES.id};
+                fri.push(tmp);
+            }
+            else if (el.NODES.hasOwnProperty('requested')){
+                delete el.NODES.requested._data.data['password'];
+                var tmp = {'data' : el.NODES.requested._data.data, 'id' : el.NODES.id};
+                req.push(tmp);
+            }
+            else if (el.NODES.hasOwnProperty('demanded')){
+                delete el.NODES.demanded._data.data['password'];
+                var tmp = {'data' : el.NODES.demanded._data.data, 'id' : el.NODES.id};
+                dem.push(tmp);
+            }
+            else{
+                delete el.NODES.suggested._data.data['password'];
+                var tmp = {'data' : el.NODES.suggested._data.data, 'id' : el.NODES.id};
+                sug.push(tmp);
+            }
+        });
+        var temp = {'user' : user, 'friends' : fri, 'requested' : req, 'demanded' : dem, 'suggested' : sug};
+        return callback(null,temp);
     });
 
 };
@@ -344,139 +388,3 @@ User.deleteUser = function (userId, callback) {
         return callback(null);
     });
 };
-
-
-
-/******************************************************************************/
-/*                          DEPRECATED METHODS                                */
-/******************************************************************************/
-
-/*
-User.getFriends = function (id, callback) {
-
-    var query = [
-        'MATCH (u:User),(user:User)',
-        'WHERE ID(u)='+ id.toString() +' and (u)-[:FRIENDS]->(user) and (user)-[:FRIENDS]->(u)',
-        'RETURN user, ID(user) AS id'
-    ].join('\n');
-    
-    db.query(query,null,function(err,results){
-        if (err) {
-            console.log("err get friends");
-            return callback(err);
-        }
-        var friends = [];
-        results.forEach(function(el){
-            var temp = el.user._data.data;
-            if (temp.hasOwnProperty('password')){
-                delete temp['password'];
-                temp['id']=el.id;
-                friends.push(temp);
-            }
-        });
-        return callback(null,friends);
-    });
-};
-
-User.getFriendsReq= function (id, callback) {
-
-    var query = [
-        'MATCH (u:User),(p:User)',
-        'WHERE ID(u)='+ id.toString() +' and (p)-[:FRIENDS]->(u) and not (u)-[:FRIENDS]->(p)',
-        'RETURN p, ID(p) AS id'
-    ].join('\n');
-    
-    db.query(query,null,function(err,results){
-        if (err) {
-            console.log("err get friends req");
-            return callback(err);
-        }
-        var friends = [];
-        results.forEach(function(el){
-            var temp = el.p._data.data;
-            if (temp.hasOwnProperty('password')){
-                delete temp['password'];
-                temp['id']=el.id;
-                friends.push(temp);
-            }
-        });
-        return callback(null,friends);
-    });
-};
-
-User.getSuggested = function (id, callback) {
-    var query = [
-        'MATCH (u)-[:FRIENDS*2]-(p)',
-        'WHERE ID(u)='+id.toString()+' AND NOT (u)-[:FRIENDS]-(p) AND ID(p)<>'+id.toString(),
-        'RETURN p, COUNT(*), ID(p) AS id',
-        'ORDER BY COUNT(*) DESC LIMIT '+limit.toString()
-    ].join('\n');
-    var i=0;
-    var friends = [];
-    db.query(query,null,function(err,results){
-        if (err) {
-            console.log("err get suggested");
-            return callback(err);
-        }
-        results.forEach(function(el){
-            var temp = el.p._data.data;
-            if (temp.hasOwnProperty('password')){
-                delete temp['password'];
-                temp['id']=el.id;
-                friends.push(temp);
-            }
-        });
-        if (results.length==limit)
-            return callback(null,friends);
-        
-        var j = limit - results.length;
-
-        query = [
-            'MATCH (u)-[:FRIENDS*3]-(p)',
-            'WHERE ID(u)='+id.toString()+' AND NOT (u)-[:FRIENDS*1..2]-(p) AND ID(p)<>'+id.toString(),
-            'RETURN p, COUNT(*), ID(p) AS id',
-            'ORDER BY COUNT(*) DESC LIMIT '+j.toString()
-        ].join('\n');
-        db.query(query,null,function(err,results){
-            if (err) {
-                console.log("err get suggested 2");
-                return callback(err);
-            }
-            results.forEach(function(el){
-                var temp = el.p._data.data;
-                if (temp.hasOwnProperty('password')){
-                    delete temp['password'];
-                    temp['id']=el.id;
-                    friends.push(temp);
-                }
-            });
-            return callback(null,friends);
-        });
-    });
-};
-
-User.getDemandes= function (id, callback) {
-
-    var query = [
-        'MATCH (u:User),(p:User)',
-        'WHERE ID(u)='+ id.toString() +' and (u)-[:FRIENDS]->(p) and not (p)-[:FRIENDS]->(u)',
-        'RETURN p, ID(p) AS id'
-    ].join('\n');
-    
-    db.query(query,null,function(err,results){
-        if (err) {
-            console.log("err get demandes");
-            return callback(err);
-        }
-        var friends = [];
-        results.forEach(function(el){
-            var temp = el.p._data.data;
-            if (temp.hasOwnProperty('password')){
-                delete temp['password'];
-                temp['id']=el.id;
-                friends.push(temp);
-            }
-        });
-        return callback(null,friends);
-    });
-};*/

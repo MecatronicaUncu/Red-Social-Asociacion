@@ -14,10 +14,10 @@
         <div class="contact-field form-group" ng-repeat="friend in filtered" >
             <img class="img-thumbnail contact-pic" ng-src="{{friend.link}}" alt="contact pic"/>
             <div class="contact-data">
-                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.firstName}}</label>
-                <label>{{friend.lastName}}</label><br/></a>
-                <label>{{friend.profession}}</label> - 
-                <label>{{friend.phone}}</label>
+                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.data.firstName}}</label>
+                <label>{{friend.data.lastName}}</label><br/></a>
+                <label>{{friend.data.profession}}</label> - 
+                <label>{{friend.data.phone}}</label>
             </div>
             <ul  class="contact-field-buttons">
                 <li><button class="btn btn-danger contact-field-button" ng-click="deleteFriend(friend.id)">Delete</button></li>
@@ -28,10 +28,10 @@
         <div class="contact-field form-group" ng-repeat="friend in demandedFriends" >
             <img class="img-thumbnail contact-pic" ng-src="{{friend.link}}" alt="contact pic"/>
             <div class="contact-data">
-                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.firstName}}</label>
-                <label>{{friend.lastName}}</label><br/></a>
-                <label>{{friend.profession}}</label> - 
-                <label>{{friend.phone}}</label>
+                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.data.firstName}}</label>
+                <label>{{friend.data.lastName}}</label><br/></a>
+                <label>{{friend.data.profession}}</label> - 
+                <label>{{friend.data.phone}}</label>
             </div>
             <ul  class="contact-field-buttons">
                 <li><button class="btn btn-danger contact-field-button" ng-click="deleteFriend(friend.id)">Cancel</button></li>
@@ -42,10 +42,10 @@
         <div class="contact-field form-group" ng-repeat="friend in requestedFriends" >
             <img class="img-thumbnail contact-pic" ng-src="{{friend.link}}" alt="contact pic"/>
             <div class="contact-data">
-           	<a ng-href="#/profile/{{friend.id}}"><label>{{friend.firstName}}</label>
-                <label>{{friend.lastName}}</label><br/></a>
-                <label>{{friend.profession}}</label> - 
-                <label>{{friend.phone}}</label>
+           	<a ng-href="#/profile/{{friend.id}}"><label>{{friend.data.firstName}}</label>
+                <label>{{friend.data.lastName}}</label><br/></a>
+                <label>{{friend.data.profession}}</label> - 
+                <label>{{friend.data.phone}}</label>
             </div>
             <ul  class="contact-field-buttons">
                 <li><button class="btn btn-info contact-field-button" ng-click="makeFriend(friend.id)">Accept</button></li>
@@ -57,10 +57,10 @@
         <div class="contact-field form-group" ng-repeat="friend in suggestedFriends" >
             <img class="img-thumbnail contact-pic" ng-src="{{friend.link}}" alt="contact pic"/>
             <div class="contact-data">
-                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.firstName}}</label>
-                <label>{{friend.lastName}}</label><br/></a>
-                <label>{{friend.profession}}</label> - 
-                <label>{{friend.phone}}</label>
+                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.data.firstName}}</label>
+                <label>{{friend.data.lastName}}</label><br/></a>
+                <label>{{friend.data.profession}}</label> - 
+                <label>{{friend.data.phone}}</label>
             </div>
             <ul  class="contact-field-buttons">
                 <li><button class="btn btn-success contact-field-button" ng-click="makeFriend(friend.id)">Contact</button></li>

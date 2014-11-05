@@ -79,31 +79,32 @@ angular.module('linkedEnibApp')
         $scope.showNavBar = (session.getId()==$routeParams.id) && ($routeParams.id != 0);
         var path = session.host+':3000/usr/' + $routeParams.id;
         $http({method:'GET', url:path})
-        .success(function (data){
-            console.log(data);
+        .success(function (result){
             $scope.fields.forEach(function(el){
-                el.model=data.user[el.name];
+                el.model=result.user[0].data[el.name];
             });
             if ($scope.showNavBar){
-                $scope.friends=data.friends;
+
+                $scope.friends=result.friends;
                 $scope.friends.forEach( function(el){
                     el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
-                $scope.suggestedFriends=data.friendsSug;
+                $scope.suggestedFriends=result.suggested;
                 $scope.suggestedFriends.forEach( function(el){
                     el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
-                $scope.requestedFriends=data.friendsReq;
+                $scope.requestedFriends=result.requested;
                 $scope.requestedFriends.forEach( function(el){
                     el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
-                $scope.demandedFriends=data.friendsDem;
+                $scope.demandedFriends=result.demanded;
                 $scope.demandedFriends.forEach( function(el){
                     el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
+
                 $scope.filtered = $scope.friends;
             };
         });
