@@ -77,7 +77,8 @@ User.getAll = function (callback) {
         results.forEach(function(el){
             var temp = el.user._data.data;
             if (temp.hasOwnProperty('password')){
-                temp['password']="";
+                //temp['password']="";
+                delete temp['password'];
                 temp['id']=el.id;
                 users.push(temp);
             }
@@ -124,7 +125,8 @@ User.getUsrProfile = function (id, callback) {
         if (results.length>0){
             if (results[0].hasOwnProperty('user')){
                 user = results[0].user._data.data;
-                user['password'] = '';
+                //user['password'] = '';
+                delete user['password'];
                 user['id']=results[0].id;
             }
         }
@@ -149,7 +151,8 @@ User.getFriends = function (id, callback) {
         results.forEach(function(el){
             var temp = el.user._data.data;
             if (temp.hasOwnProperty('password')){
-                temp['password']="";
+                //temp['password']="";
+                delete temp['password'];
                 temp['id']=el.id;
                 friends.push(temp);
             }
@@ -175,7 +178,8 @@ User.getFriendsReq= function (id, callback) {
         results.forEach(function(el){
             var temp = el.p._data.data;
             if (temp.hasOwnProperty('password')){
-                temp['password']="";
+                //temp['password']="";
+                delete temp['password'];
                 temp['id']=el.id;
                 friends.push(temp);
             }
@@ -201,7 +205,8 @@ User.getSuggested = function (id, callback) {
         results.forEach(function(el){
             var temp = el.p._data.data;
             if (temp.hasOwnProperty('password')){
-                temp['password']="";
+                //temp['password']="";
+                delete temp['password'];
                 temp['id']=el.id;
                 friends.push(temp);
             }
@@ -225,7 +230,8 @@ User.getSuggested = function (id, callback) {
             results.forEach(function(el){
                 var temp = el.p._data.data;
                 if (temp.hasOwnProperty('password')){
-                    temp['password']="";
+                    //temp['password']="";
+                    delete temp['password'];
                     temp['id']=el.id;
                     friends.push(temp);
                 }
@@ -252,7 +258,8 @@ User.getDemandes= function (id, callback) {
         results.forEach(function(el){
             var temp = el.p._data.data;
             if (temp.hasOwnProperty('password')){
-                temp['password']="";
+                //temp['password']="";
+                delete temp['password'];
                 temp['id']=el.id;
                 friends.push(temp);
             }
@@ -316,7 +323,8 @@ User.getBy = function (data, id, callback) {
         results.forEach(function(el){
             var temp = el.n._data.data;
             if (temp.hasOwnProperty('password')){
-                temp['password']="";
+                //temp['password']="";
+                delete temp['password'];
                 temp['id']=el.id;
                 users.push(temp);
             }
