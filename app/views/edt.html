@@ -1,8 +1,8 @@
 <div id="edt">
 	<div id="edtSearchBar">
 		<div id="edtSearchSelect" class="dropdown">
-			<button class="btn btn-default dropdown-toggle" type="button">
-		    {{searchTerm}}
+			<button class="edtSearchBtn dropdown-toggle" type="button">
+		    <i id="edtSearchIcon" class="fa fa-fw fa-question-circle"></i>{{searchTerm}}
 		    <span class="caret"></span>
 		  	</button>
 		  	<ul class="dropdown-menu" role="menu">
@@ -12,8 +12,8 @@
 			</ul>
 		</div>
 		
-		<button id="clearSearchBtn" ng-click="clearSearch()">
-			ASD
+		<button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()">
+			<i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
 		</button>
 		
 	</div>

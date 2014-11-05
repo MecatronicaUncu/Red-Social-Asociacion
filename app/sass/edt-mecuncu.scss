@@ -36,12 +36,6 @@ body {
 	text-align: center;
 }
 
-#edt * .edt-caption {
-	@include edt-caption-font;
-	text-align: center;
-	padding: 5px;
-}
-
 #edt * .edt-logo {
 	max-width: 80px;
 	vertical-align: middle;

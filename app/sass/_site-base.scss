@@ -47,15 +47,13 @@ $edtDaysBgColor: 	tint($edtDarkColor, 70);
 $edtTimesBgColor: 	tint(#bdc6ce, 50);
 $edtSearchBarBgColor: shade($edtLightColor,15);
 
-$edtCaptionFSize:	20 / 16;
 $edtHeadFSize:		17 / 16;
 $edtDaysFSize:		15 / 16;
 $edtFooterFSize:	13 / 16;
 $edtBlockInfoFSize:	10 / 16;
-$edtSearchBarFSize: 14 / 16;
+$edtSearchBarFSize: 21 / 16;
 
 $edtHeadFColor:		tint($edtDarkColor,80);
-$edtCaptionFColor:	shade($edtDarkColor,50);
 $edtDaysFColor:		$edtDarkColor;
 $edtFooterFColor:	shade($edtDarkColor,50);
 $edtBlockInfoFColor:	#000000;
@@ -75,13 +73,6 @@ $edtChartHeightV:		500;
 	font-family: 	$mainFont;
 	font-size: 		$edtBlockInfoFSize+em;
 	color: 			$edtBlockInfoFColor;
-	font-weight:	bold;
-}
-
-@mixin edt-caption-font {
-	font-family: 	$mainFont;
-	font-size: 		$edtCaptionFSize+em;
-	color: 			$edtCaptionFColor;
 	font-weight:	bold;
 }
 

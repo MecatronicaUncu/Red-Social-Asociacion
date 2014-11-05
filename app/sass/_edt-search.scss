@@ -1,31 +1,39 @@
 @import "site-base";
 
-#edt * #edtSearchBar {
+#edtSearchBar {
 	width: 100%;
 	background-color: $edtSearchBarBgColor;
 	height: $edtSearchBarHeight+px;
+	display: flex;
+	align-content: center;
 }
 
-#edt * #edtSearchBar * core-dropdown-menu::shadow #control {
-	margin: 0px 0px;
-	width: 30px;
-    background-color: $edtSearchBarBgColor;
-    height: ($edtSearchBarHeight - 10)+px;
+#edtSearchBar .edtSearchBtn {
+	height: 100%;
+	border: none;
+	@include border-radius(0);
+	background-color: $edtSearchBarBgColor;
+	@include edt-search-bar-font;
+}
+
+#edtSearchIcon {
+	
+	margin: 0 10px;
 }
 
 /** TAL VEZ HAYA QUE SACAR ESTO MAS ADELANTE	*/
 
-#edt * #edtSearchBar * core-dropdown-menu::shadow #control > core-icon {
+#edtSearchBar * core-dropdown-menu::shadow #control > core-icon {
 	margin: 0px 0px;
 }
 
-#edt * #edtSearchBar * core-dropdown-menu::shadow #control > core-item {
+#edtSearchBar * core-dropdown-menu::shadow #control > core-item {
 	margin: 0px 0px;
 }
 
 /****************************************************/
 
-#edt * #edtSearchBar * core-dropdown-menu::shadow #dropdown {
+#edtSearchBar * core-dropdown-menu::shadow #dropdown {
     background-color: tint($edtLightColor,50);
     border: 1px solid $edtDarkColor;
     @include text-shadow(rgba(black, 0.4) 1px 1px 0);
@@ -33,27 +41,27 @@
     max-height: 200px;
 }
 
-#edt * #edtSearchBar * core-dropdown-menu * core-item::shadow #icon {
+#edtSearchBar * core-dropdown-menu * core-item::shadow #icon {
 	color: black;
 	@include opacity(0.65);
 }
 
-#edt * #edtSearchBar paper-button {
+#edtSearchBar paper-button {
 	margin: 0;
 	padding: 0;
 	min-width: 0;
 }
 
-#edt * #edtSearchBar core-item {
+#edtSearchBar core-item {
 	@include edt-search-bar-font;
 }
 
-#edt * #edtsel {
+#edtsel {
 	@include edt-search-bar-font;
 	@include respond-to(mobile){font-size: (12 / 16)+em};
 }
 
-#edt * #edtselicon {
+#edtselicon {
 	color: black;
 	@include opacity(0.65);
 }
