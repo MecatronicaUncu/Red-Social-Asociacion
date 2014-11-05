@@ -5,7 +5,7 @@
 'use strict';
 
 angular.module('linkedEnibApp')
-.controller('ParentCtrl', function ($scope,$http,session,corsReq) {
+.controller('ParentCtrl', function ($scope,$http,session) {
     $scope.loggedIn=false;
      
     $scope.$on('logout',function(){
@@ -28,9 +28,7 @@ angular.module('linkedEnibApp')
             console.log(data);
         });
     });
-    
-//    corsReq.makeCors('GET','http://edt.mecatronicauncu.org:3000/they');
-    
+       
     $scope.$on('cors-success:GET:http://edt.mecatronicauncu.org:3000/they', function(data){
     	
     	console.log(data);
