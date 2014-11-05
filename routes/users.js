@@ -103,9 +103,11 @@ exports.getProfile = function (req, res, next) {
     
     var id = req.params.id;
     if (req.id!==id){
-		console.log('Other User, Only basic data');
         return next();
-    }
+    };
+
+
+
     
     var userProfile = {user:"",friends:"",friendsReq:"",friendsSug:"",friendsDem:""};
     var i = 5;
@@ -312,7 +314,7 @@ exports.signup = function (req, res, next) {
     if (temp.hasOwnProperty('firstName') && temp['firstName']) query = query + ', firstName:"' + temp['firstName'] + '"';
     if (temp.hasOwnProperty('lastName') && temp['lastName']) query = query + ', lastName:"' + temp['lastName'] + '"';
     if (temp.hasOwnProperty('email') && temp['email']) query = query + ', email:"' + temp['email'] + '"';
-    
+
     User.signup(query, function (err, user) {
         if (err) {
             res.send(400,'Username taken');
@@ -345,14 +347,11 @@ exports.login = function (req, res, next) {
 	
     User.login(temp['username'], hash(temp['password']), function (err, id) {
         if (err) {
-			console.log('LOGIN neo4j err');
             res.send(401,'Wrong username or password');
             return;
         }
         if (id){
-			console.log('LOGIN neo4j OK '+id);
 			if(!loggedIn(req,res)){
-				console.log('Setting Logging cookie');
 				var cook = new cookies(req, res, keys);
 				cook.set('LinkedEnibId',id, { signed: true, maxAge: 9000000 });
 				res.send(200,{id:id});
@@ -405,7 +404,6 @@ exports.uploadPic = function (req, res, next) {
                 res.send(500,'Error');
                 return;
             }
-            console.log("Upload completed!");
             User.changeProperty('url',string,id,function(err){
                 if (err){
                     res.send(500,'Error');
@@ -421,7 +419,6 @@ exports.uploadPic = function (req, res, next) {
                 res.send(500,'Error');
                 return;
             }
-            console.log("Invalid image format");
             res.redirect(400,'http://localhost:9000/#/profile');
             return;
         });

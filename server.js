@@ -52,7 +52,6 @@ var cookie2angular = function(req, res, next) {
   next();
 };
 
-
 /******************************************************************************/
 /*                       EXPRESS SERVER CONFIG                                */
 /******************************************************************************/
@@ -161,9 +160,3 @@ app.get('/*',function(req,res){
 https.createServer(config,app).listen(app.get('port'), function(){
   console.log("Express HTTPS server listening on port " + app.get('port'));
 });
-
-
-/*FALTA:
- *  PRIVACY
- *  TEST GET ALL, GET BY, IS FRIEND
- */
