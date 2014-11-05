@@ -26,7 +26,7 @@ Cómo utilizar en linux
 4. ```git clone https://github.com/MecatronicaUncu/Red-Social-Asociacion.git``` && ```cd $RED```. A partir de ahora llamaremos ```$RED``` al directorio donde se encuentra el clone del repo.
 5. Instalar [neo4j](http://neo4j.org/). A partir de ahora llamaremos ```$NEO4J``` al directorio donde se encuentra la carpeta descomprimida de [neo4j](http://neo4j.org/). (De preferencia en ```$RED/$NEO4J```)
 6. Configurar [neo4j](http://neo4j.org/): 
-  1. ```/$NEO4J/conf/neo4j-server.properties``` : Cambiar la propiedad "database directory" para que apunte hacia la carpeta ```graph.db``` dentro de la carpeta del proyecto.
+  1. ```/$NEO4J/conf/neo4j-server.properties``` : Cambiar la propiedad "database directory" para que apunte hacia la carpeta ```graph.db``` dentro de la carpeta del proyecto. Por default, la carpeta graph.db debe estar ubicada en ```/$NEO4J/data/graph.db```
   2. ```/$NEO4J/conf/neo4j.properties``` : Descomentar ```allow_store_upgrade=true```.
 7. Instalar [Ruby](https://www.ruby-lang.org/es/).
 8. Instalar [Sass](http://sass-lang.com/) y [Compass](http://compass-style.org):

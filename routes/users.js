@@ -85,8 +85,8 @@ exports.materia = function(req, res, next) {
 /**
  * GET /they -> THEY ARE USING LinkedEnib
  */
-exports.getAll = function (req, res, next) {
-    User.getAll(function (err, users) {
+exports.getThey = function (req, res, next) {
+    User.getThey(function (err, users) {
         if (err){
             res.send(500,'Error');
             return;
@@ -109,7 +109,7 @@ exports.getProfile = function (req, res, next) {
 
 
     
-    var userProfile = {user:"",friends:"",friendsReq:"",friendsSug:"",friendsDem:""};
+   /* var userProfile = {user:"",friends:"",friendsReq:"",friendsSug:"",friendsDem:""};
     var i = 5;
     User.getUsrProfile(id, function (err, user) {
         if (err){
@@ -200,7 +200,7 @@ exports.getProfile = function (req, res, next) {
             res.send(500,'Error');
             return;
         }
-    });
+    });*/
 };
 
 

@@ -110,7 +110,7 @@ app.get('/',function(req,res){
 	var targetPath = path.resolve(path.join(__dirname,file));
 	res.status(200).sendfile(targetPath);
 });
-app.get('/they', users.getAll);
+app.get('/they', users.getThey);
 app.get('/search',users.extractCookieData,users.getBy);
 app.get('/usr/:id',users.extractCookieData,users.getProfile,users.getUsrProfile);
 app.get('/usr/:id/isFriend',users.extractCookieData,users.isFriend);
