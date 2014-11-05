@@ -1,0 +1,18 @@
+<div>
+    <label>THEY ARE USING LinkedEnib </label>
+    <ul>
+        <li ng-repeat="person in people | orderBy:'nom'">
+            {{person.nom}} {{person.prenom}} {{person.profession}}
+        </li>
+    </ul>
+</div>
+
+<div>
+    <label>New to LinkedEnib ? </label>
+    <input type="button" ng-click="go('/signup')" value="Sign Up">
+</div>
+
+<div>
+    <label>Already a user ? </label>
+    <input type="button" ng-click="go('/login')" value="Log In">
+</div>

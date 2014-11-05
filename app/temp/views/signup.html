@@ -1,0 +1,16 @@
+<form>
+    Nom: <input type="text" ng-model="person.nom">
+    Prenom: <input type="text" ng-model="person.prenom">
+    Profession: <input type="text" ng-model="person.profession">
+    Age: <input type="text" ng-model="person.age">
+    Username: <input type="text" ng-model="person.username">
+    Password: <input type="password" ng-model="person.password">
+</form>
+
+<div>
+    <input type="button" ng-click="addUser(person)" value="GO!">
+</div>
+
+<div>
+    <label>{{msg}}</label>
+</div>

@@ -1,0 +1,93 @@
+
+
+<div>
+    <label>PROFILE</label>
+</div>
+
+<div>
+    <label>{{username}}</label>
+</div>
+
+<div>
+    <label>{{nom}} {{prenom}}</label>
+</div>
+
+<div>
+    <label>{{profession}}</label>
+</div>
+
+<div>
+    <label>{{age}}</label>
+</div>
+
+<div ng-if="canFriend == 1">
+    
+    <div ng-if="alreadyFriend == 1">
+        <input type="button" ng-click="deleteFriend()" value="DELETE FRIEND!">
+    </div>
+    
+    <div ng-if="alreadyFriend == 0">
+        <input type="button" ng-click="friend()" value="FRIEND!">
+    </div>
+</div>
+
+<div ng-if="canFriend == 0">
+    <div>
+        <label>My friends: </label>
+        <ul>
+            <li ng-repeat="usuario in friends | orderBy:'nom'">
+                {{usuario.nom}} {{usuario.prenom}} {{usuario.profession}}
+            </li>
+        </ul>
+    </div>
+    
+    <div>
+        <label>Friend request: </label>
+        <ul>
+            <li ng-repeat="usuario in friendsReq | orderBy:'nom'">
+                {{usuario.nom}} {{usuario.prenom}} {{usuario.profession}}
+                <input type="button" ng-click="accept(usuario)" value="Respond Friendship!">
+            </li>
+        </ul>
+    </div>
+    <div>
+        <label>Friend suggestion: </label>
+        <ul>
+            <li ng-repeat="usuario in friendsSug | orderBy:'nom'">
+                {{usuario.nom}} {{usuario.prenom}} {{usuario.profession}}
+            </li>
+        </ul>
+    </div>
+    
+    <div id="datos">
+        <label>Search by: </label>
+        <select ng-model="campo.campo1.label" ng-options="champ for champ in champs"></select>
+        <input type="text" ng-model="campo.campo1.data">
+
+        <label>Search by: </label>
+        <select ng-model="campo.campo2.label" ng-options="champ for champ in champs"></select>
+        <input type="text" ng-model="campo.campo2.data">
+    </div>
+
+    <div>
+        <input type="button" ng-click="search(campo)" value="SEARCH!">
+        <ul>
+            <li ng-repeat="usuario in usuarios | orderBy:'nom'">
+                {{usuario.nom}} {{usuario.prenom}} {{usuario.profession}}
+            </li>
+        </ul>
+    </div>
+    
+    <form name="myForm">
+        <input type="file" ng-model="file">
+        <input type="button" ng-click="upload(file)" value="UPLOAD!">
+    </form>
+    
+    <div>
+        <input type="button" ng-click="deleteUsr()" value="DELETE!">
+    </div>
+</div>
+
+
+
+

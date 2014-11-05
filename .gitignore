@@ -1,0 +1,9 @@
+graph.db/
+app/bower_components
+mongodata
+mongodb
+node_modules
+.project
+.sass-cache
+.tmp
+routes/upload

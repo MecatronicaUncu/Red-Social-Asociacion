@@ -1,0 +1,87 @@
+@import 'site-base';
+
+.profile-btn:hover,
+.profile-bar-link:hover {
+  background-color: #595959;
+  text-decoration: none;
+  color: #99d6ea;
+}
+
+.profile-nav-bar {
+	background-color: #19a3d1;
+	width: 100%;
+}
+
+.profile-bar-link {
+	color: white;
+	font-size: 1em;
+	font-weight: bold;
+	padding: 10px 20px;
+	margin: 0;
+	text-align: right;
+	width: 100%;
+	display: block;
+}
+
+.profile-container {
+	display: flex;
+	justify-content: center;
+}
+
+.profile-bar {
+
+}
+
+.profile-input,
+.profile-input > p,
+.profile-input:disabled {
+	border-radius: 0;
+	margin:0;
+	height: 40px;
+}
+
+.profile-input:disabled {
+	background-color: #595959;
+	color: #9B9B9B;
+}
+
+.profile-input {
+	background-color: transparent;
+	color: black;
+	font-style: italic;
+	padding-left: 10px;
+}
+
+.profile-element {
+	background-color: #19a3d1;
+}
+
+.profile-data {
+	display: flex;
+	flex-wrap: wrap;
+	width: 350px;
+	background-color: black;
+}
+
+.profile-label {
+	margin: 0;
+	color: white;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+#profileForm {
+	width: 100%;
+}
+
+#profileForm * i {
+	font-size: 1.3em;
+	margin: 10px;
+	margin-right: 0;
+	color: black;
+}
+
+.profilePic{
+    height: 300px;
+    width: 200px;
+}

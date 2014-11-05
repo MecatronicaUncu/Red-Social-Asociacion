@@ -1,0 +1,52 @@
+<!--h2>Welcome to LinkedENIB !</h2>
+<form class="sign-form" name="signUpForm" id="signUpForm" ng-submit="signup()" novalidate>
+	<div class="form-group" ng-repeat="field in fields">
+		<ng-form name="helperForm" id="{{field.name}}" class="form-inline">
+			<div class="input-group" ng-class="{'has-error': helperForm.data.$invalid}">
+				<span class="input-group-addon"><i class="fa {{field.icon}} fa-fw"></i></span>
+				<input id="{{field.name}}"
+					 name="data"
+					 ng-model="field.model"
+					 ng-required="{{field.required}}" 
+					 type="{{field.type}}" 
+					 placeholder="{{field.pholder}}"
+					 ng-minlength="{{field.minlength}}" 
+					 ng-maxlength="{{field.maxlength}}"
+					 min="{{field.min}}"
+					 class="form-control">
+			</div>
+			<span class="help-block" ng-show="helperForm.data.$error.required">{{field.label}} is required</span>
+			<span class="help-block" ng-show="helperForm.data.$error.minlength">{{field.label}} is too short</span>
+			<span class="help-block" ng-show="helperForm.data.$error.maxlength">{{field.label}} is too long</span>
+			<span class="help-block" ng-show="helperForm.data.$error.min">You must be over 18 to sign up!</span>
+		</ng-form>
+	</div>
+</form>
+<button type="submit" form="signUpForm" class="sign-up-btn" ng-disabled="signUpForm.$invalid">Sign Up!</button-->
+	
+<h2>Registrese en !</h2>
+<div class="sign-form">
+    <form id="signUpForm" ng-submit="signup()" data-parsley-validate>
+        <div class="sign-input-wrap">
+            <input type="text" name="first_name" placeholder="Nombre" class="sign-input" required>
+            <input type="text" name="last_name" placeholder="Apellido" class="sign-input" required>
+        </div>
+        <div class="sign-input-wrap">
+        	<input type="text" name="username" placeholder="Usuario" class="sign-input" required>
+        </div>
+        <div class="sign-input-wrap">
+          <input type="email" name="email" id="email" placeholder="Email" class="sign-input"
+          	data-parsley-trigger="change" required>
+        </div>
+        <!--div class="sign-input-wrap">
+          <input type="email" name="email_confirm" id="email-confirm" placeholder="Confirmar Email" class="sign-input"
+          data-parsley-trigger="change" data-parsley-equalto="#email" required>
+        </div-->
+        <div class="sign-input-wrap">
+            <input type="password" name="password" id="password" placeholder="Contraseña" class="sign-input" required>
+        </div>
+    </form>
+    <div class="sign-input-wrap">
+    	<button  type="submit" form="signUpForm" class="sign-up-btn">Registrarse</button>
+    </div>
+</div>

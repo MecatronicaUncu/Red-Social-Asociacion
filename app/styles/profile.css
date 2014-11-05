@@ -1,0 +1,98 @@
+@font-face {
+  font-family: "Main-Font";
+  src: url('fonts/CaviarDreams.woff') format('woff'), url('fonts/CaviarDreams.ttf') format('truetype'), url('fonts/Caviar_Dreams_Bold.woff') format('woff'), url('fonts/Caviar_Dreams_Bold.ttf') format('truetype'), url('fonts/CaviarDreams_BoldItalic.woff') format('woff'), url('fonts/CaviarDreams_BoldItalic.ttf') format('truetype'), url('fonts/CaviarDreams_Italic.woff') format('woff'), url('fonts/CaviarDreams_Italic.ttf') format('truetype');
+}
+/* line 3, ../sass/profile.scss */
+.profile-btn:hover,
+.profile-bar-link:hover {
+  background-color: #595959;
+  text-decoration: none;
+  color: #99d6ea;
+}
+
+/* line 10, ../sass/profile.scss */
+.profile-nav-bar {
+  background-color: #19a3d1;
+  width: 100%;
+}
+
+/* line 15, ../sass/profile.scss */
+.profile-bar-link {
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  padding: 10px 20px;
+  margin: 0;
+  text-align: right;
+  width: 100%;
+  display: block;
+}
+
+/* line 26, ../sass/profile.scss */
+.profile-container {
+  display: flex;
+  justify-content: center;
+}
+
+/* line 35, ../sass/profile.scss */
+.profile-input,
+.profile-input > p,
+.profile-input:disabled {
+  border-radius: 0;
+  margin: 0;
+  height: 40px;
+}
+
+/* line 43, ../sass/profile.scss */
+.profile-input:disabled {
+  background-color: #595959;
+  color: #9B9B9B;
+}
+
+/* line 48, ../sass/profile.scss */
+.profile-input {
+  background-color: transparent;
+  color: black;
+  font-style: italic;
+  padding-left: 10px;
+}
+
+/* line 55, ../sass/profile.scss */
+.profile-element {
+  background-color: #19a3d1;
+}
+
+/* line 59, ../sass/profile.scss */
+.profile-data {
+  display: flex;
+  flex-wrap: wrap;
+  width: 350px;
+  background-color: black;
+}
+
+/* line 66, ../sass/profile.scss */
+.profile-label {
+  margin: 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* line 73, ../sass/profile.scss */
+#profileForm {
+  width: 100%;
+}
+
+/* line 77, ../sass/profile.scss */
+#profileForm * i {
+  font-size: 1.3em;
+  margin: 10px;
+  margin-right: 0;
+  color: black;
+}
+
+/* line 84, ../sass/profile.scss */
+.profilePic {
+  height: 300px;
+  width: 200px;
+}

@@ -1,0 +1,41 @@
+<div id="edt">
+	<div id="edtSearchBar">
+		<div id="edtSearchSelect" class="dropdown">
+			<button class="btn btn-default dropdown-toggle" type="button">
+		    {{searchTerm}}
+		    <span class="caret"></span>
+		  	</button>
+		  	<ul class="dropdown-menu" role="menu">
+				<li role="presentation" ng-repeat="item in items.data">
+					<a role="menuitem" tabindex="-1" ng-click="this[items.click](item)">{{item.name}}</a>
+				</li>
+			</ul>
+		</div>
+		
+		<button id="clearSearchBtn" ng-click="clearSearch()">
+			ASD
+		</button>
+		
+	</div>
+
+	<table id="tabla">
+		<thead class="edt-head">
+			<th class="edt-head-wrap">Día</td>
+			<th class="edt-head-time-h" id="Hora">Hora</td>
+		</thead>			
+		<tbody>
+			<tr ng-repeat="day in days">
+				<td class="edt-days"><span id="{{day}}" ng-click="ABRIR COLLAPSE">{{day}}</span>
+					<!--core-collapse id="{{day}}Collapse">
+						<div class="chartContainerV" id="{{day}}V"></div>
+					</core-collapse-->
+				</td>
+				<td class="edt-times-h">
+					<div class="chartContainer" id="{{day}}H"></div>
+				</td>
+			</tr>
+		</tbody>
+		
+	</table>
+	<div><p class="edt-footer">Asociación de Mecatrónica de Mendoza</p></div>
+</div>

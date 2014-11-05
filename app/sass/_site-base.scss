@@ -1,0 +1,106 @@
+@import "compass/css3";
+@import "compass/utilities/general/float";
+@import "compass/utilities/general/min";
+@import "compass/css3/user-interface";
+
+@mixin respond-to($media) {
+	@if $media == mobile {
+		@media only screen and (max-width: 479px) { @content; }
+	}
+	@else if $media == big-mobile {
+		@media only screen and (min-width: 480px) and (max-width: 767px) { @content; }
+	}
+	@else if $media == tablets {
+		@media only screen and (min-width: 768px) and (max-width: 959px) { @content; }
+	}
+	@else if $media == wide {
+		@media only screen and (min-width: 960px) { @content; }
+	}
+}
+
+@include font-face("Main-Font", font-files("CaviarDreams.woff","CaviarDreams.ttf","Caviar_Dreams_Bold.woff","Caviar_Dreams_Bold.ttf","CaviarDreams_BoldItalic.woff","CaviarDreams_BoldItalic.ttf","CaviarDreams_Italic.woff","CaviarDreams_Italic.ttf"));
+$mainFont:		"Main-Font";
+
+//---------------------------- HEADER ---------------------------//
+$headerFColor: 	white;
+$headerFSize: 	20.8 / 16;
+
+$headerBgColor:	#19a3d1;
+
+@mixin header-font {
+	font-family: 	$mainFont;
+	font-size: 		$headerFSize+em;
+	color: 				$headerFColor;
+	font-weight:	bold;
+}
+
+//---------------------------- EDT	---------------------------//
+// HEIGHTS IN PIXELS
+$edtSearchBarHeight:		40;
+
+// 	COLORS
+$edtDarkColor: 	#24265D;
+$edtLightColor: #00ADEF;
+
+$edtHeadBgColor: 	tint($edtDarkColor, 5);
+$edtDaysBgColor: 	tint($edtDarkColor, 70);
+$edtTimesBgColor: 	tint(#bdc6ce, 50);
+$edtSearchBarBgColor: shade($edtLightColor,15);
+
+$edtCaptionFSize:	20 / 16;
+$edtHeadFSize:		17 / 16;
+$edtDaysFSize:		15 / 16;
+$edtFooterFSize:	13 / 16;
+$edtBlockInfoFSize:	10 / 16;
+$edtSearchBarFSize: 14 / 16;
+
+$edtHeadFColor:		tint($edtDarkColor,80);
+$edtCaptionFColor:	shade($edtDarkColor,50);
+$edtDaysFColor:		$edtDarkColor;
+$edtFooterFColor:	shade($edtDarkColor,50);
+$edtBlockInfoFColor:	#000000;
+$edtSearchBarFColor:	#FFFFFF;
+
+$edtChartHeightH:		70;
+$edtChartHeightV:		500;
+
+@mixin edt-search-bar-font {
+	font-family: 	$mainFont;
+	font-size: 		$edtSearchBarFSize+em;
+	color: 			$edtSearchBarFColor;
+	font-weight:	bold;
+}
+
+@mixin edt-block-info-font {
+	font-family: 	$mainFont;
+	font-size: 		$edtBlockInfoFSize+em;
+	color: 			$edtBlockInfoFColor;
+	font-weight:	bold;
+}
+
+@mixin edt-caption-font {
+	font-family: 	$mainFont;
+	font-size: 		$edtCaptionFSize+em;
+	color: 			$edtCaptionFColor;
+	font-weight:	bold;
+}
+
+@mixin edt-head-font {
+	font-family: 	$mainFont;
+	font-size: 		$edtHeadFSize+em;
+	color: 			$edtHeadFColor;
+}
+
+@mixin edt-footer-font {
+	font-family: 	$mainFont;
+	font-size: 		$edtFooterFSize+em;
+	color: 			$edtFooterFColor;
+}
+
+@mixin edt-days-font {
+	font-family: 	$mainFont;
+	font-size: 		$edtDaysFSize+em;
+	color: 			$edtDaysFColor;
+}
+
+//------------------------------------------------------------//

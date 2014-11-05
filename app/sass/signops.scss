@@ -1,0 +1,76 @@
+@import 'site-base';
+
+.sign-up-btn:disabled,
+.sign-up-btn:disabled:hover {
+  color: white;
+  background-color: #595959;
+}
+
+.sign-up-btn:hover,
+.sign-in-btn:hover {
+  color: #33ff9c;
+}
+
+.sign-up-btn,
+.sign-in-btn {
+  padding: 0;
+  margin: 0px auto;
+  color: white;
+  background-color: #757575;
+  width: 50%;
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  height: 40px;
+}
+
+.sign-in-btn > span,
+.sign-up-btn > span {
+  padding: 0 10px;
+}
+
+.sign-btns-container {
+  width: 100%;
+  display: inline-flex;
+  margin: 0 auto;
+  align-self: flex-end;
+}
+
+.sign-form {
+  width: 35%;
+  margin: 0px auto;
+  text-align: left;
+  padding-bottom: 20px;
+}
+
+.sign-container {
+  background: #dbdbf4;
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.sign-container h2 {
+  padding: 50px 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sign-input-wrap {
+  
+  display: flex;
+}
+
+.sign-input {
+  
+  border: 1px solid #ACACAC;
+  margin: 5px 10px;
+  height: 40px;
+  width: 100%;
+  padding-left: 10px;
+}
+
+.sign-container * .sign-up-btn,
+.sign-container * .sign-in-btn {
+  width: 100%;
+  margin: 5px 10px;
+}

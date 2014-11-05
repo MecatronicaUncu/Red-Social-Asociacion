@@ -1,0 +1,70 @@
+<accordion close-others="true">
+    <accordion-group heading="My Contacts">
+        <div class="input-group" id="filterBar">
+                <input type="hidden" name="search_param" value="all" id="search_param">         
+                <input ng-blur="applyFilter=false" ng-keyup="filter()" type="text" class="form-control" id="search_text" placeholder="Search..." ng-show="applyFilter">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="applyFilter = !applyFilter" ng-show="applyFilter"><span class="fa fa-search"></span></button>
+                </span>
+        </div>
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button" ng-click="applyFilter = !applyFilter" ng-show="!applyFilter"><span class="fa fa-search"></span></button>
+        </span>
+        <hr/>
+        <div class="contact-field form-group" ng-repeat="friend in filtered" >
+            <img class="img-thumbnail contact-pic" ng-src="{{friend.link}}" alt="contact pic"/>
+            <div class="contact-data">
+                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.firstName}}</label>
+                <label>{{friend.lastName}}</label><br/></a>
+                <label>{{friend.profession}}</label> - 
+                <label>{{friend.phone}}</label>
+            </div>
+            <ul  class="contact-field-buttons">
+                <li><button class="btn btn-danger contact-field-button" ng-click="deleteFriend(friend.id)">Delete</button></li>
+            </ul>
+        </div>
+    </accordion-group>
+    <accordion-group heading="Contact Demands">
+        <div class="contact-field form-group" ng-repeat="friend in demandedFriends" >
+            <img class="img-thumbnail contact-pic" ng-src="{{friend.link}}" alt="contact pic"/>
+            <div class="contact-data">
+                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.firstName}}</label>
+                <label>{{friend.lastName}}</label><br/></a>
+                <label>{{friend.profession}}</label> - 
+                <label>{{friend.phone}}</label>
+            </div>
+            <ul  class="contact-field-buttons">
+                <li><button class="btn btn-danger contact-field-button" ng-click="deleteFriend(friend.id)">Cancel</button></li>
+            </ul>
+        </div>
+    </accordion-group>
+    <accordion-group heading="Contact Requests">
+        <div class="contact-field form-group" ng-repeat="friend in requestedFriends" >
+            <img class="img-thumbnail contact-pic" ng-src="{{friend.link}}" alt="contact pic"/>
+            <div class="contact-data">
+           	<a ng-href="#/profile/{{friend.id}}"><label>{{friend.firstName}}</label>
+                <label>{{friend.lastName}}</label><br/></a>
+                <label>{{friend.profession}}</label> - 
+                <label>{{friend.phone}}</label>
+            </div>
+            <ul  class="contact-field-buttons">
+                <li><button class="btn btn-info contact-field-button" ng-click="makeFriend(friend.id)">Accept</button></li>
+                <li><button class="btn btn-warning contact-field-button" ng-click="deleteFriend(friend.id)">Reject</button></li>
+            </ul>
+        </div>
+    </accordion-group>
+    <accordion-group heading="Some Suggestions...">
+        <div class="contact-field form-group" ng-repeat="friend in suggestedFriends" >
+            <img class="img-thumbnail contact-pic" ng-src="{{friend.link}}" alt="contact pic"/>
+            <div class="contact-data">
+                <a ng-href="#/profile/{{friend.id}}"><label>{{friend.firstName}}</label>
+                <label>{{friend.lastName}}</label><br/></a>
+                <label>{{friend.profession}}</label> - 
+                <label>{{friend.phone}}</label>
+            </div>
+            <ul  class="contact-field-buttons">
+                <li><button class="btn btn-success contact-field-button" ng-click="makeFriend(friend.id)">Contact</button></li>
+            </ul>
+        </div>
+    </accordion-group>
+</accordion>

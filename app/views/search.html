@@ -1,0 +1,22 @@
+<div>
+    <div class="input-group">
+        <input type="hidden" name="search_param" value="all" id="search_param">         
+        <input type="text" ng-keyup="search()" class="form-control" id="search_text" placeholder="Search...">
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button" ng-click="search()"><span class="fa fa-search"></span></button>
+        </span>
+    </div>
+</div>
+
+<div class="contact-field form-group" ng-repeat="he in results" >
+    <img class="img-thumbnail contact-pic" ng-src="{{he.link}}" alt="contact pic"/>
+    <div class="contact-data">
+        <a ng-href="#/profile/{{he.id}}"><label>{{he.firstName}}</label>
+        <label>{{he.lastName}}</label></a><br/>
+        <label>{{he.address}}</label> - 
+        <label>{{he.phone}}</label>
+    </div>
+    <ul  class="contact-field-buttons">
+        <li><button class="btn btn-success contact-field-button" ng-click="makeFriend(he.id)">Contact</button></li>
+    </ul>
+</div>
