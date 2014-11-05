@@ -13,32 +13,23 @@ App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, se
     
     $(document).ready(function(){
                               
-        $scope.fields = [
-            {label:'Fisrt Name', name:'firstName', model:'', pholder:'Fist Name',
+        /*$scope.fields = [
+            {label:'Fisrt Name', name:'firstName', model:'', pholder:'First Name',
                 type:'text', required:'true', icon:'fa-user',
                 minlength:'1', maxlength:'30'},
             {label:'Last Name', name:'lastName', model:'', pholder:'Last Name',
                 type:'text', required:'true', icon:'fa-user',
                 minlength:'1', maxlength:'30'},
-            {label:'Age', name:'age', model:'', pholder:'Age',
-                type:'number', required:'true', icon:'fa-calendar-o',
-                min:18},
             {label:'Username', name:'username', model:'', pholder:'Username',
+                type:'text', required:'true', icon:'fa-user',
+                minlength:'1', maxlength:'30'},
+            {label:'Email', name:'email', model:'', pholder:'Email',
                 type:'text', required:'true', icon:'fa-user',
                 minlength:'1', maxlength:'30'},
             {label:'Password', name:'password', model:'', pholder:'Password',
                 type:'password', required:'true', icon:'fa-key',
-                minlength:'3', maxlength:'10'},
-            {label:'Profession', name:'profession', model:'', pholder:'Profession',
-                type:'text', required:'false', icon:'fa-graduation-cap',
-                minlength:'1', maxlength:'30'},
-            {label:'Address', name:'address', model:'', pholder:'Address',
-                type:'text', required:'false', icon:'fa-home',
-                minlength:'1', maxlength:'30'},
-            {label:'Phone Number', name:'phone', model:'', pholder:'Phone Number',
-                type:'tel', required:'false', icon: 'fa-phone',
-                minlength:'1', maxlength:'20'}
-        ];
+                minlength:'3', maxlength:'10'}
+        ];*/
         
        users.they(function(err,users){
 			if(err){
@@ -69,11 +60,11 @@ App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, se
       
     $scope.signup = function(){
         var person = {};
-        $scope.fields.forEach(function(el){
+        /*$scope.fields.forEach(function(el){
            person[el.name] = el.model;
-        });
+        });*/
         
-        users.signup(person,function(err){
+        users.signup($scope.fields,function(err){
         	if(err){
         		console.log(err);
         	}// else {
