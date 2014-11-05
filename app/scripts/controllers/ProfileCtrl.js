@@ -45,6 +45,13 @@ angular.module('linkedEnibApp')
         });
     };
 
+    $scope.editProfile = function(){
+        $('.profile-input').prop('contenteditable',true);
+        $('.profile-element').css('border-right','5px solid #75c7e3');
+        $('#updateSubmit').prop('disabled',false);
+        $('#updateSubmit > span').removeClass('fa-check fa-warning').addClass('fa-refresh');
+    };
+
     $scope.updateProfile = function(){
         console.log('Update: ');
         $scope.fields.forEach(function(el,index){
@@ -57,7 +64,8 @@ angular.module('linkedEnibApp')
                 .success(function(){
                     $('#updateSubmit > span').removeClass('fa-refresh').addClass('fa-check');
                     $('#updateSubmit').prop('disabled',true);
-                    $('#profileForm * .profile-input').prop('contenteditable',true).css('background-color','#19a3d1');
+                    $('.profile-input').prop('contenteditable',false);
+                    $('.profile-element').css('border','none');
                 })
                 .error(function(data){
                     console.log("Update Failed");

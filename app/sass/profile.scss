@@ -32,12 +32,9 @@
 
 }
 
-.profile-input,
-.profile-input > p,
-.profile-input:disabled {
-	border-radius: 0;
-	margin:0;
-	height: 40px;
+.profile-data-table {
+	
+	width: 100%;
 }
 
 .profile-input:disabled {
@@ -49,11 +46,28 @@
 	background-color: transparent;
 	color: black;
 	font-style: italic;
-	padding-left: 10px;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	text-align: right;
+}
+
+.profile-input span {
+	margin: 10px;
 }
 
 .profile-element {
 	background-color: #19a3d1;
+	display: flex;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+.profile-element * i {
+	font-size: 1.3em;
+	margin: 10px;
+	color: black;
 }
 
 .profile-data {
@@ -61,24 +75,15 @@
 	flex-wrap: wrap;
 	width: 350px;
 	background-color: black;
+	justify-content: center;
 }
 
 .profile-label {
-	margin: 0;
+	margin: 10px;
+	padding:0;
 	color: white;
 	font-size: 1.2em;
 	font-weight: bold;
-}
-
-#profileForm {
-	width: 100%;
-}
-
-#profileForm * i {
-	font-size: 1.3em;
-	margin: 10px;
-	margin-right: 0;
-	color: black;
 }
 
 .profilePic{

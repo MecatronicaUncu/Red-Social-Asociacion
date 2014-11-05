@@ -6,24 +6,25 @@
         </div>
     </div> 
 
-		<div class="profile-data" ng-class='{"hidden": profileTab!="Perfil"}'>    
-				<table id="profileForm">
-						<tr class="profile-element" ng-repeat="field in fields" >
-								<td><i class="fa {{field.icon}} fa-fw"></i></td>
-								<td class="profile-label">{{field.label}}</td>
-								<td id="{{field.name}}" class="profile-input">
-									<text>{{field.model}}</text>
-								</td>
-						</tr>
-				</table>
-				<div class="sign-btns-container" ng-show="showNavBar">
-					<button id="editprofilebtn" class="profile-btn sign-up-btn" onclick="$('#profileForm * .profile-input').prop('contenteditable',true).css('background-color','#75c7e3');
-						 $('#updateSubmit').prop('disabled',false); $('#updateSubmit > span').removeClass('fa-check fa-warning').addClass('fa-refresh');">Edit Profile <span class="fa fa-pencil"></span></button>
-					<button id="updateSubmit" class="profile-btn sign-up-btn" ng-click="updateProfile()" disabled>Update <span id="signinicon" class="fa fa-refresh"></span></button>
-				</div>
-				<input id="imginput" type="file" name="image" ng-show="false">
+	<div class="profile-data" ng-class='{"hidden": profileTab!="Perfil"}'>    
+		<table class="profile-data-table">
+			<tr class="profile-element" ng-repeat="field in fields">
+				<td><i class="fa {{field.icon}} fa-fw"></i></td>
+				<td class="profile-label">{{field.label}}</td>
+				<td id="{{field.name}}" class="profile-input">
+					<span>{{field.model}}</span>
+				</td>
+			</tr>
+		</table>
+
+		<div class="sign-btns-container" ng-show="showNavBar">
+			<button id="editprofilebtn" class="profile-btn sign-up-btn" ng-click="editProfile()">Edit Profile <span class="fa fa-pencil"></span></button>
+			<button id="updateSubmit" class="profile-btn sign-up-btn" ng-click="updateProfile()" disabled>Update <span id="signinicon" class="fa fa-refresh"></span></button>
 		</div>
-		<div class="profile-data" ng-class='{"hidden": profileTab!="Contactos"}'>
+		<input id="imginput" type="file" name="image" ng-show="false">
+	</div>
+
+	<div class="profile-data" ng-class='{"hidden": profileTab!="Contactos"}'>
 		<accordion close-others="true" class="contacts-data">
 			<accordion-group heading="My Contacts">
 				<div class="input-group" id="filterBar">
@@ -49,5 +50,5 @@
 				<contact-field people="suggestedFriends" ops="ops"></contact-field>
 			</accordion-group>
 		</accordion>
-		</div>
+	</div>
 </div>
