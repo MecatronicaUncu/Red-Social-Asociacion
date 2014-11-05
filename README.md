@@ -95,3 +95,4 @@ TODO
 - [ ] Arreglar los warning de deprecated
 - [ ] Agregar CSS responsive
 - [ ] Terminar de parametrizar los estilos en Sass
+- [ ] Validación de formulario (que es una table por ahora) en el perfil al modificarlo.
