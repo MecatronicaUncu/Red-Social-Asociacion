@@ -91,3 +91,7 @@ TODO
 - [x] Agregar SSL
 - [ ] Agregar ```CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;``` cuando ande el signup con email
 - [ ] Enviar Errores verbose desde express al sing(up/in) para mostrarlos directamente en el mensaje de error.
+- [ ] Limpiar el Gruntfile.js
+- [ ] Arreglar los warning de deprecated
+- [ ] Agregar CSS responsive
+- [ ] Terminar de parametrizar los estilos en Sass
