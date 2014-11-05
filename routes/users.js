@@ -311,15 +311,9 @@ exports.signup = function (req, res, next) {
 
     if (temp.hasOwnProperty('firstName') && temp['firstName']) query = query + ', firstName:"' + temp['firstName'] + '"';
     if (temp.hasOwnProperty('lastName') && temp['lastName']) query = query + ', lastName:"' + temp['lastName'] + '"';
-    if (temp.hasOwnProperty('profession') && temp['profession']) query = query + ', profession:"' + temp['profession'] + 
-'"';
-    if (temp.hasOwnProperty('age') && temp['age']) query = query + ', age:' + temp['age'];
-    if (temp.hasOwnProperty('address') && temp['address']) query = query + ', address:"' + temp['address'] + '"';
-    if (temp.hasOwnProperty('phone') && temp['phone']) query = query + ', phone:' + temp['phone'];
-    if (temp.hasOwnProperty('url') && temp['url']) query = query + ', url:"' + temp['url'] + '"';
-    console.log(query);
+    if (temp.hasOwnProperty('email') && temp['email']) query = query + ', email:"' + temp['email'] + '"';
+    
     User.signup(query, function (err, user) {
-
         if (err) {
             res.send(400,'Username taken');
             return;
