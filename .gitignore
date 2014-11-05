@@ -8,3 +8,5 @@ node_modules
 .tmp
 routes/upload
 neo4j*/
+server.key
+server.crt
