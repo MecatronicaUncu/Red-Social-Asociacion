@@ -28,14 +28,14 @@
 <div class="sign-form">
     <form id="signUpForm" ng-submit="signup()" data-parsley-validate>
         <div class="sign-input-wrap">
-            <input type="text" name="first_name" placeholder="Nombre" class="sign-input" required>
-            <input type="text" name="last_name" placeholder="Apellido" class="sign-input" required>
+            <input type="text" ng-model="fields.firstName" name="firstName" placeholder="Nombre" class="sign-input" required>
+            <input type="text" ng-model="fields.lastName" name="lastName" placeholder="Apellido" class="sign-input" required>
         </div>
         <div class="sign-input-wrap">
-        	<input type="text" name="username" placeholder="Usuario" class="sign-input" required>
+        	<input type="text" ng-model="fields.username" name="username" placeholder="Usuario" class="sign-input" required>
         </div>
         <div class="sign-input-wrap">
-          <input type="email" name="email" id="email" placeholder="Email" class="sign-input"
+          <input type="email" ng-model="fields.email" name="email" id="email" placeholder="Email" class="sign-input"
           	data-parsley-trigger="change" required>
         </div>
         <!--div class="sign-input-wrap">
@@ -43,7 +43,7 @@
           data-parsley-trigger="change" data-parsley-equalto="#email" required>
         </div-->
         <div class="sign-input-wrap">
-            <input type="password" name="password" id="password" placeholder="Contraseña" class="sign-input" required>
+            <input type="password" ng-model="fields.password" name="password" id="password" placeholder="Contraseña" class="sign-input" required>
         </div>
     </form>
     <div class="sign-input-wrap">

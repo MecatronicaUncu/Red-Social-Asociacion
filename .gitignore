@@ -12,3 +12,4 @@ server.key
 neo4j*/
 !neo4j*/conf/neo4j-server.properties
 !neo4j*/conf/neo4j.properties
+app/styles
