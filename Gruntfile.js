@@ -326,7 +326,7 @@ module.exports = function (grunt) {
     },
     shell: {
         cleanCss: {
-            command: 'rm <%= yeoman.app %>/styles/*.css'
+            command: 'if [ -f *.css ];then rm <%= yeoman.app %>/styles/*.css;fi'
         }
     },
     compass: {
