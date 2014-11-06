@@ -117,7 +117,7 @@ User.getProfile = function(id,callback){
             console.log("err profile");
             return callback(err);
         }
-        var user = [];
+        var user = {};
         var fri = [];
         var req = [];
         var dem = [];
@@ -125,8 +125,8 @@ User.getProfile = function(id,callback){
         results.forEach(function(el){
             if (el.NODES.hasOwnProperty('user')){
                 delete el.NODES.user._data.data['password'];
-                var tmp = {'data' : el.NODES.user._data.data, 'id' : el.NODES.id};
-                user.push(tmp);
+                user = el.NODES.user._data.data;
+                user['id'] =el.NODES.id;
             }
             else if (el.NODES.hasOwnProperty('friend')){
                 delete el.NODES.friend._data.data['password'];

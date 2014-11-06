@@ -80,14 +80,17 @@ angular.module('linkedEnibApp')
         var path = session.host+':3000/usr/' + $routeParams.id;
         $http({method:'GET', url:path})
         .success(function (result){
+            console.log(result);
             $scope.fields.forEach(function(el){
-                el.model=result.user[0].data[el.name];
+                el.model=result.user[el.name];
             });
+            console.log(result);
             if ($scope.showNavBar){
 
                 //$scope.friends=result.friends;
                 result.friends.forEach( function(el){
-                    var temp = {el.data ,'link'=session.host+':3000/usr/' + el['id'] + '/pic'};
+                    var temp = el.data;
+                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
                     $scope.friends.push(temp);
                     //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
@@ -95,7 +98,8 @@ angular.module('linkedEnibApp')
 
                 //$scope.suggestedFriends=result.suggested;
                 result.suggested.forEach( function(el){
-                    var temp = {el.data ,'link'=session.host+':3000/usr/' + el['id'] + '/pic'};
+                    var temp = el.data;
+                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
                     $scope.suggestedFriends.push(temp);
                     //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
@@ -103,7 +107,8 @@ angular.module('linkedEnibApp')
 
                 //$scope.requestedFriends=result.requested;
                 result.requested.forEach( function(el){
-                    var temp = {el.data ,'link'=session.host+':3000/usr/' + el['id'] + '/pic'};
+                    var temp = el.data;
+                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
                     $scope.requestedFriends.push(temp);
                     //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
@@ -111,7 +116,8 @@ angular.module('linkedEnibApp')
 
                 //$scope.demandedFriends=result.demanded;
                 result.demanded.forEach( function(el){
-                    var temp = {el.data ,'link'=session.host+':3000/usr/' + el['id'] + '/pic'};
+                    var temp = el.data;
+                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
                     $scope.demandedFriends.push(temp);
                     //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
