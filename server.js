@@ -121,7 +121,7 @@ app.post('/signup', users.signup);
 app.post('/login',users.extractCookieData,users.login);
 app.post('/friend',users.extractCookieData,users.friend);
 app.post('/profilepic/:id',users.extractCookieData,users.uploadPic);
-app.post('/change',users.extractCookieData,users.changeProperty,users.changePassword);
+app.post('/change',users.extractCookieData,users.changeProperty,users.verifyPassword, users.changePassword);
 app.post('/logout',users.extractCookieData,function (req, res, next) {
     if(req.id){
 		res.clearCookie('LinkedEnibId');

@@ -76,7 +76,7 @@ TODO
 - [ ] Show an error message when the signup process fails.
 - [x] Links to users profiles by clicking on their names
 - [x] Allow images other than .jpeg.
-- [ ] Allow password change.
+- [x] Allow password change.
 - [ ] Allow password recovery.
 - [ ] COMMENT CODE
 - [x] Ask for email on signup.
@@ -96,4 +96,5 @@ TODO
 - [ ] Agregar CSS responsive
 - [ ] Terminar de parametrizar los estilos en Sass
 - [ ] Validación de formulario (que es una table por ahora) en el perfil al modificarlo.
-- [ ] Ver seguridad [acá](https://crackstation.net/hashing-security.htm)
+- [x] Ver seguridad [acá](https://crackstation.net/hashing-security.htm)
+- [ ] Aumentar seguridad [acá](https://crackstation.net/hashing-security.htm)
