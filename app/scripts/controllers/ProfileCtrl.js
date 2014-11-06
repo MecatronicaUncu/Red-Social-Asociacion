@@ -12,13 +12,13 @@ angular.module('linkedEnibApp')
     $scope.profileNavItems=[
         {name:'Perfil', href:'#/profile/'+$routeParams.id},
         {name:'Contactos', href:'#/profile/'+$routeParams.id},
-				{name:'Cambiar Contraseña', href:'#/profile/'+$routeParams.id},
+		{name:'Cambiar Contraseña', href:'#/profile/'+$routeParams.id},
         {name:'Cerrar Sesión', href:'#/'},
         {name:'Eliminar Usuario', href:'#/'}
       ];
 
     $scope.profileTab = 'Perfil';
-    
+
     $scope.fields = [
         {label:'Nombre', name:'firstName', model:'', icon:'fa-user'},
         {label:'Apellido', name:'lastName', model:'', icon:'fa-user'},
@@ -118,7 +118,6 @@ angular.module('linkedEnibApp')
                     $scope.demandedFriends.push(temp);
                 });
 
-
                 $scope.filtered = $scope.friends;
             };
         });
@@ -200,6 +199,15 @@ angular.module('linkedEnibApp')
         });
     };
     
+    $scope.changePass = function(pass){
+        pass['id']=session.getId();
+        var path = session.host+':3000/change';
+        $http({method:'POST',url:path, data:pass})
+            .success(function(){
+                $scope.profileTab = 'Perfil';
+            });
+    };
+
     $scope.updateContacts();
 
   });

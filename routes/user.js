@@ -349,6 +349,27 @@ User.changeProperty = function (field,value,id,callback){
     });
 };
 
+User.changePassword = function (old,newP,id,callback){
+    
+    var query = [
+        'MATCH (u:User)',
+        'WHERE ID(u)=' + id.toString() + ' AND u.password="' + old + '"',
+        'SET u.password="' + newP + '"',
+        'RETURN u'
+    ].join('\n');
+    
+    db.query(query, null, function (err, results) {
+        if(err){
+            console.log("err change prop");
+            return callback(err);
+        }
+        if (results[0].u._data.data.hasOwnProperty('password')){
+            return callback(null);
+        }
+        return callback(true);
+    });
+};
+
 /******************************************************************************/
 /*                          DELETE METHODS                                    */
 /******************************************************************************/

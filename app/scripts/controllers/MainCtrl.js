@@ -13,23 +13,6 @@ App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, se
     
     $(document).ready(function(){
                               
-        /*$scope.fields = [
-            {label:'Fisrt Name', name:'firstName', model:'', pholder:'First Name',
-                type:'text', required:'true', icon:'fa-user',
-                minlength:'1', maxlength:'30'},
-            {label:'Last Name', name:'lastName', model:'', pholder:'Last Name',
-                type:'text', required:'true', icon:'fa-user',
-                minlength:'1', maxlength:'30'},
-            {label:'Username', name:'username', model:'', pholder:'Username',
-                type:'text', required:'true', icon:'fa-user',
-                minlength:'1', maxlength:'30'},
-            {label:'Email', name:'email', model:'', pholder:'Email',
-                type:'text', required:'true', icon:'fa-user',
-                minlength:'1', maxlength:'30'},
-            {label:'Password', name:'password', model:'', pholder:'Password',
-                type:'password', required:'true', icon:'fa-key',
-                minlength:'3', maxlength:'10'}
-        ];*/
         
        users.they(function(err,users){
 			if(err){

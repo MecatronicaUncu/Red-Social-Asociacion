@@ -51,4 +51,26 @@
 			</accordion-group>
 		</accordion>
 	</div>
+
+	<div class="profile-data" ng-class='{"hidden": profileTab!="Cambiar Contraseña"}'>
+		<table class="profile-data-table">
+			<tr class="profile-element">
+				<td class="profile-label">Antigua contraseña: </td>
+				<td class="profile-passInput">
+					<input id="pass1" ng-model="personPass.password" type="password" name="oldPass" placeholder="Antigua contraseña" id="oldPass">
+				</td>
+			</tr>
+			<tr class="profile-element">
+				<td class="profile-label">Nueva contraseña: </td>
+				<td class="profile-passInput">
+					<input id="pass2" ng-model="personPass.new" type="password" name="newPass" placeholder="Nueva contraseña" id="newPass">
+				</td>
+			</tr>
+		</table>
+
+		<div class="sign-btns-container">
+			<button id="changePassButton" class="profile-btn sign-up-btn" ng-click="changePass(personPass)">Cambiar contraseña <span class="fa fa-refresh"></span></button>
+		</div>
+	</div>
+
 </div>

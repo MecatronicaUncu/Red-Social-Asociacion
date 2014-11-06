@@ -344,12 +344,31 @@ exports.uploadPic = function (req, res, next) {
  */
 exports.changeProperty = function (req, res, next) {
     var tmp = req.body;
-    
+
 	if(!sameUser(tmp['id'],req,res)){
         res.send(401,'Unauthorized');
         return;
     }
+    if(tmp.hasOwnProperty('password')){
+        next();
+    }
+
     User.changeProperty(tmp['field'],tmp['value'],tmp['id'],function(err){
+        if (err){
+            res.send(500,'Error');
+            return;
+        }
+        res.send(200,'OK');
+        return;
+    });
+};
+
+exports.changePassword = function (req, res, next) {
+    var tmp = {};
+    tmp['password'] = hash(req.body['password']);
+    tmp['new'] = hash(req.body['new']);
+
+    User.changePassword(tmp['password'],tmp['new'],req.body['id'],function(err){
         if (err){
             res.send(500,'Error');
             return;
