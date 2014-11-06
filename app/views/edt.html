@@ -2,10 +2,10 @@
 	<div id="edtSearchBar">
 		<div id="edtSearchSelect" class="dropdown">
 			<button class="edtSearchBtn dropdown-toggle" type="button">
-		    <i id="edtSearchIcon" class="fa fa-fw fa-question-circle"></i>{{searchTerm}}
+		    <i id="edtSearchIcon" class="fa fa-fw {{searchIcon}}"></i>{{searchTerm}}
 		    <span class="caret"></span>
 		  	</button>
-		  	<ul class="dropdown-menu" role="menu">
+		  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
 				<li role="presentation" ng-repeat="item in items.data">
 					<a role="menuitem" tabindex="-1" ng-click="this[items.click](item)">{{item.name}}</a>
 				</li>
@@ -15,6 +15,18 @@
 		<button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()">
 			<i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
 		</button>
+
+		<div id="edtWeekSelect" class="dropdown">
+			<button class="edtSearchBtn dropdown-toggle" type="button">
+		    <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>Semana {{thisWeek}}
+		    <span class="caret"></span>
+		  	</button>
+		  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
+				<li role="presentation" ng-repeat="week in weeks">
+					<a role="menuitem" tabindex="-1" ng-click="setDates(week)">{{week}}</a>
+				</li>
+			</ul>
+		</div>
 		
 	</div>
 
@@ -25,13 +37,14 @@
 		</thead>			
 		<tbody>
 			<tr ng-repeat="day in days">
-				<td class="edt-days"><span id="{{day}}" ng-click="ABRIR COLLAPSE">{{day}}</span>
+				<td class="edt-days"><span id="{{day.name}}" ng-click=""><p>{{day.name}}</p>
+					<p>{{day.date}}</p></span>
 					<!--core-collapse id="{{day}}Collapse">
-						<div class="chartContainerV" id="{{day}}V"></div>
+						<div class="chartContainerV" id="{{day.name}}V"></div>
 					</core-collapse-->
 				</td>
 				<td class="edt-times-h">
-					<div class="chartContainer" id="{{day}}H"></div>
+					<div class="chartContainer" id="{{day.name}}H"></div>
 				</td>
 			</tr>
 		</tbody>

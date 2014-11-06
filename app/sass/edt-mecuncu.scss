@@ -1,17 +1,13 @@
 @import "site-base";
 @import "edt-search";
 
-body {
-	@include respond-to(mobile){margin: 0px};
-}
-
 #edt table {
 	border-collapse: collapse;	
 	table-layout: fixed;
 	width: 100%;
 }
 
-#edt #edt {
+#edt {
 	@include respond-to(mobile){width: 100%};
 	@include respond-to(big-mobile){width: 450px};
 	@include respond-to(tablets){width: 700px};
@@ -58,6 +54,7 @@ body {
 	vertical-align: middle;
 	text-align: center;
 	background-color: $edtDaysBgColor;
+	border-bottom: 1px solid shade($edtTimesBgColor, 20);
 }
 
 #edt * .edt-times-h {

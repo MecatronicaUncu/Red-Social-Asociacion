@@ -189,8 +189,8 @@ angular
   					return next('Error Getting Types',data);
   				});
   		},
-  		getSubTypes: function(name, next){
-  			$http({method:'GET', url:session.host+':3000/subtypes', params:{name:name}})
+  		getSubTypes: function(type, next){
+  			$http({method:'GET', url:session.host+':3000/subtypes', params:{type:type}})
   				.success(function(data){
   					return next(null,data.data[0].subtypes);
   				})
@@ -198,13 +198,13 @@ angular
   					return next('Error Getting Subtypes',data);
   				});
   		},
-  		getTimes: function(what, next){
-  			$http({method:'GET', url:session.host+':3000/times', params:{what:what}})
+  		getTimes: function(type, name, next){
+  			$http({method:'GET', url:session.host+':3000/times', params:{type:type, name:name}})
   				.success(function(data){
   					return next(null,data);
   				})
   				.error(function(data){
-  					return next('Error Getting Subtypes',data);
+  					return next('Error Getting Times',data);
   				});
   		}
   	};

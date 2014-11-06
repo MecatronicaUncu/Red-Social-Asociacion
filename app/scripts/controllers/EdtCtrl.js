@@ -9,6 +9,60 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 		$scope.replot();
 	});
 	
+	$scope.DobToYWDarr = function(DArg) {
+		var DOb = new Date(DArg); // <- errors with Opera 9
+		if (isNaN(DOb)) 
+			return false;
+		var D = DOb.getDay();
+		if (D==0)
+			D=7; // D = ISO DoW
+		DOb.setDate(DOb.getDate() + (4-D));   // To nearest Thu, mid-week
+		var YN = DOb.getFullYear();           // YN = ISO W-N Year
+		// uses Jan 1 of YN; -6h allows for Summer Time
+		var ZBDoCY = Math.floor( (DOb.getTime() - new Date(YN, 0, 1, -6)) / 864e5 );
+		var WN = 1 + Math.floor(ZBDoCY/7);
+
+		return [YN, WN, D] /* ISO 8601 */
+	};
+
+	$scope.YWDarrToDob = function(AYWD) { // Arg : ISO 8601 : [Y, W, D]
+		var DOb = new Date(+AYWD[0], 0, 3);  // Jan 3
+		if (isNaN(DOb))
+			return false;
+		DOb.setDate( 3 - DOb.getDay() + (AYWD[1]-1)*7 + +AYWD[2] );
+		return DOb;
+	};
+
+	/*	Devuelve el número de semanas en este año
+	 *
+	 */
+	$scope.weeksInYear = function() {
+  		var d = new Date((new Date()).getFullYear(), 11, 31);
+  		var week = $scope.DobToYWDarr(d)[1];
+  		return week == 1? $scope.DobToYWDarr(d.setDate(24))[1] : week;
+	};
+
+	/*	Para una semana data como parámetro, o para la semana actual si es omitido,
+	 *	guarda los strings correspondientes a las fechas de esa semana.
+	 */
+	$scope.setDates = function(w){
+
+		// No importa el Day Of Week en week, porque al iterar se sobreescribe
+		var week = (w?[(new Date()).getFullYear(),w,0]:$scope.DobToYWDarr(new Date()));
+
+		$scope.thisWeek = week[1];
+
+		$scope.days.forEach(function(el,index){
+			var jour = $scope.YWDarrToDob([week[0],week[1],index+1]);
+			var d = jour.getDate();
+			var m = (jour.getMonth()+1);
+			var y = jour.getFullYear();
+			el.date = (d<10?'0':'')+d+'-'+(m<10?'0':'')+m+'-'+y;
+		});
+
+		//TODO: PLOTEAR ACA.
+	}
+
 	$scope.edtTypes = function(){
 		
 		edt.getTypes(function(err,data){
@@ -27,14 +81,34 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 			data: []
 		};
 		
+		$scope.setDates();
+
 		$scope.searchTerm = 'Elija Tipo';
+		$scope.searchIcon = 'fa-question-circle';
 		$scope.type = '';
 		$scope.subtype = '';
-		
+
 		$scope.edtTypes();
 	};
 	
-	$scope.days = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+	$scope.days = [{name:'Lunes',
+					date:''
+				},
+				{	name:'Martes',
+					date:''
+				},
+				{	name:'Miércoles',
+					date:''
+				},
+				{	name:'Jueves',
+					date:''
+				},
+				{	name:'Viernes',
+					date:''
+				},
+				{	name:'Sábado',
+					date:''
+				}];
 
 	$scope.config = {	types:	{
 							Clase: {
@@ -314,7 +388,8 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 	$scope.edtSubTypes = function(item){
 		
 		$scope.type = item.name;
-		$scope.searchTerm = 'Elija '+item.name; 
+		$scope.searchTerm = 'Elija '+item.name;
+		$scope.searchIcon = item.icon;
 		edt.getSubTypes($scope.type, function(err,data){
 			if(err){
 				console.log(err);
@@ -328,7 +403,9 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 	
 	$scope.edtGetTimes = function(item){
 		console.log('EDT GET TIMES');
+		$scope.searchTerm = item.name;
 		console.log(item);
+		edt.getTimes($scope.type,item.name);
 	};
 	
 	$scope.$on('$viewContentLoaded', function () {
@@ -340,6 +417,15 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 		$timeout(function(){
 			$scope.clearSearch();
 			$scope.timeplot($scope.times,$scope.config);
+			
+			/*	Cargar las semanas en el año, sólo una vez al cargar el controlador
+			 */
+			var wn = $scope.weeksInYear();
+			var i;
+			$scope.weeks = [];
+			for(i=1;i<=wn;i++){
+				$scope.weeks.push(i);
+			};
 		}, 200);
 	});
 	
