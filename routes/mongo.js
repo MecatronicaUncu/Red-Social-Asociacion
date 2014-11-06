@@ -29,7 +29,7 @@ exports.getTypes = function (req, res, next) {
 
 exports.getSubTypes = function (req, res, next) {
 
-	var col = db.collection(req.query.name);
+	var col = db.collection(req.query.type);
 
 	col.find().toArray(function(err, docs) {
 		if (err){
@@ -42,3 +42,10 @@ exports.getSubTypes = function (req, res, next) {
   });
 	return;
 };
+
+exports.getTimes = function(req, res, next){
+
+	var col = db.collection('Actividades');
+
+
+}

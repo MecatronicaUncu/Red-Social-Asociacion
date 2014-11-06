@@ -58,6 +58,7 @@ body {
 	vertical-align: middle;
 	text-align: center;
 	background-color: $edtDaysBgColor;
+	border-bottom: 1px solid shade($edtTimesBgColor, 20);
 }
 
 #edt * .edt-times-h {
