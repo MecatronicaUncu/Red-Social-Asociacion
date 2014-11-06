@@ -199,7 +199,7 @@ angular
   				});
   		},
   		getTimes: function(type, name, next){
-  			$http({method:'GET', url:session.host+':3000/times', params:{type:what, name:name}})
+  			$http({method:'GET', url:session.host+':3000/times', params:{type:type, name:name}})
   				.success(function(data){
   					return next(null,data);
   				})
