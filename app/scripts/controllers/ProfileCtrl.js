@@ -87,42 +87,37 @@ angular.module('linkedEnibApp')
             console.log(result);
             if ($scope.showNavBar){
 
-                //$scope.friends=result.friends;
                 result.friends.forEach( function(el){
                     var temp = el.data;
                     temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                    temp['id'] = el['id'];
                     $scope.friends.push(temp);
-                    //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
 
-                //$scope.suggestedFriends=result.suggested;
                 result.suggested.forEach( function(el){
                     var temp = el.data;
                     temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                    temp['id'] = el['id'];
                     $scope.suggestedFriends.push(temp);
-                    //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
 
-                //$scope.requestedFriends=result.requested;
                 result.requested.forEach( function(el){
                     var temp = el.data;
                     temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                    temp['id'] = el['id'];
                     $scope.requestedFriends.push(temp);
-                    //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
 
-                //$scope.demandedFriends=result.demanded;
                 result.demanded.forEach( function(el){
                     var temp = el.data;
                     temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                    temp['id'] = el['id'];
                     $scope.demandedFriends.push(temp);
-                    //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
-                console.log($scope.suggestedFriends);
 
                 $scope.filtered = $scope.friends;
             };
