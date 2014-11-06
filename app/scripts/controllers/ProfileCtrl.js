@@ -85,25 +85,38 @@ angular.module('linkedEnibApp')
             });
             if ($scope.showNavBar){
 
-                $scope.friends=result.friends;
-                $scope.friends.forEach( function(el){
-                    el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
+                //$scope.friends=result.friends;
+                result.friends.forEach( function(el){
+                    var temp = {el.data ,'link'=session.host+':3000/usr/' + el['id'] + '/pic'};
+                    $scope.friends.push(temp);
+                    //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
-                $scope.suggestedFriends=result.suggested;
-                $scope.suggestedFriends.forEach( function(el){
-                    el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
+
+                //$scope.suggestedFriends=result.suggested;
+                result.suggested.forEach( function(el){
+                    var temp = {el.data ,'link'=session.host+':3000/usr/' + el['id'] + '/pic'};
+                    $scope.suggestedFriends.push(temp);
+                    //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
-                $scope.requestedFriends=result.requested;
-                $scope.requestedFriends.forEach( function(el){
-                    el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
+
+                //$scope.requestedFriends=result.requested;
+                result.requested.forEach( function(el){
+                    var temp = {el.data ,'link'=session.host+':3000/usr/' + el['id'] + '/pic'};
+                    $scope.requestedFriends.push(temp);
+                    //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
 
-                $scope.demandedFriends=result.demanded;
-                $scope.demandedFriends.forEach( function(el){
-                    el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
+
+                //$scope.demandedFriends=result.demanded;
+                result.demanded.forEach( function(el){
+                    var temp = {el.data ,'link'=session.host+':3000/usr/' + el['id'] + '/pic'};
+                    $scope.demandedFriends.push(temp);
+                    //el['link']=session.host+':3000/usr/' + el['id'] + '/pic';
                 });
+
+                console.log($scope.suggestedFriends);
 
                 $scope.filtered = $scope.friends;
             };
