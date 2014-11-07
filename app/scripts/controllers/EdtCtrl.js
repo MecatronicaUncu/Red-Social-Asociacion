@@ -10,6 +10,14 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			$scope.replot();
 		}
 	});
+
+	$scope.newActCollapse = true;
+	$scope.divs = [];
+	$scope.divIndex = 0;
+	$scope.lasttimes = {};
+	$scope.lastconfig = {};
+	$scope.suffix = 'H';
+	$scope.session = session;
 	
 	$scope.DobToYWDarr = function(DArg) {
 		var DOb = new Date(DArg); // <- errors with Opera 9
@@ -178,11 +186,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 								type:'Examen'
 							}]
 						}];
-	$scope.divs = [];
-	$scope.divIndex = 0;
-	$scope.lasttimes = {};
-	$scope.lastconfig = {};
-	$scope.suffix = 'H';
 	
 	$scope.getOffset = function(el){
 		var _x = 0;
@@ -264,8 +267,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	
 	$scope.timeplot = function(alltimes, config){
 		console.log(alltimes[0].times[0]);
-		//$scope.lasttimes=JSON.parse(JSON.stringify(alltimes));
-		//$scope.lastconfig=JSON.parse(JSON.stringify(config));
 
 		var divwidth;
 		var divheight;
@@ -552,7 +553,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				} else {
 					$scope.actCats = data;
 					$scope.newActCat = $scope.actCats[0];
-					console.log($scope.actCats);
 					$scope.newActSubCats($scope.newActCat);
 				}
 			});

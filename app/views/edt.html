@@ -1,6 +1,6 @@
 <div id="edt" hidden>
 	<div id="edtSearchBar">
-		<div id="edtSearchSelect" class="dropdown">
+		<div id="edtSearchSelect" class="dropdown" ng-show="newActCollapse">
 			<button class="edtSearchBtn dropdown-toggle" type="button">
 		    <i id="edtSearchIcon" class="fa fa-fw {{searchIcon}}"></i>{{searchTerm}}
 		    <span class="caret"></span>
@@ -12,11 +12,11 @@
 			</ul>
 		</div>
 		
-		<button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()">
+		<button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()" ng-show="newActCollapse">
 			<i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
 		</button>
 
-		<div id="edtWeekSelect" class="dropdown">
+		<div id="edtWeekSelect" class="dropdown" ng-show="newActCollapse">
 			<button class="edtSearchBtn dropdown-toggle" type="button">
 			    <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>Semana {{thisWeek}}
 			    <span class="caret"></span>
@@ -28,7 +28,7 @@
 			</ul>
 		</div>
 
-		<button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse=!newActCollapse">
+		<button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse=!newActCollapse" ng-show="session.isLogged() === 'true' ">
 			<i class="fa fa-fw fa-plus"></i>
 		</button>
 
