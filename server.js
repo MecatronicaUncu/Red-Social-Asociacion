@@ -101,7 +101,7 @@ app.get('/edtconfig',mongo.getConfig);
 app.get('/checkCookie',users.extractCookieData,function(req,res){
 	
 	if(req.id){
-		res.send(200, {id:req.id});
+		res.send(200, {id:req.id, name:req.name});
 	} else {
 		res.send(500);
 	}
