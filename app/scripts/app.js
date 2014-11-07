@@ -166,6 +166,7 @@ angular
 	                if (data.id==null){
 	                    return next('ID was null');
 	                }else{
+                      //return next(null);
 	                    return funcs.login(person,next);
 	                }
 	            })

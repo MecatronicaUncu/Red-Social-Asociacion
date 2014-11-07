@@ -290,16 +290,15 @@ User.signup = function (data, callback) {
 
 };
 
-User.login = function (username, password, callback) {
+User.login = function (username, callback) {
     var query = [
         'MATCH (user:User)',
-        'WHERE user.username={username} and user.password={password}',
-        'RETURN ID(user) AS id'
+        'WHERE user.username={username}',
+        'RETURN ID(user) AS id, user.password AS pass, user.salt AS salt'
     ].join('\n');
 
     var params = {
-        username: username,
-        password: password
+        username: username
     };
 
     db.query(query, params, function (err, results) {
@@ -308,7 +307,7 @@ User.login = function (username, password, callback) {
             return callback(err);
         }
         if (results.length>0){
-            return callback(null, results[0]['id']);
+            return callback(null, results[0]);
         }
         console.log('err log in 2');
         return callback(err);
@@ -349,13 +348,12 @@ User.changeProperty = function (field,value,id,callback){
     });
 };
 
-User.changePassword = function (old,newP,id,callback){
+User.verifyPassword = function (id,callback){
     
     var query = [
         'MATCH (u:User)',
-        'WHERE ID(u)=' + id.toString() + ' AND u.password="' + old + '"',
-        'SET u.password="' + newP + '"',
-        'RETURN u'
+        'WHERE ID(u)=' + id.toString(),
+        'RETURN u.password AS pass, u.salt AS salt'
     ].join('\n');
     
     db.query(query, null, function (err, results) {
@@ -363,10 +361,27 @@ User.changePassword = function (old,newP,id,callback){
             console.log("err change prop");
             return callback(err);
         }
-        if (results[0].u._data.data.hasOwnProperty('password')){
-            return callback(null);
+        return callback(null, results[0]);
+    });
+};
+
+User.changePassword = function (oldP,newP,newS,id,callback){
+    
+    var query = [
+        'MATCH (u:User)',
+        'WHERE ID(u)=' + id.toString(),
+        'SET u.password="' + newP + '", u.salt="' +newS + '"'
+    ].join('\n');
+    
+    db.query(query, null, function (err, results) {
+        if(err){
+            console.log("err change prop");
+            return callback(err);
         }
-        return callback(true);
+        /*if (results[0].u._data.data.hasOwnProperty('password')){
+            return callback(null);
+        }*/
+        return callback(null);
     });
 };
 

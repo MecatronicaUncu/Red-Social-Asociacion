@@ -18,8 +18,21 @@ var crypto = require('crypto');
 /*
  * Hash password
  */
-var hash = function(pwd) {
-  return crypto.createHash('sha256').update(pwd).digest('base64');
+var hash = function(pwd,salt) {
+    if (!salt){
+        try {
+          var buf = crypto.randomBytes(64);
+          salt = buf.toString('base64');
+        } 
+        catch (ex) {
+            throw ex;
+        }
+    }
+    var pass = salt + pwd;
+
+    var passHash = crypto.createHash('sha256').update(pass).digest('base64');
+    var temp = {'pass': passHash, 'salt': salt};
+    return temp;
 };
 
 /*
@@ -223,7 +236,8 @@ exports.signup = function (req, res, next) {
         return;        
     }
 
-    query = 'username:"' + temp['username'] + '", password:"' + hash(temp['password']) + '"';
+    var tempPass = hash(temp['password'],null);
+    query = 'username:"' + temp['username'] + '", password:"' + tempPass['pass'] + '", salt:"' + tempPass['salt'] + '"';
 
     if (temp.hasOwnProperty('firstName') && temp['firstName']) query = query + ', firstName:"' + temp['firstName'] + '"';
     if (temp.hasOwnProperty('lastName') && temp['lastName']) query = query + ', lastName:"' + temp['lastName'] + '"';
@@ -235,7 +249,8 @@ exports.signup = function (req, res, next) {
             return;
         }
         if (user){
-		res.send(200,{id:user.id});
+            //next();
+            res.send(200,{id:user.id});
 		return;
         }
         res.send(500,'Database error');
@@ -249,7 +264,6 @@ exports.signup = function (req, res, next) {
 exports.login = function (req, res, next) {
 	
 	var temp = req.body;
-	
 	if (!temp.hasOwnProperty('password') || temp['password']==''){
         res.send(400,'Missing password');
         return;
@@ -258,17 +272,23 @@ exports.login = function (req, res, next) {
         res.send(400,'Missing username');
         return;        
     }
-	
-    User.login(temp['username'], hash(temp['password']), function (err, id) {
+
+    User.login(temp['username'], function (err, results) {
         if (err) {
             res.send(401,'Wrong username or password');
             return;
         }
-        if (id){
+
+        var secPass = hash(temp['password'],results['salt']);
+
+        if (secPass['pass']!==results['pass']){
+            res.send(401,'Wrong username or password');    
+        };
+        if (results['id']){
 			if(!loggedIn(req,res)){
 				var cook = new cookies(req, res, keys);
-				cook.set('LinkedEnibId',id, { signed: true, maxAge: 9000000 });
-				res.send(200,{id:id});
+				cook.set('LinkedEnibId',results['id'], { signed: true, maxAge: 9000000 });
+				res.send(200,{id:results['id']});
 				return;
 			}
 			else{
@@ -363,12 +383,26 @@ exports.changeProperty = function (req, res, next) {
     });
 };
 
-exports.changePassword = function (req, res, next) {
-    var tmp = {};
-    tmp['password'] = hash(req.body['password']);
-    tmp['new'] = hash(req.body['new']);
+exports.verifyPassword = function (req, res, next) { 
+    User.verifyPassword(req.body['id'],function(err,results){
+        if (err){
+            res.send(500,'Error');
+            return;
+        }
+        var tmp = hash(req.body['password'],results['salt']);
+        if (tmp['pass']!==results['pass']){
+            res.send(401,'Wrong username or password');    
+        };
+        next();
+        return;
+    });
+};
 
-    User.changePassword(tmp['password'],tmp['new'],req.body['id'],function(err){
+exports.changePassword = function (req, res, next) {
+    
+    var pswdNew = hash(req.body['new'],null);
+
+    User.changePassword(pswdNew['pass'],pswdNew['salt'],req.body['id'],function(err){
         if (err){
             res.send(500,'Error');
             return;
