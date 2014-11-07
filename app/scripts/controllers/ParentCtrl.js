@@ -21,21 +21,5 @@ angular.module('linkedEnibApp')
     $scope.$on('$destroy',function (event){
         session.log('out');
     });
-
-    $(document).ready(function(){
-	$http({method:'GET', url:session.host+':3000/testMateria'})
-        .success(function (data){
-            console.log(data);
-        });
-    });
-       
-    $scope.$on('cors-success:GET:http://edt.mecatronicauncu.org:3000/they', function(data){
-    	
-    	console.log(data);
-    });
-    
-    $scope.$on('cors-error:GET:http://edt.mecatronicauncu.org:3000/they', function(){
-    	
-    	console.log('CORS ERROR');
-    });
+   
   });

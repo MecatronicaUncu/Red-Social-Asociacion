@@ -14,25 +14,25 @@
 	@include respond-to(wide){width: 900px};
 }
 
-#edt * .edt-head {
+.edt-head {
 	@include edt-head-font;
 	text-align: center;
 	background-color: $edtHeadBgColor;
 }
 
-#edt * .edt-head-wrap {
+.edt-head-wrap {
 	width: 90px;
 	@include respond-to(mobile){width: 100%};
 	text-align: center;
 }
 
-#edt * .edt-head-time-h {
+.edt-head-time-h {
 	display: table-cell;
 	@include respond-to(mobile){display: none};
 	text-align: center;
 }
 
-#edt * .edt-logo {
+.edt-logo {
 	max-width: 80px;
 	vertical-align: middle;
 	display: block;
@@ -40,7 +40,7 @@
 	@include respond-to(mobile){display: none};
 }
 
-#edt * .edt-footer {
+.edt-footer {
 	@include edt-footer-font;
 	border-bottom: 2px solid $edtDarkColor;
 	padding-top: 5px;
@@ -48,7 +48,7 @@
 	text-align: right;
 }
 
-#edt * .edt-days {
+.edt-days {
 	@include edt-days-font;
 	padding: 0;
 	vertical-align: middle;
@@ -57,7 +57,7 @@
 	border-bottom: 1px solid shade($edtTimesBgColor, 20);
 }
 
-#edt * .edt-times-h {
+.edt-times-h {
 	background-color: $edtTimesBgColor;	
 	display: table-cell;
 	border-bottom: 1px solid shade($edtTimesBgColor, 20);
@@ -65,7 +65,7 @@
 	padding: 0;
 }
 
-#edt * .chartContainer {
+.chartContainer {
 	width: 100%;
 	height: $edtChartHeightH+px;
 	padding: 0;
@@ -73,11 +73,11 @@
 	position: relative;
 }
 
-#edt * .chartContainer * core-icon {
+.chartContainer * core-icon {
 	@include opacity(0.7);
 }
 
-#edt * .chartContainerV {
+.chartContainerV {
 	background-color: $edtTimesBgColor;
 	display: none;
 	text-align: left;
@@ -87,10 +87,10 @@
 	position: relative;
 }
 
-#edt * .chartContainerV * core-icon {
+.chartContainerV * core-icon {
 	@include opacity(0.7);
 }
 
-#edt * .edt-block-info {
+.edt-block-info {
 	@include edt-block-info-font;
 }

@@ -1,0 +1,56 @@
+@import 'site-base';
+
+.activity-form {
+	
+	width: 50%;
+	min-width: 550px;
+}
+
+.newActBtn {
+	
+	height: 40px;
+	border: 1px solid #ACACAC;
+	@include border-radius(0);
+	background-color: #FFF;
+	@include edt-search-bar-font;
+	font-size: 0.9em;
+	color: #595959;
+	margin: 5px 10px;
+}
+
+.newActLbl{
+	
+	border: none;
+}
+
+.newActIcon {
+	
+	color: #595959;
+}
+
+.edt-newact-dropdown {
+	
+	background-color: #FFF;
+    border: 1px solid #595959;
+    @include border-radius(0);
+    width: auto;
+    max-height: 200px;
+    height: auto;
+    overflow-x: hidden;
+    z-index: 20;
+}
+
+#newActWhere {
+	
+	width: auto;
+}
+
+#newActForm {
+
+	margin: 30px 0px;
+}
+
+#newActWrap {
+	
+	border: 1px solid #ACACAC;
+}

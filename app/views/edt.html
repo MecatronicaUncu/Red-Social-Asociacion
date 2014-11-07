@@ -1,4 +1,4 @@
-<div id="edt">
+<div id="edt" hidden>
 	<div id="edtSearchBar">
 		<div id="edtSearchSelect" class="dropdown">
 			<button class="edtSearchBtn dropdown-toggle" type="button">
@@ -7,7 +7,7 @@
 		  	</button>
 		  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
 				<li role="presentation" ng-repeat="item in items.data">
-					<a role="menuitem" tabindex="-1" ng-click="this[items.click](item)">{{item.name}}</a>
+					<a role="menuitem" tabindex="-1" ng-click="this[items.click](item,thisWeek)">{{item.name}}</a>
 				</li>
 			</ul>
 		</div>
@@ -18,8 +18,8 @@
 
 		<div id="edtWeekSelect" class="dropdown">
 			<button class="edtSearchBtn dropdown-toggle" type="button">
-		    <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>Semana {{thisWeek}}
-		    <span class="caret"></span>
+			    <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>Semana {{thisWeek}}
+			    <span class="caret"></span>
 		  	</button>
 		  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
 				<li role="presentation" ng-repeat="week in weeks">
@@ -27,28 +27,90 @@
 				</li>
 			</ul>
 		</div>
-		
+
+		<button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse=!newActCollapse">
+			<i class="fa fa-fw fa-plus"></i>
+		</button>
+
 	</div>
 
-	<table id="tabla">
-		<thead class="edt-head">
-			<th class="edt-head-wrap">Día</td>
-			<th class="edt-head-time-h" id="Hora">Hora</td>
-		</thead>			
-		<tbody>
-			<tr ng-repeat="day in days">
-				<td class="edt-days"><span id="{{day.name}}" ng-click=""><p>{{day.name}}</p>
-					<p>{{day.date}}</p></span>
-					<!--core-collapse id="{{day}}Collapse">
-						<div class="chartContainerV" id="{{day.name}}V"></div>
-					</core-collapse-->
-				</td>
-				<td class="edt-times-h">
-					<div class="chartContainer" id="{{day.name}}H"></div>
-				</td>
-			</tr>
-		</tbody>
-		
-	</table>
+	<div id="newActWrap" collapse="newActCollapse">
+		<div class="sign-form activity-form">
+		    <form id="newActForm" ng-submit="newActivity(newAct)" novalidate>
+		        <div class="sign-input-wrap">
+		            <input id="newActWhen" type="text" ng-model="newAct.date" placeholder="Fecha" class="sign-input" required>
+		            <input id="newActStart" type="text" ng-model="newAct.start" placeholder="Inicio" class="sign-input" required>
+		            <input id="newActDur" type="text" ng-model="newAct.dur" placeholder="Duración" class="sign-input" required>
+		            <input id="newActEnd" type="text" ng-model="newAct.end" placeholder="Fin" class="sign-input" required>
+		        </div>
+		        <div class="sign-input-wrap">
+	        		<div class="dropdown newActSelect">
+	        			<span class="edtSearchBtn newActBtn newActLbl">Categoría</span>
+						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+						    {{newActCat.name}}
+						    <span class="caret"></span>
+					  	</button>
+					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
+							<li role="presentation" ng-repeat="cat in actCats">
+								<a role="menuitem" tabindex="-1" ng-click="newActSubCats(cat)">{{cat.name}}</a>
+							</li>
+						</ul>
+					</div>
+					<div class="dropdown newActSelect">
+	        			<span class="edtSearchBtn newActBtn newActLbl">En particular?</span>
+						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+						    {{newActSubCat.name}}
+						    <span class="caret"></span>
+					  	</button>
+					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
+							<li role="presentation" ng-repeat="subcat in actSubCats">
+								<a role="menuitem" tabindex="-1" ng-click="">{{subcat.name}}</a>
+							</li>
+						</ul>
+					</div>
+	        	</div>
+	        	<div class="sign-input-wrap">	
+					<div class="dropdown newActSelect">
+						<span class="edtSearchBtn newActBtn newActLbl">Actividad</span>
+						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+						    {{newActType.name}}
+						    <span class="caret"></span>
+					  	</button>
+					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
+							<li role="presentation" ng-repeat="type in actTypes">
+								<a role="menuitem" tabindex="-1" ng-click="">{{type.name}}</a>
+							</li>
+						</ul>
+					</div>
+					<input id="newActWhere" type="text" ng-model="newAct.where" placeholder="Lugar" class="sign-input" required>
+				</div>
+		    </form>
+		    <div class="sign-input-wrap">
+		    	<button  type="submit" form="newActForm" class="sign-up-btn">Guardar</button>
+		    </div>
+	    </div>
+	</div>
+
+	<div collapse="!newActCollapse">
+		<table id="timeTable">
+			<thead class="edt-head">
+				<th class="edt-head-wrap">Día</td>
+				<th class="edt-head-time-h" id="Hora">Hora</td>
+			</thead>			
+			<tbody>
+				<tr ng-repeat="day in days">
+					<td class="edt-days"><span id="{{day.name}}" ng-click=""><p>{{day.name}}</p>
+						<p>{{day.date}}</p></span>
+						<!--core-collapse id="{{day}}Collapse">
+							<div class="chartContainerV" id="{{day.name}}V"></div>
+						</core-collapse-->
+					</td>
+					<td class="edt-times-h">
+						<div class="chartContainer" id="{{day.name}}H"></div>
+					</td>
+				</tr>
+			</tbody>	
+		</table>
+	</div>
 	<div><p class="edt-footer">Asociación de Mecatrónica de Mendoza</p></div>
 </div>

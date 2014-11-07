@@ -4,9 +4,11 @@ var App = angular.module('linkedEnibApp');
 
 App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 	
-	$(window).on('resize', function() {					
-		$scope.clearplot();
-		$scope.replot();
+	$(window).on('resize', function() {			
+		if($scope.newActCollapse){
+			$scope.clearplot();
+			$scope.replot();
+		}
 	});
 	
 	$scope.DobToYWDarr = function(DArg) {
@@ -63,13 +65,12 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 		//TODO: PLOTEAR ACA.
 	}
 
-	$scope.edtTypes = function(){
+	$scope.edtAllTypes = function(){
 		
-		edt.getTypes(function(err,data){
+		edt.getAllTypes(function(err,data){
 			if(err){
 				console.log(err);
 			} else {
-				console.log(data);
 				$scope.items.data = data;
 			}
 		});
@@ -87,8 +88,9 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 		$scope.searchIcon = 'fa-question-circle';
 		$scope.type = '';
 		$scope.subtype = '';
+		$scope.newActCollapse = true;
 
-		$scope.edtTypes();
+		$scope.edtAllTypes();
 	};
 	
 	$scope.days = [{name:'Lunes',
@@ -110,28 +112,6 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 					date:''
 				}];
 
-	$scope.config = {	types:	{
-							Clase: {
-								color:'#B1C3F9'
-							},
-							Plenaria: {
-								color:'#9EE874'
-							},
-							Curso: {
-								color: '#FFED70'
-							},
-							Examen: {
-								color: '#9F8186'
-							},
-							TP: {
-								color: '#FF8680'
-							}
-						},
-						limits:	{
-							start:'08h00',
-							end:'22h00'
-						}
-				};				
 	$scope.times = [	{	day:'Jueves',
 							times: [
 							{	ti:'12h30',
@@ -226,7 +206,7 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 			pos = 'bottom';
 			htip = 50;
 		}
-		if((timejson.ti-ti) > (tt/2) ){
+		if((timejson.mti-ti) > (tt/2) ){
 			if($scope.suffix=='H'){
 				pos = 'left';
 				htip = h - 10;
@@ -238,7 +218,7 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 		w = Math.ceil(w);	
 		var info = ['<div style="padding-left: 3px; height: 100%">',
 					'<div style="height: 20%">'+timejson.type.substr(0,15)+'</div>',
-					'<div style="height: 40%">'+timejson.sti+' - '+timejson.stf+'</div>',
+					'<div style="height: 40%">'+timejson.ti+' - '+timejson.tf+'</div>',
 					'<div style="height: 20%">'+timejson.person.split(' ')[0].substr(0,1)+'. '+timejson.person.split(' ')[1]+'</div>',
 					'<div style="height: 20%">'+timejson.place+'</div>',
 					'</div>'].join('\n');
@@ -254,9 +234,9 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 	};
 	
 	$scope.getminutes = function(t){
-		t = t.split('h');
-		t = parseInt(t[0])*60 + parseInt(t[1]);
-		return t;
+		var mt = t.split('h');
+		mt = parseInt(mt[0])*60 + parseInt(mt[1]);
+		return mt;
 	};
 	
 	$scope.clearplot = function(){
@@ -270,7 +250,7 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 	};
 	
 	$scope.replot = function(){
-		$scope.timeplot($scope.lasttimes, $scope.lastconfig);
+		$scope.timeplot($scope.times, $scope.config);
 	};
 	// ARREGLARRRR
 	$scope.togglettip = function(id){
@@ -284,8 +264,8 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 	
 	$scope.timeplot = function(alltimes, config){
 		console.log(alltimes[0].times[0]);
-		$scope.lasttimes=JSON.parse(JSON.stringify(alltimes));
-		$scope.lastconfig=JSON.parse(JSON.stringify(config));
+		//$scope.lasttimes=JSON.parse(JSON.stringify(alltimes));
+		//$scope.lastconfig=JSON.parse(JSON.stringify(config));
 
 		var divwidth;
 		var divheight;
@@ -313,20 +293,18 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 			var times = el.times;
 			//	Transform times
 			times.forEach(function(el){
-				el.sti = el.ti;
-				el.stf = el.tf;
-				el.ti = $scope.getminutes(el.ti);
-				el.tf = $scope.getminutes(el.tf);
+				el.mti = $scope.getminutes(el.ti);
+				el.mtf = $scope.getminutes(el.tf);
 			});
 			
 			times.sort(function(a, b){
-				return a.ti - b.ti;
+				return a.mti - b.mti;
 			});
 			
 			if($scope.suffix=='H'){	
 				times.forEach(function(el){
-					var x = ((el.ti-start)/tt)*divwidth;
-					var w = ((el.tf - el.ti)/tt)*divwidth;
+					var x = ((el.mti-start)/tt)*divwidth;
+					var w = ((el.mtf - el.mti)/tt)*divwidth;
 					$scope.divs[$scope.divIndex] = document.createElement('div');
 					$scope.divs[$scope.divIndex].id = 'ttip-'+id+$scope.divIndex;
 					$($scope.divs[$scope.divIndex]).css('position','absolute');
@@ -351,8 +329,8 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 				var top = 0;
 				var hcum = 0;
 				times.forEach(function(el){
-					var y = ((el.ti-start)/tt)*divheight;
-					var h = ((el.tf - el.ti)/tt)*divheight;
+					var y = ((el.mti-start)/tt)*divheight;
+					var h = ((el.mtf - el.mti)/tt)*divheight;
 					top = y-hcum;
 					console.log('y '+y+' h '+h);
 					$scope.divs[$scope.divIndex] = document.createElement('div');
@@ -401,23 +379,70 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 		});
 	};
 	
-	$scope.edtGetTimes = function(item){
+	$scope.edtGetTimes = function(item, week){
 		console.log('EDT GET TIMES');
 		$scope.searchTerm = item.name;
 		console.log(item);
-		edt.getTimes($scope.type,item.name);
+		edt.getTimes(item.name,week,function(err,times){
+			if(err){
+				console.log(err);
+			} else {
+				console.log('EDT GET TIMES: ');
+				console.log(times);
+			}
+		});
 	};
 	
+	$scope.edtGetConfig = function(){
+
+		edt.getConfig(function(err,config){
+			if(err){
+				console.log(err);
+			} else {
+				console.log('EDT GET CONFIG: ');
+				console.log(config);
+				$scope.config.limits = config.limits;
+				$scope.config.mongoTypes = config.types;
+				$scope.actTypes = $scope.config.mongoTypes;
+				$scope.newActType = $scope.actTypes[0];
+				config.types.forEach(function(el){
+					($scope.config.types[el.name] = new Object()).color = el.color;
+				});
+				console.log($scope.config);
+				$scope.timeplot($scope.times, $scope.config);
+			}
+		});
+	};
+
+	$scope.newActSubCats = function(cat){
+
+		$scope.newActCat = cat;
+
+		edt.getSubTypes(cat.name,function(err,data){
+
+			if(err){
+				console.log(err);
+			} else {
+				$scope.actSubCats = data;
+				$scope.newActSubCat = $scope.actSubCats[0];
+			}
+		});
+	};
+
+	$scope.newActivity = function(newAct){
+
+		//$scope.newActCollapse =! $scope.newActCollapse;
+	}
+
 	$scope.$on('$viewContentLoaded', function () {
+		$scope.clearSearch();
+
 		/* Como los ids de la tabla del EDT se generan dinámicamente en un ng-repeat,
 		 * el documento tarda un tiempo en verlos. Deberia haber un evento como $viewContentLoaded
 		 * que indique cuándo están accesibles. O se debería cambiar la forma en que está hecho el EDT.
 		 * Por el momento hacer un delay funciona...
 		 */
 		$timeout(function(){
-			$scope.clearSearch();
-			$scope.timeplot($scope.times,$scope.config);
-			
 			/*	Cargar las semanas en el año, sólo una vez al cargar el controlador
 			 */
 			var wn = $scope.weeksInYear();
@@ -426,6 +451,30 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 			for(i=1;i<=wn;i++){
 				$scope.weeks.push(i);
 			};
+
+			$('#edt').prop('hidden',false);
+			$('#newActWhen').datepicker();
+			$('.ui-datepicker').css('margin-top', '245px');
+
+			/* 	TODO:
+			 *	mongoTypes usado para el menú desplegable en edt.html,
+			 *	types usado para el plot, que busca según types[el.name]
+			 * 	Se debería solucionar esta diferencia
+			 */
+			$scope.config = { limits: {}, types: {}, mongoTypes: {}};
+			$scope.edtGetConfig();
+
+			edt.getTypes('Activity',function(err,data){
+				if(err){
+					console.log('Error Getting Activities Types');
+				} else {
+					$scope.actCats = data;
+					$scope.newActCat = $scope.actCats[0];
+					console.log($scope.actCats);
+					$scope.newActSubCats($scope.newActCat);
+				}
+			});
+
 		}, 200);
 	});
 	
