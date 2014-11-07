@@ -180,33 +180,47 @@ angular
   .service('edt',function($http, session){
   	
   	var funcs = {
-  		getTypes: function(next){
-  			$http({method:'GET', url:session.host+':3000/types'})
+  		getTypes: function(sub,next){
+  			$http({method:'GET', url:session.host+':3000/types', params:{sub:sub}})
   				.success(function(data){
-  					return next(null,data.data[0].types);
+            console.log(data);
+  					return next(null,data.data);
   				})
   				.error(function(data){
   					return next('Error Getting Types',data);
   				});
   		},
+
+      getAllTypes: function(next){
+        return funcs.getTypes('',next);
+      },
   		getSubTypes: function(type, next){
   			$http({method:'GET', url:session.host+':3000/subtypes', params:{type:type}})
   				.success(function(data){
-  					return next(null,data.data[0].subtypes);
+  					return next(null,data.data);
   				})
   				.error(function(data){
   					return next('Error Getting Subtypes',data);
   				});
   		},
-  		getTimes: function(type, name, next){
-  			$http({method:'GET', url:session.host+':3000/times', params:{type:type, name:name}})
+  		getTimes: function(name, week, next){
+  			$http({method:'GET', url:session.host+':3000/times', params:{name:name, week:week}})
   				.success(function(data){
   					return next(null,data);
   				})
   				.error(function(data){
   					return next('Error Getting Times',data);
   				});
-  		}
+  		},
+      getConfig: function(next){
+        $http({method:'GET', url:session.host+':3000/edtconfig'})
+          .success(function(data){
+            return next(null,data);
+          })
+          .error(function(data){
+            return next('Error Getting EDT Config',data);
+          });
+      }
   	};
 
   	return funcs;
