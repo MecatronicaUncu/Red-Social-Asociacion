@@ -95,6 +95,8 @@ app.configure('development', function(){
 /******************************************************************************/
 app.get('/types', mongo.getTypes);
 app.get('/subtypes', mongo.getSubTypes);
+app.get('/times',mongo.getTimes);
+app.get('/edtconfig',mongo.getConfig);
 
 app.get('/checkCookie',users.extractCookieData,function(req,res){
 	
@@ -116,7 +118,6 @@ app.get('/usr/:id',users.extractCookieData,users.getProfile,users.getUsrProfile)
 app.get('/usr/:id/isFriend',users.extractCookieData,users.isFriend);
 app.get('/usr/:id/pic',users.getPicture);
 app.get('/images/pub/:name',users.getPub);
-app.get('/testMateria',users.materia);
 app.post('/signup', users.signup);
 app.post('/login',users.extractCookieData,users.login);
 app.post('/friend',users.extractCookieData,users.friend);
