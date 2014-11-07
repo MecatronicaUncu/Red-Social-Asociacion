@@ -35,13 +35,16 @@
 	</div>
 
 	<div id="newActWrap" collapse="newActCollapse">
+
+		<div id="WrongAct" class="alert alert-danger" hidden></div>
+
 		<div class="sign-form activity-form">
-		    <form id="newActForm" ng-submit="newActivity(newAct)" novalidate>
+		    <form id="newActForm" ng-submit="newActivity(newAct)" data-parsley-validate >
 		        <div class="sign-input-wrap">
-		            <input id="newActWhen" type="text" ng-model="newAct.date" placeholder="Fecha" class="sign-input" required>
-		            <input id="newActStart" type="text" ng-model="newAct.start" placeholder="Inicio" class="sign-input" required>
-		            <input id="newActDur" type="text" ng-model="newAct.dur" placeholder="Duración" class="sign-input" required>
-		            <input id="newActEnd" type="text" ng-model="newAct.end" placeholder="Fin" class="sign-input" required>
+		            <input id="newActWhen" type="text" ng-model="when" placeholder="Fecha" class="sign-input" data-parsley-ui-enabled="false" required>
+		            <input id="newActStart" type="text" ng-model="newAct.ti" placeholder="Inicio" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="calcTime()" data-parsley-ui-enabled="false" required>
+		            <input id="newActDur" type="text" ng-model="newAct.dur" placeholder="Duración" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="calcTime()" data-parsley-ui-enabled="false">
+		            <input id="newActEnd" type="text" ng-model="newAct.tf" placeholder="Fin" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="calcTime()" required data-parsley-ui-enabled="false">
 		        </div>
 		        <div class="sign-input-wrap">
 	        		<div class="dropdown newActSelect">
@@ -87,6 +90,10 @@
 		    </form>
 		    <div class="sign-input-wrap">
 		    	<button  type="submit" form="newActForm" class="sign-up-btn">Guardar</button>
+		    	<button class="sign-up-btn" id="clearActBtn" ng-click="clearAct()">
+		    		Limpiar
+					<i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
+				</button>
 		    </div>
 	    </div>
 	</div>

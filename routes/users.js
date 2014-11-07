@@ -64,10 +64,12 @@ exports.extractCookieData = function (req, res, next){
     
     var cook = new cookies(req, res, keys);
     var idCookie = cook.get('LinkedEnibId');
+    var nameCookie = cook.get('LinkedEnibName');
     
-    if(idCookie){
+    if(idCookie && nameCookie){
 
-		req.id = idCookie;		
+		req.id = idCookie;
+        req.name = nameCookie;		
 	}
 	else{
 		console.log('Cookies Errors');
@@ -288,7 +290,8 @@ exports.login = function (req, res, next) {
 			if(!loggedIn(req,res)){
 				var cook = new cookies(req, res, keys);
 				cook.set('LinkedEnibId',results['id'], { signed: true, maxAge: 9000000 });
-				res.send(200,{id:results['id']});
+                cook.set('LinkedEnibName',results['firstName']+' '+results['lastName'], { signed: true, maxAge: 9000000 });
+				res.send(200,{id:results['id'], name:results['firstName']+' '+results['lastName']});
 				return;
 			}
 			else{

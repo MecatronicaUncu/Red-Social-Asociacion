@@ -54,3 +54,8 @@
 	
 	border: 1px solid #ACACAC;
 }
+
+#WrongAct {
+	
+	@include border-radius(0);
+}

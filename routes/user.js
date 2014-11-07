@@ -294,7 +294,7 @@ User.login = function (username, callback) {
     var query = [
         'MATCH (user:User)',
         'WHERE user.username={username}',
-        'RETURN ID(user) AS id, user.password AS pass, user.salt AS salt'
+        'RETURN ID(user) AS id, user.password AS pass, user.salt AS salt, user.firstName AS firstName, user.lastName AS lastName'
     ].join('\n');
 
     var params = {

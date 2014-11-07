@@ -2,7 +2,7 @@
 
 var App = angular.module('linkedEnibApp');
 
-App.controller('EdtCtrl', function ($scope, edt, $timeout) {
+App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	
 	$(window).on('resize', function() {			
 		if($scope.newActCollapse){
@@ -429,9 +429,90 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 		});
 	};
 
+	$scope.checkTimes = function(){
+
+		var msg=null;
+		if($scope.getminutes($scope.newAct.ti) < $scope.getminutes($scope.config.limits.start)){
+			msg = 'La hora inicial no puede ser anterior al inicio general! ('
+				+$scope.config.limits.start+')';
+		} else if ($scope.getminutes($scope.newAct.tf) > $scope.getminutes($scope.config.limits.end)) {
+			msg = 'La hora final no puede ser posterior al fin general! ('
+				+$scope.config.limits.end+')';
+		} else if ($scope.getminutes($scope.newAct.ti) > $scope.getminutes($scope.newAct.tf)) {
+			msg = 'La hora inicial no puede ser posterior que la final!';
+		} else {
+			$('#WrongAct').prop('hidden',true);
+			return false;
+		}
+		
+		if(msg){
+			$('#WrongAct').text(msg).prop('hidden',false);
+			return true;
+		} else {
+			$('#WrongAct').prop('hidden',true);
+			return false;
+		}
+	}
+
 	$scope.newActivity = function(newAct){
 
+		console.log(newAct);
+		if($scope.checkTimes()){
+			return;
+		} else {
+			var day = $('#newActWhen').datepicker('getDate').getDate();  
+			var month = $('#newActWhen').datepicker('getDate').getMonth();  
+			var year = $('#newActWhen').datepicker('getDate').getFullYear(); 
+			var date = $scope.DobToYWDarr(new Date(year,month,day));
+			$scope.newAct.when = {year:date[0],week:date[1],day:date[2]};
+			$scope.newAct.whoID = session.getId();
+			$scope.newAct.who = session.getUserName();
+			console.log($scope.newAct);
+
+		}
 		//$scope.newActCollapse =! $scope.newActCollapse;
+	}
+
+	$scope.minutes2Str = function(minutes){
+		var h = Math.floor(minutes/60);
+		var m = minutes-h*60;
+
+		return (h<10?'0'+h:h)+'h'+(m<10?'0'+m:m);
+	}
+
+	$scope.calcTime = function(){
+
+
+		if($('#newActStart').parsley().isValid() && $('#newActDur').parsley().isValid(true)){
+			var start = $scope.getminutes($scope.newAct.ti);
+			var dur = $scope.getminutes($scope.newAct.dur);
+			var end = start+dur;
+			end = $scope.minutes2Str(end);
+			$scope.newAct.tf = end;
+
+			if($scope.checkTimes()){$scope.newAct.tf = ''};
+		} else if($('#newActStart').parsley().isValid() && $('#newActEnd').parsley().isValid()){
+			var start = $scope.getminutes($('#newActStart').val());
+			var end = $scope.getminutes($('#newActEnd').val());
+			var dur = end-start;
+			dur = $scope.minutes2Str(dur);
+			$scope.newAct.dur = dur;
+
+			if($scope.checkTimes()){$scope.newAct.dur = ''};
+		} else if($('#newActDur').parsley().isValid(true) && $('#newActEnd').parsley().isValid()){
+			var dur = $scope.getminutes($('#newActDur').val());
+			var end = $scope.getminutes($('#newActEnd').val());
+			var start = end-dur;
+			start = $scope.minutes2Str(start);
+			$scope.newAct.ti = start;
+
+			if($scope.checkTimes()){$scope.newAct.ti = ''};
+		}
+	}
+
+	$scope.clearAct = function(){
+
+		$('#newActForm * input').val('');
 	}
 
 	$scope.$on('$viewContentLoaded', function () {
@@ -453,8 +534,9 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 			};
 
 			$('#edt').prop('hidden',false);
-			$('#newActWhen').datepicker();
-			$('.ui-datepicker').css('margin-top', '245px');
+			$('#newActWhen').datepicker({minDate: 0});
+			// No sé porqué pero es muy necesario hacer esto.
+			$('.ui-datepicker').css('margin-top', '0px');
 
 			/* 	TODO:
 			 *	mongoTypes usado para el menú desplegable en edt.html,
@@ -474,6 +556,8 @@ App.controller('EdtCtrl', function ($scope, edt, $timeout) {
 					$scope.newActSubCats($scope.newActCat);
 				}
 			});
+
+			$scope.newAct = {};
 
 		}, 200);
 	});

@@ -100,10 +100,20 @@ angular
   .service('session',function($rootScope,$http,$timeout) {
     this.loggedIn = 'false';
     this.ID = 0;
+    this.name = '';
     this.host_LAN = 'https://192.168.3.3';
     this.host_LOC = 'https://127.0.0.1';
     this.host_NET = 'https://edt.mecatronicauncu.org';
     this.host = this.host_LOC;
+
+    this.setUserName = function(name){
+      this.name = name;
+    }
+
+    this.getUserName = function(){
+      return this.name;
+    }
+
     this.setUserID = function(id){
         this.ID = id;
     };
@@ -116,6 +126,7 @@ angular
         else if(inOut==='out'){
             this.loggedIn = 'false';
             this.setUserID(0);
+            this.setUserName('');
             $rootScope.$broadcast('logout');
             $rootScope.$broadcast('update');
         }
@@ -153,6 +164,8 @@ angular
                     return next('Error');
                 }
                 session.setUserID(data.id);
+                session.setUserName(data.name);
+                console.log(data);
                 session.log('in');
                 return next(null);
 			})
@@ -240,12 +253,14 @@ angular
 	  $http({method:'GET', url:session.host+':3000/checkCookie'})
 		.success(function (data){
             session.setUserID(data.id);
+            session.setUserName(data.name);
             //console.log('Check Cookies Success');
             session.log('in');
 		})
 		.error(function(){
 			//console.log('No Cookie');
 			session.setUserID(0);
+      session.setUserName('');
 			session.log('out');
 		});
    });
