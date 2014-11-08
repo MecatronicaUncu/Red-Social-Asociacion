@@ -97,4 +97,9 @@ TODO
 - [ ] Terminar de parametrizar los estilos en Sass
 - [ ] Validación de formulario (que es una table por ahora) en el perfil al modificarlo.
 - [x] Ver seguridad [acá](https://crackstation.net/hashing-security.htm)
-- [ ] Aumentar seguridad [acá](https://crackstation.net/hashing-security.htm)
+- [ ] Agregar SSL entre localhost y BDD (pensar si es necesario, puede alguien identificarse remotamente como localhost y asi queryar a la BDD?).
+- [ ] Agregar CAPTCHA (esto puede servir si hay riesgo de un ataque masivo, con el objetivo de embocarnos el server, evaluar la necesidad)
+- [ ] Tecnicas de hasheado avanzadas, especificamente el slow hashing y hashing encriptado.
+- [ ] Hashing en el navegador ?
+- [ ] Politica de contrasenas dificiles
+- [ ] Cambio de contrasena cada tanto tiempo
