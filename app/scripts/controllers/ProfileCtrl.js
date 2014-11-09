@@ -47,7 +47,7 @@ angular.module('linkedEnibApp')
 
     $scope.editProfile = function(){
         $('.profile-input').prop('contenteditable',true);
-        $('.profile-element').css('border-right','5px solid #75c7e3');
+        $('.profile-data-table').css('border-right','5px solid #75c7e3');
         $('#updateSubmit').prop('disabled',false);
         $('#updateSubmit > span').removeClass('fa-check fa-warning').addClass('fa-refresh');
     };
@@ -65,7 +65,7 @@ angular.module('linkedEnibApp')
                     $('#updateSubmit > span').removeClass('fa-refresh').addClass('fa-check');
                     $('#updateSubmit').prop('disabled',true);
                     $('.profile-input').prop('contenteditable',false);
-                    $('.profile-element').css('border','none');
+                    $('.profile-data-table').css('border','none');
                 })
                 .error(function(data){
                     console.log("Update Failed");

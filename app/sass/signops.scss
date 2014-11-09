@@ -31,22 +31,29 @@
 
 .sign-btns-container {
   width: 100%;
-  display: inline-flex;
-  margin: 0 auto;
+  display: flex;
   align-self: flex-end;
 }
 
 .sign-form {
-  width: 35%;
+  width: 300px;
+  @include respond-to(mobile){width: 100%; margin: 0px 10px};
   margin: 0px auto;
   text-align: left;
   padding-bottom: 20px;
 }
 
-.sign-container {
+.sign-collapse {
   background: #dbdbf4;
   text-align: center;
   padding-bottom: 20px;
+}
+
+.sign-container {
+  @include respond-to(mobile){
+    display: flex;
+    flex-wrap: wrap
+  }
 }
 
 .sign-container h2 {
@@ -59,6 +66,7 @@
   
   display: flex;
   justify-content: space-between;
+  @include respond-to(mobile){flex-wrap: wrap};
 }
 
 .sign-input {

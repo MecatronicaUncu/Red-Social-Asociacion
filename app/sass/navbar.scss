@@ -19,6 +19,10 @@
   	align-content: center;
   	list-style-type: none;
   	margin: 0;
+  	@include respond-to(mobile){width: 100%};
+	@include respond-to(big-mobile){width: 450px};
+	@include respond-to(tablets){width: 700px};
+	@include respond-to(wide){width: 900px};
 }
 
 .nav-link a {

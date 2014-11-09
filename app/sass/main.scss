@@ -1,13 +1,17 @@
 @import 'site-base';
 
-.body-wrap {
-  width: 60%;
-  min-width: 550px;
-}
-
 .site-wrap {
   display: flex;
   justify-content: center;
+}
+
+.body-wrap {
+  //width: 60%;
+  //min-width: 550px;
+  @include respond-to(mobile){width: 100%; margin: 0px 10px};
+  @include respond-to(big-mobile){width: 450px};
+  @include respond-to(tablets){width: 700px};
+  @include respond-to(wide){width: 900px};
 }
 
 .pub-bar {
@@ -16,11 +20,17 @@
   align-items: center;
   margin: 20px auto;
   margin-top: 80px;
+  @include respond-to(mobile){display: none};
 }
 
 .pub-pic {
   width: auto;
   height: 60px;
+}
+
+.mobile-margin {
+  
+  @include respond-to(mobile){margin: 100px auto};
 }
 
 ////////////////////////////////////////////////////

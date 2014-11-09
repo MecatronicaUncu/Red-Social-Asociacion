@@ -1,35 +1,37 @@
-<h2>Bienvenido a !</h2>
+<div class="sign-container">
+	<h2>Bienvenido a !</h2>
 
-<div id="loginFailed" class="alert alert-danger" ng-show="loginFailed">Ups! Your username and/or password don't seem to be correct.</div>
-<div class="sign-form">
-	<form id="signinform" novalidate role="form" ng-submit="loginn(person)">
-		<div class="sign-input-wrap">
-			<input 	ng-focus="loginFailed = false" type="text" ng-model="person.username" 
-					class="sign-input" placeholder="Username" required autofocus>
+	<div id="loginFailed" class="alert alert-danger" ng-show="loginFailed">Ups! Your username and/or password don't seem to be correct.</div>
+	<div class="sign-form">
+		<form id="signinform" novalidate role="form" ng-submit="loginn(person)">
+			<div class="sign-input-wrap">
+				<input 	ng-focus="loginFailed = false" type="text" ng-model="person.username" 
+						class="sign-input" placeholder="Username" required autofocus>
+			</div>
+			<div class="sign-input-wrap">
+				<input 	type="password" ng-model="person.password" class="sign-input" 
+						placeholder="Password" required>
+			</div>
+		</form>
+		 <div class="sign-input-wrap">
+			<button class="sign-in-btn" form="signinform" type="submit">Sign in <span id="signinicon" class="fa fa-play"></span></button>
+		</div class="sign-input-wrap">
+			<label class="forgot-signin">Recuperar contraseña</label>
+		<div>
 		</div>
-		<div class="sign-input-wrap">
-			<input 	type="password" ng-model="person.password" class="sign-input" 
-					placeholder="Password" required>
-		</div>
-	</form>
-	 <div class="sign-input-wrap">
-		<button class="sign-in-btn" form="signinform" type="submit">Sign in <span id="signinicon" class="fa fa-play"></span></button>
-	</div class="sign-input-wrap">
-		<label class="forgot-signin">Recuperar contraseña</label>
-	<div>
 	</div>
+	<!--div>
+		<p>Reset password</p>
+
+		<form ua-reset-password ng-show="!emailSent">
+			<input name="login" placeholder="Username"><br>
+			<button type="submit">Send email</button>
+
+			<p ng-show="loading"><img src="https://app.userapp.io/img/ajax-loader-transparent.gif"></p>
+			<p ng-show="error">{{ error.message }}</p>
+		</form>
+
+		<p ng-show="emailSent">An email has been sent to your inbox. Click on the link to set a new password.</p>
+		<p><a href="#/login">Log in</a></p>
+	</div-->
 </div>
-<!--div>
-	<p>Reset password</p>
-
-	<form ua-reset-password ng-show="!emailSent">
-		<input name="login" placeholder="Username"><br>
-		<button type="submit">Send email</button>
-
-		<p ng-show="loading"><img src="https://app.userapp.io/img/ajax-loader-transparent.gif"></p>
-		<p ng-show="error">{{ error.message }}</p>
-	</form>
-
-	<p ng-show="emailSent">An email has been sent to your inbox. Click on the link to set a new password.</p>
-	<p><a href="#/login">Log in</a></p>
-</div-->

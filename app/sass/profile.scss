@@ -1,7 +1,9 @@
 @import 'site-base';
 
 .profile-btn:hover,
-.profile-bar-link:hover {
+.profile-bar-link:hover,
+profile-bar-link:active,
+profile-bar-link:visited {
   background-color: #595959;
   text-decoration: none;
   color: #99d6ea;
@@ -57,12 +59,11 @@
 }
 
 .profile-element {
-	background-color: #19a3d1;
 	display: flex;
 	width: 100%;
 	padding: 0;
 	margin: 0;
-	border-bottom: 2px solid #000;
+	border-bottom: 1px solid #ACACAC;
 }
 
 .profile-element * i {
@@ -75,21 +76,23 @@
 	display: flex;
 	flex-wrap: wrap;
 	width: 350px;
-	background-color: black;
 	justify-content: center;
+	background-color: #EEE;
 }
 
 .profile-label {
 	margin: 10px;
 	padding:0;
-	color: white;
-	font-size: 1.2em;
+	color: black;
+	font-size: 1.1em;
 	font-weight: bold;
 }
 
 .profilePic{
     height: 300px;
     width: 200px;
+    border: 1px solid #ACACAC;
+    border-bottom: none;	
 }
 
 .profile-passInput {

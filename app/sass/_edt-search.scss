@@ -6,6 +6,7 @@
 	height: $edtSearchBarHeight+px;
 	display: flex;
 	align-content: center;
+	@include respond-to(mobile){display: block; height: auto};
 }
 
 .edtSearchBtn {
@@ -14,21 +15,23 @@
 	@include border-radius(0);
 	background-color: $edtSearchBarBgColor;
 	@include edt-search-bar-font;
+	@include respond-to(mobile){
+		max-width: 250px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis}
 }
 
 #edtSearchIcon,
+#newActivityIcon,
 #edtWeekIcon {
-	margin: 0 10px;
+	margin: 0px 10px 0px 0px;
 }
 
-/** TAL VEZ HAYA QUE SACAR ESTO MAS ADELANTE	*/
-
-#edtSearchBar * core-dropdown-menu::shadow #control > core-icon {
-	margin: 0px 0px;
-}
-
-#edtSearchBar * core-dropdown-menu::shadow #control > core-item {
-	margin: 0px 0px;
+.edtSearchGroup {
+	display: flex;
+	justify-content: space-between;
+	@include respond-to(mobile){padding: 5px 0px};
 }
 
 /****************************************************/

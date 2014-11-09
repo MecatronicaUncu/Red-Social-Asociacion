@@ -3,7 +3,17 @@
 .activity-form {
 	
 	width: 50%;
-	min-width: 550px;
+	min-width: 450px;
+	@include respond-to(mobile){min-width: 0px; width: 100%};
+}
+
+.caret {
+	margin-left: 10px;
+}
+
+#newActWrap * .sign-up-btn {
+	margin: 5px 10px;
+	@include respond-to(mobile){width: 100%};
 }
 
 .newActBtn {
@@ -16,6 +26,12 @@
 	font-size: 0.9em;
 	color: #595959;
 	margin: 5px 10px;
+	max-width: 100px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-align: left;
+	@include respond-to(mobile){max-width: none; width: 100%};
 }
 
 .newActLbl{
@@ -43,6 +59,7 @@
 #newActWhere {
 	
 	width: auto;
+	@include respond-to(mobile){width: 100%}
 }
 
 #newActForm {

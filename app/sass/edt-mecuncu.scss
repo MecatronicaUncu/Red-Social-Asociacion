@@ -8,10 +8,7 @@
 }
 
 #edt {
-	@include respond-to(mobile){width: 100%};
-	@include respond-to(big-mobile){width: 450px};
-	@include respond-to(tablets){width: 700px};
-	@include respond-to(wide){width: 900px};
+	
 }
 
 .edt-head {
@@ -73,22 +70,18 @@
 	position: relative;
 }
 
-.chartContainer * core-icon {
-	@include opacity(0.7);
-}
-
 .chartContainerV {
 	background-color: $edtTimesBgColor;
 	display: none;
 	text-align: left;
 	width: 100%;
-	@include respond-to(mobile){display: table-cell};
+	@include respond-to(mobile){
+		display: flex;
+		flex-wrap: wrap;
+		border-left: 1px solid $edtDaysBgColor;
+		border-right: 1px solid $edtDaysBgColor};
 	height: $edtChartHeightV+px;
 	position: relative;
-}
-
-.chartContainerV * core-icon {
-	@include opacity(0.7);
 }
 
 .edt-block-info {

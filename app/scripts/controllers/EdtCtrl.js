@@ -4,7 +4,8 @@ var App = angular.module('linkedEnibApp');
 
 App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	
-	$(window).on('resize', function() {			
+	$(window).on('resize', function() {
+		console.log($scope.newActCollapse);
 		if($scope.newActCollapse){
 			$scope.clearplot();
 			$scope.replot();
@@ -102,22 +103,28 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	};
 	
 	$scope.days = [{name:'Lunes',
-					date:''
+					date:'',
+					collapsed: true
 				},
 				{	name:'Martes',
-					date:''
+					date:'',
+					collapsed: true
 				},
 				{	name:'Miércoles',
-					date:''
+					date:'',
+					collapsed: true
 				},
 				{	name:'Jueves',
-					date:''
+					date:'',
+					collapsed: true
 				},
 				{	name:'Viernes',
-					date:''
+					date:'',
+					collapsed: true
 				},
 				{	name:'Sábado',
-					date:''
+					date:'',
+					collapsed: true
 				}];
 
 	$scope.times = [	{	day:'Jueves',
@@ -198,34 +205,16 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		return { top: _y, left: _x };
 	};
 	
-	$scope.blockHTML = function(timejson,ti,tt,h,w,ttip){
-
-		var pos,htip;
-		
-		if($scope.suffix=='H'){
-			pos = 'right';
-			htip = h - 10;
-		} else {
-			pos = 'bottom';
-			htip = 50;
-		}
-		if((timejson.mti-ti) > (tt/2) ){
-			if($scope.suffix=='H'){
-				pos = 'left';
-				htip = h - 10;
-			} else {
-				pos = 'top';
-				htip = 50;
-			}
-		}
-		w = Math.ceil(w);	
+	$scope.blockHTML = function(timejson){
+	
+		//w = Math.ceil(w);	
 		var info = ['<div style="padding-left: 3px; height: 100%">',
 					'<div style="height: 20%">'+timejson.type.substr(0,15)+'</div>',
 					'<div style="height: 40%">'+timejson.ti+' - '+timejson.tf+'</div>',
 					'<div style="height: 20%">'+timejson.person.split(' ')[0].substr(0,1)+'. '+timejson.person.split(' ')[1]+'</div>',
 					'<div style="height: 20%">'+timejson.place+'</div>',
 					'</div>'].join('\n');
-					
+		/*			
 		if(ttip){
 			return [	'<core-tooltip show="false"; position="'+pos+'">',
 						'<div style="height: '+h+'px; width: '+w+'px;"><core-icon icon="list"></core-icon></div>',
@@ -233,7 +222,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 						'</core-tooltip>'].join('\n');
 		} else {
 			return info;
-		}
+		}*/
+		return info;
 	};
 	
 	$scope.getminutes = function(t){
@@ -254,15 +244,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	
 	$scope.replot = function(){
 		$scope.timeplot($scope.times, $scope.config);
-	};
-	// ARREGLARRRR
-	$scope.togglettip = function(id){
-		var div = $('#'+id+' > core-tooltip');
-		if(div.prop('show') == true){
-			div.prop('show',false);
-		} else {
-			div.prop('show',true);
-		}
 	};
 	
 	$scope.timeplot = function(alltimes, config){
@@ -302,34 +283,58 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				return a.mti - b.mti;
 			});
 			
+			var pos,htip;
+		
 			if($scope.suffix=='H'){	
+				pos = 'right center';
+				//htip = h - 10;
+
+				if((el.mti-start) > (tt/2) ){
+					pos = 'left center';
+					//htip = h - 10;
+				}
+
 				times.forEach(function(el){
 					var x = ((el.mti-start)/tt)*divwidth;
 					var w = ((el.mtf - el.mti)/tt)*divwidth;
 					$scope.divs[$scope.divIndex] = document.createElement('div');
 					$scope.divs[$scope.divIndex].id = 'ttip-'+id+$scope.divIndex;
+					$scope.divs[$scope.divIndex].title = "";
 					$($scope.divs[$scope.divIndex]).css('position','absolute');
 					$($scope.divs[$scope.divIndex]).css('left', x);
 					$($scope.divs[$scope.divIndex]).css('width', w);
 					$($scope.divs[$scope.divIndex]).css('height',divheight);
 					$($scope.divs[$scope.divIndex]).css('background-color', config.types[el.type].color);
 					if(w >= 85){
-						$($scope.divs[$scope.divIndex]).append($scope.blockHTML(el,start,tt,divheight,w,false));
+						$($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
 						$scope.divs[$scope.divIndex].className += ' edt-block-info';
 					} else {
-						$($scope.divs[$scope.divIndex]).append($scope.blockHTML(el,start,tt,divheight,w,true));
+						$scope.divs[$scope.divIndex].className += ' edt-ttip';
+						$($scope.divs[$scope.divIndex]).tooltip({
+							position: {
+								at: pos,
+								collision: 'none'
+							},
+							content: $scope.blockHTML(el)
+						});
 					}
-					//ARREGLAR EL CLICK
-					$($scope.divs[$scope.divIndex]).click({id: $scope.divs[$scope.divIndex].id, ctx:$scope},$scope.togglettip);			
 					document.getElementById(id).appendChild($scope.divs[$scope.divIndex]);
 					$scope.divIndex++;
 					//TODO: new row if superposition found
 				});
 			} else {
+				pos = 'center bottom';
+				htip = 50;
+
+				if((el.mti-start) > (tt/2) ){
+					pos = 'center top';
+					htip = 50;
+				}
+
 				console.log('VERTICAL');
 				var top = 0;
 				var hcum = 0;
-				times.forEach(function(el){
+				times.forEach(function(el,index){
 					var y = ((el.mti-start)/tt)*divheight;
 					var h = ((el.mtf - el.mti)/tt)*divheight;
 					top = y-hcum;
@@ -337,31 +342,39 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					$scope.divs[$scope.divIndex] = document.createElement('div');
 					$scope.divs[$scope.divIndex].id = 'ttip-'+id+$scope.divIndex;
 					$($scope.divs[$scope.divIndex]).css('position','relative');
-					$($scope.divs[$scope.divIndex]).css('top', top+'px');
+					if(index==0){$($scope.divs[$scope.divIndex]).css('top', top+'px');}
 					$($scope.divs[$scope.divIndex]).css('width', '100%');
 					$($scope.divs[$scope.divIndex]).css('height',h+'px');
 					$($scope.divs[$scope.divIndex]).css('background-color', config.types[el.type].color);
 					if(h >= 70){
-						$($scope.divs[$scope.divIndex]).append($scope.blockHTML(el,start,tt,h,divwidth,false));
+						$($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
 						$scope.divs[$scope.divIndex].className += ' edt-block-info';
 					} else {
-						$($scope.divs[$scope.divIndex]).append($scope.blockHTML(el,start,tt,h,divwidth,true));
+						$scope.divs[$scope.divIndex].className += ' edt-ttip';
+						$($scope.divs[$scope.divIndex]).tooltip({
+							position: {
+								at: pos,
+								collision: 'none'
+							},
+							content: $scope.blockHTML(el)
+						});
 					}	
-					//ARREGLAR EL CLICK
-					$($scope.divs[$scope.divIndex]).click({id: $scope.divs[$scope.divIndex].id, ctx:$scope},$scope.togglettip);	
 					document.getElementById(id).appendChild($scope.divs[$scope.divIndex]);
 					$scope.divIndex++;
 					hcum+=h;
 					//TODO: new row if superposition found
 				});
+				
+				$('.edt-ttip').off( "mouseover" ).click(function(){
+					$(this).tooltip('open');
+				}).off("mouseout");
 			}
 		});
 	};
 	
 	//ARREGLAR
-	$scope.showTimesV = function(event) {
-		//$('#'+sender.id+'Collapse').toggle();
-		console.log(event);
+	$scope.showTimesV = function(day) {
+		$scope.days[day].collapsed = !$scope.days[day].collapsed;
 	};
 		
 	$scope.edtSubTypes = function(item){
@@ -471,7 +484,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			console.log($scope.newAct);
 
 		}
-		//$scope.newActCollapse =! $scope.newActCollapse;
 	}
 
 	$scope.minutes2Str = function(minutes){

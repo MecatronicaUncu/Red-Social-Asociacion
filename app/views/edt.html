@@ -1,37 +1,42 @@
-<div id="edt" hidden>
+<div id="edt" class="mobile-margin" hidden>
 	<div id="edtSearchBar">
-		<div id="edtSearchSelect" class="dropdown" ng-show="newActCollapse">
-			<button class="edtSearchBtn dropdown-toggle" type="button">
-		    <i id="edtSearchIcon" class="fa fa-fw {{searchIcon}}"></i>{{searchTerm}}
-		    <span class="caret"></span>
-		  	</button>
-		  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
-				<li role="presentation" ng-repeat="item in items.data">
-					<a role="menuitem" tabindex="-1" ng-click="this[items.click](item,thisWeek)">{{item.name}}</a>
-				</li>
-			</ul>
-		</div>
-		
-		<button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()" ng-show="newActCollapse">
-			<i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
-		</button>
-
-		<div id="edtWeekSelect" class="dropdown" ng-show="newActCollapse">
-			<button class="edtSearchBtn dropdown-toggle" type="button">
-			    <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>Semana {{thisWeek}}
-			    <span class="caret"></span>
-		  	</button>
-		  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
-				<li role="presentation" ng-repeat="week in weeks">
-					<a role="menuitem" tabindex="-1" ng-click="setDates(week)">{{week}}</a>
-				</li>
-			</ul>
+		<div class="edtSearchGroup">
+			<div id="edtSearchSelect" class="dropdown" ng-show="newActCollapse">
+				<button class="edtSearchBtn dropdown-toggle" type="button">
+				    <i id="edtSearchIcon" class="fa fa-fw {{searchIcon}}"></i>
+				    {{searchTerm}}
+				    <span class="caret"></span>
+			  	</button>
+			  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
+					<li role="presentation" ng-repeat="item in items.data">
+						<a role="menuitem" tabindex="-1" ng-click="this[items.click](item,thisWeek)">{{item.name}}</a>
+					</li>
+				</ul>
+			</div>
+			
+			<button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()" ng-show="newActCollapse">
+				<i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
+			</button>
 		</div>
 
-		<button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse=!newActCollapse" ng-show="session.isLogged() === 'true' ">
-			<i class="fa fa-fw fa-plus"></i>
-		</button>
+		<div class="edtSearchGroup">
+			<div id="edtWeekSelect" class="dropdown" ng-show="newActCollapse">
+				<button class="edtSearchBtn dropdown-toggle" type="button">
+				    <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>
+				    Semana {{thisWeek}}
+				    <span class="caret"></span>
+			  	</button>
+			  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
+					<li role="presentation" ng-repeat="week in weeks">
+						<a role="menuitem" tabindex="-1" ng-click="setDates(week)">{{week}}</a>
+					</li>
+				</ul>
+			</div>
 
+			<button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse=!newActCollapse" ng-show="session.isLogged() === 'true' ">
+				<i id="newActivityIcon" class="fa fa-fw fa-plus"></i>
+			</button>
+		</div>
 	</div>
 
 	<div id="newActWrap" collapse="newActCollapse">
@@ -50,8 +55,8 @@
 	        		<div class="dropdown newActSelect">
 	        			<span class="edtSearchBtn newActBtn newActLbl">Categoría</span>
 						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+							<span class="caret"></span>
 						    {{newActCat.name}}
-						    <span class="caret"></span>
 					  	</button>
 					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
 							<li role="presentation" ng-repeat="cat in actCats">
@@ -62,8 +67,8 @@
 					<div class="dropdown newActSelect">
 	        			<span class="edtSearchBtn newActBtn newActLbl">En particular?</span>
 						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+							<span class="caret"></span>
 						    {{newActSubCat.name}}
-						    <span class="caret"></span>
 					  	</button>
 					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
 							<li role="presentation" ng-repeat="subcat in actSubCats">
@@ -76,8 +81,8 @@
 					<div class="dropdown newActSelect">
 						<span class="edtSearchBtn newActBtn newActLbl">Actividad</span>
 						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+							<span class="caret"></span>
 						    {{newActType.name}}
-						    <span class="caret"></span>
 					  	</button>
 					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
 							<li role="presentation" ng-repeat="type in actTypes">
@@ -92,7 +97,6 @@
 		    	<button  type="submit" form="newActForm" class="sign-up-btn">Guardar</button>
 		    	<button class="sign-up-btn" id="clearActBtn" ng-click="clearAct()">
 		    		Limpiar
-					<i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
 				</button>
 		    </div>
 	    </div>
@@ -106,11 +110,14 @@
 			</thead>			
 			<tbody>
 				<tr ng-repeat="day in days">
-					<td class="edt-days"><span id="{{day.name}}" ng-click=""><p>{{day.name}}</p>
-						<p>{{day.date}}</p></span>
-						<!--core-collapse id="{{day}}Collapse">
+					<td class="edt-days">
+						<div ng-click="showTimesV($index)">
+							<span id="{{day.name}}"><p>{{day.name}}</p>
+							<p>{{day.date}}</p></span>
+						</div>
+						<div collapse="day.collapsed">
 							<div class="chartContainerV" id="{{day.name}}V"></div>
-						</core-collapse-->
+						</div>
 					</td>
 					<td class="edt-times-h">
 						<div class="chartContainer" id="{{day.name}}H"></div>
