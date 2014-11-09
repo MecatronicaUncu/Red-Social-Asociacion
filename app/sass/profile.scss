@@ -85,7 +85,6 @@ profile-bar-link:visited {
 	padding:0;
 	color: black;
 	font-size: 1.1em;
-	font-weight: bold;
 }
 
 .profilePic{
@@ -95,11 +94,11 @@ profile-bar-link:visited {
     border-bottom: none;	
 }
 
-.profile-passInput {
-	color: black;
-	font-style: italic;
-	padding: 0;
-	margin: 0;
-	width: 50%;
-	text-align: right;
+#changePwdBtn {
+	width: 100%;
+	margin: 0px 10px;
+}
+
+#changePwdForm {
+	margin: 30px 0px;
 }

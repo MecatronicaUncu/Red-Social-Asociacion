@@ -53,7 +53,27 @@
 	</div>
 
 	<div class="profile-data" ng-class='{"hidden": profileTab!="Cambiar Contraseña"}'>
-		<table class="profile-data-table">
+		
+		<div class="sign-form">
+			<form id="changePwdForm" novalidate role="form" ng-submit="changePass(personPass)">
+				<div class="sign-input-wrap">
+					<input 	id="oldPass" type="password" ng-model="personPass.password" name="oldPass"
+							class="sign-input" placeholder="Antigua contraseña" required autofocus>
+				</div>
+				<div class="sign-input-wrap">
+					<input 	id="newPass" type="password" ng-model="personPass.new" class="sign-input" 
+							placeholder="Nueva contraseña" required name="newPass">
+				</div>
+			</form>
+			<div class="sign-input-wrap">
+				<button id="changePwdBtn" class="sign-up-btn" form="changePwdForm" type="submit">
+					Cambiar contraseña
+				 <span class="fa fa-refresh"></span>
+				</button>
+			</div>
+		</div>
+
+		<!--table class="profile-data-table">
 			<tr class="profile-element">
 				<td class="profile-label">Antigua contraseña: </td>
 				<td class="profile-passInput">
@@ -70,7 +90,7 @@
 
 		<div class="sign-btns-container">
 			<button id="changePassButton" class="profile-btn sign-up-btn" ng-click="changePass(personPass)">Cambiar contraseña <span class="fa fa-refresh"></span></button>
-		</div>
+		</div-->
 	</div>
 
 </div>
