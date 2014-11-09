@@ -37,7 +37,7 @@
 
 .sign-form {
   width: 300px;
-  @include respond-to(mobile){width: 100%; margin: 0px 10px};
+  @include respond-to(mobile){width: 100%; padding: 5px 10px};
   margin: 0px auto;
   text-align: left;
   padding-bottom: 20px;
@@ -76,6 +76,9 @@
   height: 40px;
   width: 100%;
   padding-left: 10px;
+  @include respond-to(mobile){
+    margin: 5px 0
+  }
 }
 
 .sign-container * .sign-up-btn,

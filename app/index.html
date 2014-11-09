@@ -14,6 +14,7 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="bower_components/jQuery.mmenu/src/css/jquery.mmenu.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -24,8 +25,7 @@
     <link rel="stylesheet" href="app/styles/contacts.css">
     <link rel="stylesheet" href="app/styles/edt-mecuncu.css">
     <link rel="stylesheet" href="app/styles/static/jquery-ui-custom/jquery-ui.min.css">
-    <link rel="stylesheet" href="app/styles/activity-form.css">
-    
+    <link rel="stylesheet" href="app/styles/activity-form.css">    
     <!-- endbuild -->
   </head>
   <body>
@@ -33,19 +33,31 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div class="site-wrap" ng-controller="ParentCtrl">
+    <div id="content" class="site-wrap" ng-controller="ParentCtrl">
         <!-- BARRA DE NAVEGACIÓN -->
         <div ng-controller="NavBarCtrl">
             <div class="header">
                     <ul class="header-wrap">
+                        <li class="nav-link nav-menu">
+                            <a id="mobilemenu" ng-click="toggleMMenu()"><i class="fa fa-fw fa-bars"></i></a>
+                        </li>
                         <li class="nav-link nav-title">
                             <a></a>
                         </li>
-                        <li class="nav-link" ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible==='true'" ng-class='{"nav-active": navBarItem.active}'>
+                        <li class="nav-link hide-mobile" ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible==='true'" ng-class='{"nav-active": navBarItem.active}'>
                             <a ng-href="{{navBarItem.href}}">{{navBarItem.name}}</a>
                         </li>
                     </ul> 
             </div>
+
+            <nav id="navbar">
+                <ul>
+                    <li ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible==='true'" ng-class='{"nav-active": navBarItem.active}'>
+                        <a ng-href="{{navBarItem.href}}">{{navBarItem.name}}</a>
+                    </li>
+                </ul> 
+            </nav>
+
         </div>
 
         <div class="body-wrap">
@@ -80,6 +92,7 @@
     <script src="bower_components/bower-angular-placeholders/angular-placeholders.js"></script>
     <script src="bower_components/parsleyjs/dist/parsley.js"></script>
     <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="bower_components/jQuery.mmenu/src/js/jquery.mmenu.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     

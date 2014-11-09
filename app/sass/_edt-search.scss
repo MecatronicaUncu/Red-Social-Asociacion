@@ -15,11 +15,10 @@
 	@include border-radius(0);
 	background-color: $edtSearchBarBgColor;
 	@include edt-search-bar-font;
-	@include respond-to(mobile){
-		max-width: 250px;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis}
+	max-width: 250px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 #edtSearchIcon,

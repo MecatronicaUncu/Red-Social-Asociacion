@@ -21,5 +21,20 @@ angular.module('linkedEnibApp')
     $scope.$on('$destroy',function (event){
         session.log('out');
     });
-   
+
+    $scope.isIE = function() { return ((navigator.appName == 'Microsoft Internet Explorer') || ((navigator.appName == 'Netscape') && (new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null)));}
+
+    $(document).ready(function(){
+        $('#navbar').mmenu();
+        if($scope.isIE()){
+            $(document).ready(function(){
+                $('#navbar').on('opening.mm', function() {
+                    $('.header').css('position','static');
+                 }).on('closing.mm',function(){
+                    $('.header').css('position','fixed');
+                });
+            });
+        }
+    });
+
   });

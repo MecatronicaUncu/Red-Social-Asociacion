@@ -4,7 +4,7 @@
 	
 	width: 50%;
 	min-width: 450px;
-	@include respond-to(mobile){min-width: 0px; width: 100%};
+	@include respond-to(mobile){padding: 0 10px; min-width: 0px; width: 100%};
 }
 
 .caret {
@@ -13,7 +13,7 @@
 
 #newActWrap * .sign-up-btn {
 	margin: 5px 10px;
-	@include respond-to(mobile){width: 100%};
+	@include respond-to(mobile){width: 100%; margin: 5px 0;};
 }
 
 .newActBtn {
@@ -31,7 +31,7 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	text-align: left;
-	@include respond-to(mobile){max-width: none; width: 100%};
+	@include respond-to(mobile){margin: 5px 0; max-width: none; width: 100%};
 }
 
 .newActLbl{

@@ -16,10 +16,11 @@
 	width: 60%;
 	display: flex;
 	justify-content: flex-end;
+	@include respond-to(mobile){justify-content: flex-start};
   	align-content: center;
   	list-style-type: none;
   	margin: 0;
-  	@include respond-to(mobile){width: 100%};
+  	@include respond-to(mobile){width: 100%; padding-left: 0px};
 	@include respond-to(big-mobile){width: 450px};
 	@include respond-to(tablets){width: 700px};
 	@include respond-to(wide){width: 900px};
@@ -59,4 +60,17 @@
 .nav-title a:visited {
 	color: white;
 	text-decoration: none;
+}
+
+.nav-menu {
+	font-size: 1.2em;
+	display: none;
+	@include respond-to(mobile){
+		display: block;
+	};
+}
+
+.hide-mobile {
+	
+	@include respond-to(mobile){display: none}
 }

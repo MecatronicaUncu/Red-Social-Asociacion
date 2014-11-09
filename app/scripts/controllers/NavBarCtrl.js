@@ -21,11 +21,21 @@ angular.module('linkedEnibApp')
    
     $scope.$on('$locationChangeStart', function(event,newUrl,oldUrl){
         $scope.update();
+        $(".mm-opened").trigger("close.mm");
     });
     
     $scope.$on('update',function(){
         $scope.update();
     });
+
+    $scope.toggleMMenu = function(){
+        //console.log($(".mm-offcanvas"));
+        if($(".mm-offcanvas").length != 0){
+            $('#navbar').trigger('open.mm');
+        }else{
+            $(".mm-opened").trigger("close.mm");
+        }
+    };
        
 });
 

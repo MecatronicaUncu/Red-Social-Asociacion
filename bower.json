@@ -14,7 +14,8 @@
     "bower-angular-placeholders": "~0.0.2",
     "parsleyjs": "~2.0.5",
     "font-awesome": "~4.2.0",
-    "jquery-ui": "~1.11.2"
+    "jquery-ui": "~1.11.2",
+    "jQuery.mmenu": "~4.6.4"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",
