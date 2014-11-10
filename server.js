@@ -97,6 +97,7 @@ app.get('/types', mongo.getTypes);
 app.get('/subtypes', mongo.getSubTypes);
 app.get('/times',mongo.getTimes);
 app.get('/edtconfig',mongo.getConfig);
+app.get('/edtplaces',mongo.getPlaces);
 
 app.get('/checkCookie',users.extractCookieData,function(req,res){
 	

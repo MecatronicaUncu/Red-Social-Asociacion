@@ -409,7 +409,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	
 	$scope.edtGetConfig = function(){
 
-		edt.getConfig(function(err,config){
+		edt.getConfig('',function(err,config){
 			if(err){
 				console.log(err);
 			} else {
@@ -417,8 +417,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				console.log(config);
 				$scope.config.limits = config.limits;
 				$scope.config.mongoTypes = config.types;
-				$scope.actTypes = $scope.config.mongoTypes;
-				$scope.newActType = $scope.actTypes[0];
 				config.types.forEach(function(el){
 					($scope.config.types[el.name] = new Object()).color = el.color;
 				});
@@ -428,9 +426,30 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		});
 	};
 
+	$scope.newActSelectActWhere = function(place){
+		$scope.newActWhere = place;
+	}
+
+	$scope.newActSelectActType = function(type){
+		$scope.newActType = type;
+	};
+
+	$scope.newActSelectSubCats = function(subcat){
+		$scope.newActSubCat = subcat;
+	};
+
 	$scope.newActSubCats = function(cat){
 
 		$scope.newActCat = cat;
+
+		edt.getConfig(cat.name, function(err,data){
+			if(err){
+				console.log(err);
+			} else {
+				$scope.actTypes = data.types;
+				$scope.newActType = $scope.actTypes[0];
+			}
+		});
 
 		edt.getSubTypes(cat.name,function(err,data){
 
@@ -470,7 +489,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 
 	$scope.newActivity = function(newAct){
 
-		console.log(newAct);
 		if($scope.checkTimes()){
 			return;
 		} else {
@@ -493,33 +511,55 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		return (h<10?'0'+h:h)+'h'+(m<10?'0'+m:m);
 	}
 
-	$scope.calcTime = function(){
+	$scope.correctTime = function(el){
+	    
+	    var matches = /([0-2]{0,1})([0-9]{0,1})(h{0,1})([0-5]{0,1})([0-9]{0,1})/g.exec($scope.newAct[el]);
+	    if(matches[1] == ''){
+	    	$scope.newAct[el] = '';
+	    }else if(matches[2] == '' || parseInt(matches[1]+''+matches[2]) > 23){
+	    	$scope.newAct[el] = matches[1];
+	    }else if(matches[4] == '' ){
+	    	$scope.newAct[el] = matches[1]+''+matches[2]+'h';
+	    }else if(matches[5] == ''){
+	    	$scope.newAct[el] = matches[1]+''+matches[2]+'h'+''+matches[4];
+	    }else if(matches[5] != ''){
+	    	$scope.newAct[el] = matches[1]+''+matches[2]+'h'+''+matches[4]+''+matches[5];
+	    	return true;
+	    	//Desabilitar input?
+	    }
 
+	    return false;
+	};
 
-		if($('#newActStart').parsley().isValid() && $('#newActDur').parsley().isValid(true)){
-			var start = $scope.getminutes($scope.newAct.ti);
-			var dur = $scope.getminutes($scope.newAct.dur);
-			var end = start+dur;
-			end = $scope.minutes2Str(end);
-			$scope.newAct.tf = end;
+	$scope.calcTime = function(el){
 
-			if($scope.checkTimes()){$scope.newAct.tf = ''};
-		} else if($('#newActStart').parsley().isValid() && $('#newActEnd').parsley().isValid()){
-			var start = $scope.getminutes($('#newActStart').val());
-			var end = $scope.getminutes($('#newActEnd').val());
-			var dur = end-start;
-			dur = $scope.minutes2Str(dur);
-			$scope.newAct.dur = dur;
+		if($scope.correctTime(el)){
 
-			if($scope.checkTimes()){$scope.newAct.dur = ''};
-		} else if($('#newActDur').parsley().isValid(true) && $('#newActEnd').parsley().isValid()){
-			var dur = $scope.getminutes($('#newActDur').val());
-			var end = $scope.getminutes($('#newActEnd').val());
-			var start = end-dur;
-			start = $scope.minutes2Str(start);
-			$scope.newAct.ti = start;
+			if($('#newActStart').parsley().isValid() && $('#newActDur').parsley().isValid(true)){
+				var start = $scope.getminutes($scope.newAct.ti);
+				var dur = $scope.getminutes($scope.newAct.dur);
+				var end = start+dur;
+				end = $scope.minutes2Str(end);
+				$scope.newAct.tf = end;
 
-			if($scope.checkTimes()){$scope.newAct.ti = ''};
+				if($scope.checkTimes()){$scope.newAct.tf = ''};
+			} else if($('#newActStart').parsley().isValid() && $('#newActEnd').parsley().isValid()){
+				var start = $scope.getminutes($('#newActStart').val());
+				var end = $scope.getminutes($('#newActEnd').val());
+				var dur = end-start;
+				dur = $scope.minutes2Str(dur);
+				$scope.newAct.dur = dur;
+
+				if($scope.checkTimes()){$scope.newAct.dur = ''};
+			} else if($('#newActDur').parsley().isValid(true) && $('#newActEnd').parsley().isValid()){
+				var dur = $scope.getminutes($('#newActDur').val());
+				var end = $scope.getminutes($('#newActEnd').val());
+				var start = end-dur;
+				start = $scope.minutes2Str(start);
+				$scope.newAct.ti = start;
+
+				if($scope.checkTimes()){$scope.newAct.ti = ''};
+			}
 		}
 	}
 
@@ -564,8 +604,18 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					console.log('Error Getting Activities Types');
 				} else {
 					$scope.actCats = data;
+					console.log(data);
 					$scope.newActCat = $scope.actCats[0];
 					$scope.newActSubCats($scope.newActCat);
+				}
+			});
+
+			edt.getPlaces(function(err,data){
+				if(err){
+					console.log(err);
+				} else {
+					$scope.actPlaces = data;
+					$scope.newActWhere = $scope.actPlaces[0];
 				}
 			});
 

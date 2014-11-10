@@ -101,10 +101,10 @@ angular
     this.loggedIn = 'false';
     this.ID = 0;
     this.name = '';
-    this.host_LAN = 'https://192.168.3.3';
+    this.host_LAN = 'https://192.168.3.107';
     this.host_LOC = 'https://127.0.0.1';
     this.host_NET = 'https://edt.mecatronicauncu.org';
-    this.host = this.host_LOC;
+    this.host = this.host_LAN;
 
     this.setUserName = function(name){
       this.name = name;
@@ -226,13 +226,22 @@ angular
   					return next('Error Getting Times',data);
   				});
   		},
-      getConfig: function(next){
-        $http({method:'GET', url:session.host+':3000/edtconfig'})
+      getConfig: function(filter,next){
+        $http({method:'GET', url:session.host+':3000/edtconfig', params:{act:filter}})
           .success(function(data){
             return next(null,data);
           })
           .error(function(data){
             return next('Error Getting EDT Config',data);
+          });
+      },
+      getPlaces: function(next){
+        $http({method:'GET', url:session.host+':3000/edtplaces'})
+          .success(function(data){
+            return next(null,data.data);
+          })
+          .error(function(data){
+            return next('Error Getting EDT Places',data);
           });
       }
   	};

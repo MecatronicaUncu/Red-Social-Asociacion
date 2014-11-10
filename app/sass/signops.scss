@@ -85,6 +85,7 @@
 .sign-container * .sign-in-btn {
   width: 100%;
   margin: 5px 10px;
+  @include respond-to(mobile){margin: 5px 0px};
 }
 
 .loginFailed {

@@ -73,6 +73,14 @@ exports.getTimes = function(req, res, next){
 exports.getConfig = function(req, res, next){
 
 	var col = db.collection('Config');
+	var act = req.query.act;
+	var filter;
+	if(act){
+		filter = new RegExp(act+'.*');
+	} else {
+		filter = new RegExp('.*');
+	}
+	console.log(filter);
 	var types;
 	var limits;
 	col.find({name: 'limits'}).toArray(function(err,lim) {
@@ -81,7 +89,7 @@ exports.getConfig = function(req, res, next){
 			return;
 		} else {
 			limits = lim[0];
-			col.find({name: {$not: /limits/}}).toArray(function(err,docs) {
+			col.find({name: {$not: /limits/}, Activity: filter}).toArray(function(err,docs) {
 				if(err) {
 					res.send(500,'Error MONGO getConfig 2');
 					return;
@@ -93,4 +101,19 @@ exports.getConfig = function(req, res, next){
 			});
 		}
 	});
+};
+
+exports.getPlaces = function (req, res, next) {
+
+	var col = db.collection('Places');
+
+	col.find({},{_id:0}).toArray(function(err, docs) {
+		if (err){
+			res.send(500,'Error MONGO getPlaces');
+			return;
+		} else {
+			res.send(200, {data:docs});
+			return;
+		}
+  });
 };
