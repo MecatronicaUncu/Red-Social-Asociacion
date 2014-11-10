@@ -27,12 +27,10 @@ angular.module('linkedEnibApp')
     $(document).ready(function(){
         $('#navbar').mmenu();
         if($scope.isIE()){
-            $(document).ready(function(){
-                $('#navbar').on('opening.mm', function() {
-                    $('.header').css('position','static');
-                 }).on('closing.mm',function(){
-                    $('.header').css('position','fixed');
-                });
+            $('#navbar').on('opening.mm', function() {
+                $('.header').css('position','static');
+             }).on('closing.mm',function(){
+                $('.header').css('position','fixed');
             });
         }
     });

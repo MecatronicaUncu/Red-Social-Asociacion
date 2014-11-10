@@ -1,8 +1,10 @@
 <div class="profile-container">
     <div class="profile-bar">
-        <img ng-src="{{image}}" class="profilePic" ng-click="changeProfilePic()"/>
-				<div ng-show="showNavBar" class="profile-nav-bar">
-				<a class="profile-bar-link" ng-repeat="profileNavItem in profileNavItems" ng-class='{"nav-active": profileNavItem.name===profileTab}' ng-click="click(profileNavItem)" ng-href="{{profileNavItem.href}}">{{profileNavItem.name}}</a>
+    	<div class="profilePicWrap">
+        	<img ng-src="{{image}}" class="profilePic" ng-click="changeProfilePic()"/>
+        </div>
+		<div ng-show="showNavBar" class="profile-nav-bar">
+			<a class="profile-bar-link" ng-repeat="profileNavItem in profileNavItems" ng-class='{"nav-active": profileNavItem.name===profileTab}' ng-click="click(profileNavItem)" ng-href="{{profileNavItem.href}}">{{profileNavItem.name}}</a>
         </div>
     </div> 
 
