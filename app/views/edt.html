@@ -9,7 +9,7 @@
 			  	</button>
 			  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
 					<li role="presentation" ng-repeat="item in items.data">
-						<a role="menuitem" tabindex="-1" ng-click="this[items.click](item,thisWeek)">{{item.name}}</a>
+						<a role="menuitem" tabindex="-1" ng-click="this[items.click](item,searchWeek)">{{item.name}}</a>
 					</li>
 				</ul>
 			</div>
@@ -23,7 +23,7 @@
 			<div id="edtWeekSelect" class="dropdown" ng-show="newActCollapse">
 				<button class="edtSearchBtn dropdown-toggle" type="button">
 				    <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>
-				    Semana {{thisWeek}}
+				    Semana {{searchWeek}}
 				    <span class="caret"></span>
 			  	</button>
 			  	<ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
@@ -51,12 +51,33 @@
 		            <input id="newActDur" type="text" ng-model="newAct.dur" placeholder="Duración" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="calcTime('dur')" data-parsley-ui-enabled="false">
 		            <input id="newActEnd" type="text" ng-model="newAct.tf" placeholder="Fin" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="calcTime('tf')" required data-parsley-ui-enabled="false">
 		        </div>
+
+				<div class="sign-input-wrap">
+					<div class="dropdown newActSelect">
+						<span class="edtSearchBtn newActBtn newActLbl">Repetir?</span>
+						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+							<span class="caret"></span>
+						    {{newActRepeat.name}}
+					  	</button>
+					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
+							<li role="presentation" ng-repeat="repeat in actRepeats">
+								<a role="menuitem" tabindex="-1" ng-click="newActSelectRepeat(repeat)">{{repeat.name}}</a>
+							</li>
+						</ul>
+					</div>
+
+					<div class="dropdown newActSelect" ng-show="newAct.repeat != 'n'">
+						<span class="edtSearchBtn newActBtn newActLbl">Hasta?</span>
+						<input id="newActToWhen" type="text" placeholder="Hasta?" class="edtSearchBtn newActBtn" data-parsley-ui-enabled="false">
+					</div>
+				</div>
+
 		        <div class="sign-input-wrap">
 	        		<div class="dropdown newActSelect">
 	        			<span class="edtSearchBtn newActBtn newActLbl">Categoría</span>
 						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
 							<span class="caret"></span>
-						    {{newActCat.name}}
+						    {{newAct.type}}
 					  	</button>
 					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
 							<li role="presentation" ng-repeat="cat in actCats">
@@ -68,7 +89,7 @@
 	        			<span class="edtSearchBtn newActBtn newActLbl">En particular?</span>
 						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
 							<span class="caret"></span>
-						    {{newActSubCat.name}}
+						    {{newAct.what}}
 					  	</button>
 					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
 							<li role="presentation" ng-repeat="subcat in actSubCats">
@@ -82,7 +103,7 @@
 						<span class="edtSearchBtn newActBtn newActLbl">Actividad</span>
 						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
 							<span class="caret"></span>
-						    {{newActType.name}}
+						    {{newAct.actType}}
 					  	</button>
 					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
 							<li role="presentation" ng-repeat="type in actTypes">
@@ -94,7 +115,7 @@
 						<span class="edtSearchBtn newActBtn newActLbl">Dónde?</span>
 						<button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
 							<span class="caret"></span>
-						    {{newActWhere.name}}
+						    {{newAct.where}}
 					  	</button>
 					  	<ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
 							<li role="presentation" ng-repeat="place in actPlaces">
@@ -102,7 +123,6 @@
 							</li>
 						</ul>
 					</div>
-					<!--input id="newActWhere" type="text" ng-model="newAct.where" placeholder="Lugar" class="sign-input" required-->
 				</div>
 		    </form>
 		    <div class="sign-input-wrap">

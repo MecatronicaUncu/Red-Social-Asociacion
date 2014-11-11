@@ -61,14 +61,14 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		// No importa el Day Of Week en week, porque al iterar se sobreescribe
 		var week = (w?[(new Date()).getFullYear(),w,0]:$scope.DobToYWDarr(new Date()));
 
-		$scope.thisWeek = week[1];
+		$scope.searchWeek = week[1];
 
 		$scope.days.forEach(function(el,index){
 			var jour = $scope.YWDarrToDob([week[0],week[1],index+1]);
 			var d = jour.getDate();
 			var m = (jour.getMonth()+1);
 			var y = jour.getFullYear();
-			el.date = (d<10?'0':'')+d+'-'+(m<10?'0':'')+m+'-'+y;
+			el.date = (d<10?'0':'')+d+'/'+(m<10?'0':'')+m+'/'+y;
 		});
 
 		//TODO: PLOTEAR ACA.
@@ -102,6 +102,11 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		$scope.edtAllTypes();
 	};
 	
+	$scope.actRepeats = [	{name:'Cada semana', value:'pw'},
+							{name:'Semana próxima', value:'nw'},
+							{name:'Cada dos semanas', value:'2w'},
+							{name:'Nunca', value:'n'}]
+
 	$scope.days = [{name:'Lunes',
 					date:'',
 					collapsed: true
@@ -426,28 +431,63 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		});
 	};
 
+	$scope.newActRepeatTo = function(strDate){
+		var date = strDate.split('/');
+		var day  = date[0];  
+		// month - 1 porque en formato ISO el mes es de 0 a 11
+		var month = date[1] - 1;  
+		var year = date[2]; 
+
+		date = new Date(year,month,day);
+		date = $scope.DobToYWDarr(date);
+
+		$scope.newAct.toWhen = {year:date[0],week:date[1],day:date[2]};
+	}
+
+	$scope.newActSelectRepeat = function(repeat){
+		$scope.newActRepeat = repeat;
+		$scope.newAct.repeat = repeat.value;
+
+		/* 	Para llenar el valor del input. Podria usarse $('#newActWhen').val($scope.today);
+		 *	No se llama a 'onSelect'
+		 */
+		var ref = $scope.newAct.when;
+		var date = $scope.YWDarrToDob([ref.year,ref.week+1,ref.day]);
+		$('#newActToWhen').datepicker('setDate', date);
+
+		/* 	Para que se carguen los valores en $scope.newAct.toWhen.* ; 
+		 *	
+		 */
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		date = (d<10?'0':'')+d+'/'+((parseInt(m)+1)<10?'0':'')+(parseInt(m)+1)+'/'+y;
+		$scope.newActRepeatTo(date);
+	};
+
 	$scope.newActSelectActWhere = function(place){
-		$scope.newActWhere = place;
+		$scope.newAct.where = place.name;
 	}
 
 	$scope.newActSelectActType = function(type){
-		$scope.newActType = type;
+		$scope.newAct.actType = type.name;
 	};
 
 	$scope.newActSelectSubCats = function(subcat){
-		$scope.newActSubCat = subcat;
+		$scope.newAct.what = subcat.name;
 	};
 
 	$scope.newActSubCats = function(cat){
 
-		$scope.newActCat = cat;
+		// Guardar la elección. Importante!
+		$scope.newAct.type = cat.name;
 
 		edt.getConfig(cat.name, function(err,data){
 			if(err){
 				console.log(err);
 			} else {
 				$scope.actTypes = data.types;
-				$scope.newActType = $scope.actTypes[0];
+				$scope.newAct.actType = $scope.actTypes[0].name;
 			}
 		});
 
@@ -457,7 +497,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				console.log(err);
 			} else {
 				$scope.actSubCats = data;
-				$scope.newActSubCat = $scope.actSubCats[0];
+				$scope.newAct.what = $scope.actSubCats[0].name;
 			}
 		});
 	};
@@ -487,16 +527,32 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		}
 	}
 
+	$scope.newActWhen = function(strDate){
+		var date = strDate.split('/');
+		var day  = date[0];  
+		// month - 1 porque en formato ISO el mes es de 0 a 11
+		var month = date[1] - 1;  
+		var year = date[2]; 
+
+		date = new Date(year,month,day);
+		$('#newActToWhen').datepicker( "option", "minDate", date);
+		date = $scope.DobToYWDarr(date);
+		$scope.newAct.when = {year:date[0],week:date[1],day:date[2]};
+
+		//Auto completar toWhen
+		$scope.newActSelectRepeat($scope.newActRepeat);
+	};
+
 	$scope.newActivity = function(newAct){
 
 		if($scope.checkTimes()){
 			return;
 		} else {
-			var day = $('#newActWhen').datepicker('getDate').getDate();  
-			var month = $('#newActWhen').datepicker('getDate').getMonth();  
-			var year = $('#newActWhen').datepicker('getDate').getFullYear(); 
-			var date = $scope.DobToYWDarr(new Date(year,month,day));
-			$scope.newAct.when = {year:date[0],week:date[1],day:date[2]};
+			// var day = $('#newActWhen').datepicker('getDate').getDate();  
+			// var month = $('#newActWhen').datepicker('getDate').getMonth();  
+			// var year = $('#newActWhen').datepicker('getDate').getFullYear(); 
+			// var date = $scope.DobToYWDarr(new Date(year,month,day));
+			// $scope.newAct.when = {year:date[0],week:date[1],day:date[2]};
 			$scope.newAct.whoID = session.getId();
 			$scope.newAct.who = session.getUserName();
 			console.log($scope.newAct);
@@ -577,19 +633,13 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		 * Por el momento hacer un delay funciona...
 		 */
 		$timeout(function(){
-			/*	Cargar las semanas en el año, sólo una vez al cargar el controlador
-			 */
-			var wn = $scope.weeksInYear();
-			var i;
-			$scope.weeks = [];
-			for(i=1;i<=wn;i++){
-				$scope.weeks.push(i);
-			};
 
-			$('#edt').prop('hidden',false);
-			$('#newActWhen').datepicker({minDate: 0});
-			// No sé porqué pero es muy necesario hacer esto.
-			$('.ui-datepicker').css('margin-top', '0px');
+			// Si no está definido no se pueden crear los campos al vuelo
+			$scope.newAct = {};
+			$scope.actCats = {};
+			// Si no está definido al datepicker no le gusta
+			$scope.newAct.when = {};
+			$scope.newAct.toWhen = {};
 
 			/* 	TODO:
 			 *	mongoTypes usado para el menú desplegable en edt.html,
@@ -604,9 +654,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					console.log('Error Getting Activities Types');
 				} else {
 					$scope.actCats = data;
-					console.log(data);
-					$scope.newActCat = $scope.actCats[0];
-					$scope.newActSubCats($scope.newActCat);
+					$scope.newAct.type = $scope.actCats[0].name;
+					$scope.newActSubCats($scope.newAct.type);
 				}
 			});
 
@@ -615,11 +664,72 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					console.log(err);
 				} else {
 					$scope.actPlaces = data;
-					$scope.newActWhere = $scope.actPlaces[0];
+					$scope.newAct.where = $scope.actPlaces[0].name;
 				}
 			});
 
-			$scope.newAct = {};
+			/*	Cargar las semanas en el año, sólo una vez al cargar el controlador
+			 */
+			var wn = $scope.weeksInYear();
+			var i;
+			$scope.weeks = [];
+			for(i=1;i<=wn;i++){
+				$scope.weeks.push(i);
+			};
+
+			var ajd = new Date();
+			var d = ajd.getDate();
+			var m = ajd.getMonth();
+			var y = ajd.getFullYear();
+			$scope.today = (d<10?'0':'')+d+'/'+((parseInt(m)+1)<10?'0':'')+(parseInt(m)+1)+'/'+y;
+			$scope.thisWeek = $scope.DobToYWDarr($scope.today)[1];
+
+			$scope.newActRepeat = $scope.actRepeats[3]; // = Nunca !
+			$scope.newAct.repeat = $scope.newActRepeat.value;
+
+			$('#edt').prop('hidden',false);
+			$('#newActWhen').datepicker({	minDate: 0,
+											showWeek: true,
+											dateFormat:'dd/mm/yy',
+											defaultDate: 0,
+											firstDay: 1,
+											onSelect: $scope.newActWhen
+											});
+			/* 	Para llenar el valor del input. Podria usarse $('#newActWhen').val($scope.today);
+			 *	No se llama a 'onSelect'
+			 */
+			$('#newActWhen').datepicker('setDate', new Date());
+			$('#newActToWhen').datepicker({	showWeek: true,
+											dateFormat:'dd/mm/yy',
+											firstDay: 1,
+											beforeShowDay : function (date) {
+												var rep = $scope.newActRepeat.value;
+												var ref = $scope.newAct.when;
+												date = $scope.DobToYWDarr(date);
+												// Nunca repetir o el DoW no es el mismo
+												if(rep === 'n' || date[2] != ref.day){
+													return [false];
+												} else if(rep === 'pw'){
+													// week check
+        											return [true];
+        										} else if(rep === 'nw'){
+        											// Solo la semana siguiente
+        											return [((date[1]-ref.week) == 1) && (parseInt(date[2]) == ref.day)];
+        										} else if(rep === '2w'){
+        											// Cada dos semanas
+        											return [(date[1]-ref.week)%2 == 0];
+        										}
+    										},
+    										onSelect: $scope.newActRepeatTo
+    										//minDate seteada en $scope.newActWhen()
+			});
+			/* 	Para que se carguen los valores en $scope.newAct.when.* ; 
+			 *	Hay que llamarlo después de crear el $('#newActToWhen').datepicker();
+			 */
+			$scope.newActWhen($scope.today);
+
+			// No sé porqué pero es muy necesario hacer esto.
+			$('.ui-datepicker').css('margin-top', '0px');
 
 		}, 200);
 	});
