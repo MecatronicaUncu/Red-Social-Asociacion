@@ -1,19 +1,41 @@
+////////////////////////////////////////////////////////////////
+//                                                            //
+// Módulo del server que se comunica la base de datos MongoDB //
+//                                                            //
+////////////////////////////////////////////////////////////////
+
 var mongo = require('mongodb').MongoClient;
 
+/** @type {String} URL de conexión a la base de datos MongoDB */
 var mdburl = 'mongodb://localhost:27017/test';
+/** @type {MongoDB} Objeto que hace referencia a la base de datos utilizada */
 var db = null;
-var mongoConfig;
 
+/**
+ * Realiza la conexión con la base de datos MongoDB local y guarda la referencia
+ * en db
+ * 
+ * @param  {String} mdburl URL de conexión
+ * @param  {Function} callback Callback al que le llega la referencia a la base de
+ * datos y el error en el caso correspondiente
+ */
 mongo.connect(mdburl, function(err, mdb) {
 	if(err){
 		console.log('Error connecting to mongodb server');
 	} else {
 		console.log('Connected correctly to mongodb server');
 		db = mdb;
-		mongoConfig = db.collection('Config').find({name:'type'});
 	}
 });
 
+/**
+ * Realiza una búsqueda de las categorías posibles en la BDD, aplicando un filtro.
+ * Por ejemplo, sólo las categorías clasificadas como 'Person', o 'Activity'
+ * 
+ * @param  {Object}   req  HTTP Request.
+ * @param  {Object}   res  HTTP Response
+ * @param  {Function} next Siguiente función a ejecutar, si existiece.
+ */
 exports.getTypes = function (req, res, next) {
 
 	var sub = req.query.sub;
@@ -32,6 +54,14 @@ exports.getTypes = function (req, res, next) {
   });
 };
 
+/**
+ * Realiza una búsqueda de las subcategorías de una categoría. Por ejemplo, los
+ * nombres de un profesor o alumno, o las diferentes materias
+ * 
+ * @param  {Object}   req  HTTP Request.
+ * @param  {Object}   res  HTTP Response
+ * @param  {Function} next Siguiente función a ejecutar, si existiece.
+ */
 exports.getSubTypes = function (req, res, next) {
 
 	var col = db.collection(req.query.type);
@@ -49,6 +79,16 @@ exports.getSubTypes = function (req, res, next) {
   	});
 };
 
+/**
+ * Realiza una búsqueda de los horarios para la semana, y el elemento indicado
+ * (ya sea una persona o una materia por ejemplo).
+ * 
+ * @param  {Object}   req  HTTP Request.
+ * @param  {Object}   res  HTTP Response
+ * @param  {Function} next Siguiente función a ejecutar, si existiece.
+ *
+ * TODO: Buscar por ID!
+ */
 exports.getTimes = function(req, res, next){
 
 	var col = db.collection('Actividades');
@@ -70,6 +110,14 @@ exports.getTimes = function(req, res, next){
   	});
 };
 
+/**
+ * Realiza la búsqueda de la configuración de las franjas horarias. Límites por
+ * un lado y colores según se pida, para un tipo de actividad indicada.
+ * 
+ * @param  {Object}   req  HTTP Request.
+ * @param  {Object}   res  HTTP Response
+ * @param  {Function} next Siguiente función a ejecutar, si existiece.
+ */
 exports.getConfig = function(req, res, next){
 
 	var col = db.collection('Config');
@@ -103,6 +151,14 @@ exports.getConfig = function(req, res, next){
 	});
 };
 
+/**
+ * Realiza una búsqueda de los lugares posibles para desarrollarse las
+ * actividades.
+ * 
+ * @param  {Object}   req  HTTP Request.
+ * @param  {Object}   res  HTTP Response
+ * @param  {Function} next Siguiente función a ejecutar, si existiece.
+ */
 exports.getPlaces = function (req, res, next) {
 
 	var col = db.collection('Places');
