@@ -13,6 +13,8 @@ var counter = 11;
 var limit = 5;
 // private constructor:
 
+var privateFields = ['email','phone','address'];
+
 var User = module.exports = function User(_node) {
     this._node = _node;
 };
@@ -30,30 +32,157 @@ Object.defineProperty(User.prototype, 'name', {
     }
 });
 
+User.isAdmin = function(id, callback){
+    
+    var query = [
+        'MATCH (a)-[:ADMINS]->()',
+        'WHERE ID(a)='+id,
+        'RETURN ID(a)'].join('\n');
+    
+    db.query(query, null, function(err, results) {
+        if(err){
+            throw err;
+            console.log('err isAdmin');
+            return callback(false);
+        }
+        if(results.length>0)
+            return callback(true);
+        else
+            return callback(false);
+    });
+};
 
 /******************************************************************************/
 /*                          GET METHODS                                       */
 /******************************************************************************/
 
-User.materia = function(callback){
-	var query = [
-		'MATCH (m:Materia)',
-		'RETURN m'].join('\n');
+User.getAsocs = function(idNEO, callback){
+    
+    var query = [
+        'MATCH (u:User)-[r]->(i) WHERE ID(u)='+idNEO,
+        'AND NOT TYPE(r) IN ["ADMINS","SUBSCRIBED","PARTOF"]',
+        'RETURN TYPE(r) as reltype, LABELS(i) AS instLabel, ID(i) AS instID, i.name AS instName'
+    ].join('\n');
 
-	db.query(query, null, function(err, results) {
-		if(err){
+    db.query(query, null, function (err, results) {
+        if (err){
 			throw err;
-			console.log('err materia');
-			return callback(err);
-		}
-		var materias = [];
-	        results.forEach(function(el){
-        	    var temp = el.m._data.data;
-	            materias.push(temp);
-	        });
-	        return callback(null, materias);
-	});
+            console.log("err get Profile");
+            return callback(err);
+        }else{
+            results.push({label:"PRIVATE",instID:-1,instName:"PRIVATE"});
+            if(results.length > 0){
+                return callback(null, results);
+            }else{
+                return callback('No Results');
+            }
+        }
+     });  
+};
 
+User.getProfile = function(idNEO,public,callback){
+  
+    var query = [
+        'MATCH (u:User) WHERE ID(u)='+idNEO,
+        'RETURN u as USER'
+    ].join('\n');
+
+    db.query(query, null, function (err, results) {
+        if (err){
+			throw err;
+            console.log("err get Profile");
+            return callback(err);
+        }else{
+            if(results.length > 0){
+                var profile = results[0].USER._data.data;
+                if(public){
+                    privateFields.forEach(function(field){
+                       delete profile[field];
+                    });
+                }
+                delete profile.password;
+                delete profile.salt;
+                delete profile.c;
+                console.log(profile);
+                return callback(null, profile);
+            }else{
+                return callback('No Results');
+            }
+        }
+     });  
+    
+};
+
+User.getAdminNodes = function(idNEO, callback){
+	
+	var query = [
+        'MATCH (admin)-[:ADMINS]->(nodes)',
+        'WHERE ID(admin) = '+idNEO,
+        'OPTIONAL MATCH (nodes)-[:PARTOF]->(parent)',
+        'RETURN distinct nodes as nodeData, ID(nodes) AS idNEO,',
+        'LABELS(nodes) AS label, parent.name AS parentName'
+    ].join('\n');
+
+    db.query(query, null, function (err, results) {
+        if (err){
+			throw err;
+            console.log("err get AdminNodes");
+            return callback(err);
+        }else if(results.length === 0){
+            return callback('Unauthorized');
+        }else{
+            results.forEach(function(res){
+                res.nodeData = res.nodeData._data.data;
+            });
+            return callback(null, results);
+        }
+     });        	
+};
+
+User.getNodeContents = function(idNEO, callback){
+
+	var query = [
+        'MATCH (e)-[r:PARTOF]->(u) WHERE ID(u)='+idNEO.toString(),
+		'RETURN distinct e as nodeData, ID(e) AS idNEO, LABELS(e) AS label,',
+		'TYPE(r) AS reltype, extract(name in collect(e.name) | name) AS instName',
+		'UNION',
+		'MATCH (e)-[r]->(u) WHERE ID(u)='+idNEO.toString(),
+		'AND NOT TYPE(r) IN ["PARTOF","ADMINS","MEMBER","SUBSCRIBED"]',
+		'RETURN distinct e as nodeData, ID(e) AS idNEO, LABELS(e) AS label,',
+        'TYPE(r) AS reltype, \'\' AS instName',
+		'UNION',
+		'MATCH (e)-[r]->(u) WHERE ID(u)='+idNEO.toString()+' WITH e, r.memberAs AS label',
+		'MATCH (e)-[r]->(inst) WHERE TYPE(r)=label',
+		'RETURN distinct e as nodeData, ID(e) AS idNEO, LABELS(e) AS label,',
+		'TYPE(r) AS reltype, inst.name AS instName'
+    ].join('\n');
+
+    db.query(query, null, function (err, results) {
+        if (err){
+			throw err;
+            console.log("err get NodeContent");
+            return callback(err);
+        }else{
+        	var contents = {
+        		parts: [],
+        		rels: []
+        	};
+            results.forEach(function(res){
+                res.nodeData = res.nodeData._data.data;
+                if(res.reltype === 'PARTOF'){
+                   contents.parts.push(res);
+                }else{
+                    if(res.nodeData.hasOwnProperty('password')){
+                        delete res.nodeData.password;
+                        delete res.nodeData.salt;
+                        delete res.nodeData.c;
+                    }
+                    contents.rels.push(res);
+                }
+            });
+		   	return callback(null, contents);
+        }
+     });
 };
 
 User.getThey = function (callback) {
@@ -63,7 +192,7 @@ User.getThey = function (callback) {
         'WHERE ID(user)<>0',
         'WITH user, rand() AS r',
         'ORDER BY r',
-        'RETURN user, ID(user) AS id, count(user) AS max',
+        'RETURN user, ID(user) AS idNEO, count(user) AS max',
         'LIMIT '+limit.toString()
     ].join('\n');
 
@@ -78,7 +207,9 @@ User.getThey = function (callback) {
             var temp = el.user._data.data;
             if (temp.hasOwnProperty('password')){
                 delete temp['password'];
-                temp['id']=el.id;
+                delete temp.salt;
+                delete temp.c;
+                temp['idNEO']=el.idNEO;
                 users.push(temp);
             }
         });
@@ -86,27 +217,23 @@ User.getThey = function (callback) {
     });
 };
 
-User.getProfile = function(id,callback){
+User.getContacts = function(id,callback){
 
     var query = [
-        'MATCH (user:User)',
-        'WHERE ID(user)='+ id.toString(),
-        'RETURN {user : user, id : ID(user)} AS NODES',
-        'UNION',
-        'MATCH (user)-[:FRIENDS]->(friend)',
-        'WHERE ID(user)='+ id.toString() +' AND (friend)-[:FRIENDS]->(user)',
+        'MATCH (user:User)-[:FRIENDS]->(friend:User)',
+        'WHERE ID(user)='+ id.toString() +' AND (friend:User)-[:FRIENDS]->(user:User)',
         'RETURN {friend : friend, id : ID(friend)} AS NODES',
         'UNION',
-        'MATCH (requested)-[:FRIENDS]->(user)',
-        'WHERE ID(user)='+ id.toString() +' AND NOT (user)-[:FRIENDS]->(requested)',
+        'MATCH (requested:User)-[:FRIENDS]->(user:User)',
+        'WHERE ID(user)='+ id.toString() +' AND NOT (user:User)-[:FRIENDS]->(requested:User)',
         'RETURN {requested : requested, id : ID(requested)} AS NODES',
         'UNION',
-        'MATCH (user)-[:FRIENDS]->(demanded)',
-        'WHERE ID(user)='+ id.toString() +' AND NOT (demanded)-[:FRIENDS]->(user)',
+        'MATCH (user:User)-[:FRIENDS]->(demanded:User)',
+        'WHERE ID(user)='+ id.toString() +' AND NOT (demanded:User)-[:FRIENDS]->(user:User)',
         'RETURN {demanded : demanded, id : ID(demanded)} AS NODES',
         'UNION',
-        'MATCH (user)-[:FRIENDS*2..3]-(suggested)',
-        'WHERE ID(user)='+ id.toString() +' AND NOT (user)-[:FRIENDS]-(suggested) AND ID(suggested)<>'+ id.toString(),
+        'MATCH (user:User)-[:FRIENDS*2..3]-(suggested:User)',
+        'WHERE ID(user)='+ id.toString() +' AND NOT (user:User)-[:FRIENDS]-(suggested:User) AND ID(suggested)<>'+ id.toString(),
         'RETURN {suggested : suggested, id : ID(suggested), count : COUNT(suggested)} AS NODES',
         'ORDER BY NODES.count DESC LIMIT 5'
     ].join('\n');
@@ -117,18 +244,19 @@ User.getProfile = function(id,callback){
             console.log("err profile");
             return callback(err);
         }
-        var user = {};
+        //var user = {};
         var fri = [];
         var req = [];
         var dem = [];
         var sug = [];
         results.forEach(function(el){
+            /*
             if (el.NODES.hasOwnProperty('user')){
                 delete el.NODES.user._data.data['password'];
                 user = el.NODES.user._data.data;
                 user['id'] =el.NODES.id;
             }
-            else if (el.NODES.hasOwnProperty('friend')){
+            else */if (el.NODES.hasOwnProperty('friend')){
                 delete el.NODES.friend._data.data['password'];
                 var tmp = {'data' : el.NODES.friend._data.data, 'id' : el.NODES.id};
                 fri.push(tmp);
@@ -149,39 +277,15 @@ User.getProfile = function(id,callback){
                 sug.push(tmp);
             }
         });
-        var temp = {'user' : user, 'friends' : fri, 'requested' : req, 'demanded' : dem, 'suggested' : sug};
+        var temp = {/*'user' : user, */ 'friends' : fri, 'requested' : req, 'demanded' : dem, 'suggested' : sug};
         return callback(null,temp);
     });
 
 };
 
-User.getUsrProfile = function (id, callback) {
-    var query = [
-        'MATCH (user:User)',
-        'WHERE ID(user)='+id.toString(),
-        'RETURN user, ID(user) AS id'
-    ].join('\n');
-
-    db.query(query, null, function (err, results) {
-        if (err){
-            console.log('error get usr prof')
-            return callback(err);
-        }
-        var user = {};
-        if (results.length>0){
-            if (results[0].hasOwnProperty('user')){
-                user = results[0].user._data.data;
-                delete user['password'];
-                user['id']=results[0].id;
-            }
-        }
-        return callback(null, user);
-    });
-};
-
 User.getParam = function (id, field, callback) {
     var query = [
-        'MATCH (user:User)',
+        'MATCH (user)',
         'WHERE ID(user)='+id.toString(),
         'RETURN user.'+ field + ' AS value'
     ].join('\n');
@@ -224,44 +328,68 @@ User.isFriend = function (id, friend, callback) {
     });
 };
 
-User.getBy = function (data, id, callback) {
-    
+User.search = function (what, data, id, callback) {
+      
     var i = 0;
     var temp = "(";
     for (var i = 0; i<data.length; i++){
-        temp += 'n.' + data[i].label + ' =~ "(?i)' + data[i].value + '.*" or ';
+        temp += 'n.' + data[i].label + ' =~ "(?i)' + data[i].value + '.*" OR ';
     }
     if (i==0)
         temp = "";
     else
-        temp += 'null) and ';
-    temp += 'ID(n)<>'+ id.toString();
+        temp += 'null)';// and ';
     
-    var query = [
+    //temp += 'ID(n)<>'+ id.toString();
+    
+    var userQuery = [
         'MATCH (n:User)',
         'WHERE ' + temp,
         'WITH n',
         'OPTIONAL MATCH (p:User)-[rel:FRIENDS*1..2]-(n)',
-        'WHERE ID(p)='+id.toString(),
-        'RETURN n,ID(n) AS id, COUNT(rel)',
-        'ORDER BY COUNT(rel) DESC LIMIT '+limit.toString()
+        'WHERE ID(p)='+id,
+        'RETURN distinct n, ID(n) AS idNEO, COUNT(rel)',
+        'ORDER BY COUNT(rel) DESC LIMIT '+limit
     ].join('\n');
     
+    var partQuery = [
+        'MATCH (n),(p) WHERE NOT n:User AND ID(p)='+id,
+        'OPTIONAL MATCH (n)<-[relA:SUBSCRIBED]-(p)',
+        'OPTIONAL MATCH (p)-[relB:FRIENDS*1..2]-(m)-[relC:SUBSCRIBED]->(n)',
+        'OPTIONAL MATCH (p)-[relD:SUBSCRIBED]-()-[relE:PARTOF*]->(n)',
+        'OPTIONAL MATCH (p)-[relF:FRIENDS*1..2]-(m)-[relG:SUBSCRIBED]->()-[relH:PARTOF*]->(n)',
+        'WITH n, COUNT(distinct relA) AS crelA, COUNT(distinct relB) AS crelB, COUNT(distinct relD) AS crelD, COUNT(distinct relF) AS crelF, COUNT(distinct relG) AS crelG',
+        'RETURN distinct n, ID(n) AS idNEO,crelA,crelB,crelD,crelF,crelG',
+        'ORDER BY crelA DESC,crelB DESC,crelD DESC,crelF DESC,crelG DESC LIMIT '+limit
+        ].join('\n');
+    
+    var query;
+    if(what==='Parts'){
+        query = partQuery;
+    }else if (what==='Users'){
+        query = userQuery;
+    }else{
+        return callback('What not defined');
+    }
+    console.log(query,what);
     db.query(query,null,function(err,results){
         if (err) {
             console.log("err get by");
             return callback(err);
         }        
-        var users = [];
+        var nodes = [];
         results.forEach(function(el){
             var temp = el.n._data.data;
             if (temp.hasOwnProperty('password')){
-                delete temp['password'];
-                temp['id']=el.id;
-                users.push(temp);
+                //Si tiene password, tiene el resto...
+                delete temp.password;
+                delete temp.salt;
+                delete temp.c;
             }
+            temp['idNEO']=el.idNEO;
+            nodes.push(temp);
         });
-        return callback(null,users);
+        return callback(null,nodes);
     });
  
 };
@@ -269,47 +397,139 @@ User.getBy = function (data, id, callback) {
 /******************************************************************************/
 /*                          POST METHODS                                      */
 /******************************************************************************/
-User.signup = function (data, callback) {
 
-   query = [
-	'MERGE (user:User {' + data + '})',
-	'ON CREATE SET user.c=0',
-	'ON MATCH SET user.c=1',
-	'RETURN ID(user) AS id, user.c AS c'
+User.updateProfile = function(idNEO, changes, callback){
+    
+    var params = '';
+    for(var key in changes){
+        if(changes.hasOwnProperty(key))
+            params += ('u.'+key+'="'+changes[key]+'", ');
+    }
+    params = params.slice(0,-2);
+
+    var query = [
+	'MATCH (u:User) WHERE ID(u)='+idNEO,
+    'SET '+params,
+	'RETURN u AS USER'
     ].join('\n');
 
+    console.log(query);
+
     db.query(query, null, function (err, results) {
-         if (err){
-         	   console.log(err);
-               console.log('err sign in');
-               return callback(err);
-         }
-	if (results[0].c == 1) return callback(true);
-    return callback(null, results[0]);
+        if (err){
+			throw err;
+            console.log("err USER updateProfile");
+            return callback(err);
+        }else{
+            var profile = results[0].USER._data.data;
+            delete profile.password;
+            delete profile.salt;
+            delete profile.c;
+            console.log(profile);
+            return callback(null, profile);
+        }
+     });  
+};
+
+User.newRel = function(relData,callback){
+  
+    var params = {
+        instID: relData.inst.idNEO,
+        usrID: relData.usrID
+    };
+  
+    var query = [
+    'MATCH (u),(i) WHERE ID(u)={usrID} AND ID(i)={instID}',
+    'CREATE (u)-[:'+relData.relType + ']->(i)'
+    ].join('\n');
+    
+    db.query(query, params, function (err, results) {
+        if (err){
+            console.log(err);
+            console.log('Err User newRel');
+            return callback(err);
+        }else{
+            return callback(null);
+        }
+    });    
+};
+
+User.newPart = function(data,callback){
+    
+    var query = [
+    'MATCH (i) WHERE ID(i)='+data.instID,
+    'CREATE (p:'+data.label+'{ partData })-[:PARTOF]->(i)',
+	'RETURN ID(p) AS idNEO'
+    ].join('\n');
+    
+    var params = {
+        partData: data.partData
+    };
+    
+    db.query(query, params, function (err, results) {
+        if (err){
+            console.log(err);
+            console.log('Err User newPart');
+            return callback(err);
+        }
+		//console.log('Part: ',results[0]);
+        return callback(null,results[0].idNEO);
+    });
+};
+
+User.signup = function (nodeData, callback) {
+    
+    var params = '';
+    for(var key in nodeData){
+        if(nodeData.hasOwnProperty(key))
+            params += (key+':"'+nodeData[key]+'", ');
+    }
+    params = params.slice(0,-2);
+
+    var query = [
+	'MERGE (user:User {'+params+'})',
+	'ON CREATE SET user.c=0',
+	'ON MATCH SET user.c=1',
+	'RETURN ID(user) AS idNEO, user.c AS c'
+    ].join('\n');
+
+    console.log(query);
+
+    db.query(query, null, function (err, results) {
+        if (err){
+            throw err;
+            console.log('err sign up');
+            return callback(err);
+        }
+		if (results[0].c == 1)
+			return callback(true);
+			
+	    return callback(null, results[0].idNEO);
     });
 
 };
 
-User.login = function (username, callback) {
+User.login = function (email, callback) {
     var query = [
         'MATCH (user:User)',
-        'WHERE user.username={username}',
-        'RETURN ID(user) AS id, user.password AS pass, user.salt AS salt, user.firstName AS firstName, user.lastName AS lastName'
+        'WHERE user.email={email}',
+        'RETURN ID(user) AS idNEO, user.password AS pass,',
+        'user.salt AS salt, user.lang AS lang'
     ].join('\n');
 
     var params = {
-        username: username
+        email: email
     };
 
     db.query(query, params, function (err, results) {
         if (err) {
-            console.log('err log in');
+            console.log('user log in error');
             return callback(err);
         }
         if (results.length>0){
             return callback(null, results[0]);
         }
-        console.log('err log in 2');
+        console.log('user log in error 2');
         return callback(err);
     });
 };
@@ -334,7 +554,7 @@ User.friend = function (userId, otherId, callback) {
 User.changeProperty = function (field,value,id,callback){
     
     var query = [
-        'MATCH (u:User)',
+        'MATCH (u)',
         'WHERE ID(u)='+ id.toString(),
         'SET u.'+field+'="'+value+'"'
     ].join('\n');
@@ -351,7 +571,7 @@ User.changeProperty = function (field,value,id,callback){
 User.verifyPassword = function (id,callback){
     
     var query = [
-        'MATCH (u:User)',
+        'MATCH (u)',
         'WHERE ID(u)=' + id.toString(),
         'RETURN u.password AS pass, u.salt AS salt'
     ].join('\n');
@@ -368,7 +588,7 @@ User.verifyPassword = function (id,callback){
 User.changePassword = function (oldP,newP,newS,id,callback){
     
     var query = [
-        'MATCH (u:User)',
+        'MATCH (u)',
         'WHERE ID(u)=' + id.toString(),
         'SET u.password="' + newP + '", u.salt="' +newS + '"'
     ].join('\n');

@@ -15,6 +15,7 @@ profile-bar-link:visited {
 }
 
 .profile-bar-link {
+        cursor: pointer;
 	color: white;
 	font-size: 1em;
 	font-weight: bold;
@@ -102,9 +103,9 @@ profile-bar-link:visited {
     height: 200px;
     width: 200px;
     @include border-radius(100px);
-    padding: 5px;
-	box-shadow: 0px 0px 10px 1px #000;
-	margin: 10px;
+    padding: 1px;
+    box-shadow: 0px 0px 2px 1px #000;
+    margin: 10px;
 }
 
 #changePwdBtn {

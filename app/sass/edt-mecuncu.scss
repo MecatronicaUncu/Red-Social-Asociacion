@@ -87,3 +87,9 @@
 .edt-block-info {
 	@include edt-block-info-font;
 }
+
+.newActAddRemoveBtn {
+    background-color: white;
+    color: $edtSearchBarBgColor;
+    font-size: 1.5em;
+}

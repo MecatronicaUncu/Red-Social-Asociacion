@@ -5,16 +5,20 @@
 'use strict';
 
 angular.module('linkedEnibApp')
-.controller('ProfileCtrl', function ($scope,$http,$routeParams,session,formDataObject) {
+.controller('ProfileCtrl', function ($scope,$http,$routeParams,session,formDataObject,$location) {
 
-    $scope.image = session.host+':3000/usr/' + $routeParams.id + '/pic';
+    if($routeParams.id){
+        $scope.image = session.host+':3000/usr/' + $routeParams.id + '/pic';
+    }else{
+        $scope.image = session.host+':3000/usr/' + session.getId() + '/pic';
+    }
     
     $scope.profileNavItems=[
-        {name:'Perfil', href:'#/profile/'+$routeParams.id},
-        {name:'Contactos', href:'#/profile/'+$routeParams.id},
-		{name:'Cambiar Contraseña', href:'#/profile/'+$routeParams.id},
-        {name:'Cerrar Sesión', href:'#/'},
-        {name:'Eliminar Usuario', href:'#/'}
+        {name:'Perfil'},
+        {name:'Contactos'},
+        {name:'Cambiar Contraseña'},
+        {name:'Cerrar Sesión'},
+        {name:'Eliminar Usuario'}
       ];
 
     $scope.profileTab = 'Perfil';
@@ -54,13 +58,15 @@ angular.module('linkedEnibApp')
 
     $scope.updateProfile = function(){
         console.log('Update: ');
+        var data = {changes: {}, id:0};
+        data.id = session.getId();
         $scope.fields.forEach(function(el,index){
-            if(index===$scope.fields.length-1){
-                return;
-						}
-            var data = {field:el.name, value:$('#'+el.name).text().trim(), id:session.getId()};
-            console.log(data);
-            $http({method:'POST',url:session.host+':3000/change',data:data})
+        	data.changes[el.name] = $('#'+el.name).text().trim();
+        });
+        	
+        console.log(data);
+        	
+        $http({method:'POST',url:session.host+':3000/uptprofile',data:data})
                 .success(function(){
                     $('#updateSubmit > span').removeClass('fa-refresh').addClass('fa-check');
                     $('#updateSubmit').prop('disabled',true);
@@ -71,47 +77,66 @@ angular.module('linkedEnibApp')
                     console.log("Update Failed");
                     $('#updateSubmit > span').removeClass('fa-refresh').addClass('fa-warning');
                 }); 
-        });
     };
-      
-    $scope.updateContacts = function(){
-		console.log('UPDATE CONTACTS: GETID: '+session.getId()+' ROUTEID: '+$routeParams.id+'valid '+(session.getId()===$routeParams.id));
-        $scope.showNavBar = (session.getId()==$routeParams.id) && ($routeParams.id != 0);
-        var path = session.host+':3000/usr/' + $routeParams.id;
-        $http({method:'GET', url:path})
-        .success(function (result){
-            console.log(result);
-            $scope.fields.forEach(function(el){
-                el.model=result.user[el.name];
+    
+    $scope.loadProfile = function(){ 	
+        var id = ($routeParams.id)?true:false;
+        $scope.showNavBar = (session.isLogged() && !id) || (id && (session.getId() == $routeParams.id));
+        if(id && $routeParams.id != session.getId()){
+            var path = session.host+':3000/profile/' + $routeParams.id;
+            $http({method:'GET', url:path})
+            .success(function (profile){
+                $scope.fields.forEach(function(el){
+                    el.model=profile[el.name];
+                });
+                console.log(profile);
+            })
+            .error(function(err){
+                console.log('Error loading profile');
             });
-            console.log(result);
+        }else{
+            //TODO: CAMBIAR POR LOS CAMPOS DIRECTAMENTE QUE VIENEN DEL SERVER
+            if(session.profile){
+                $scope.fields.forEach(function(el){
+                    el.model=session.profile[el.name];
+                });
+            }
+        }
+   	};
+    $scope.updateContacts = function(){
+        console.log($scope.profileTab);
+        var path = session.host+':3000/contacts/' + session.getId();
+        $http({method:'GET', url:path})
+        .success(function (data){
+            var results = data.results;
+            console.log(results);
             if ($scope.showNavBar){
-
-                result.friends.forEach( function(el){
+				$scope.friends = [];
+                results.friends.forEach( function(el){
                     var temp = el.data;
                     temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
                     temp['id'] = el['id'];
                     $scope.friends.push(temp);
                 });
 
-
-                result.suggested.forEach( function(el){
+				$scope.suggestedFriends = [];
+                results.suggested.forEach( function(el){
                     var temp = el.data;
                     temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
                     temp['id'] = el['id'];
                     $scope.suggestedFriends.push(temp);
                 });
 
-
-                result.requested.forEach( function(el){
+				$scope.requestedFriends = [];
+                results.requested.forEach( function(el){
                     var temp = el.data;
                     temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
                     temp['id'] = el['id'];
                     $scope.requestedFriends.push(temp);
                 });
 
-
-                result.demanded.forEach( function(el){
+				$scope.demandedFriends = [];
+                results.demanded.forEach( function(el){
                     var temp = el.data;
                     temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
                     temp['id'] = el['id'];
@@ -119,25 +144,31 @@ angular.module('linkedEnibApp')
                 });
 
                 $scope.filtered = $scope.friends;
+                console.log($scope.profileTab);
             };
         });
     };
        
     $scope.click = function(clicked){
+        console.log($scope.profileTab);
         if(clicked.name==='Cerrar Sesión'){
-			$http({method:'POST',url:session.host+':3000/logout',data:{id:session.getId()}})
-				.success(function(){
-					console.log('Success Logging out');
-					session.log('out');
-				})
-				.error(function(){
-					console.log('Error logging out');
-				});
-			return;
+            $http({method:'POST',url:session.host+':3000/logout',data:{id:session.getId()}})
+            .success(function(){
+                    console.log('Success Logging out');
+                    session.log('out');
+                    $location.path('/');
+            })
+            .error(function(){
+                    console.log('Error logging out');
+            });
+            return;
         }
-        if(clicked.name==='Eliminar Usuario'){
+        else if(clicked.name==='Eliminar Usuario'){
             $scope.deleteUser();
             return;
+        }
+        else if(clicked.name==='Contactos'){
+            $scope.updateContacts();
         }
         $scope.profileTab = clicked.name;
     };
@@ -208,6 +239,11 @@ angular.module('linkedEnibApp')
             });
     };
 
-    $scope.updateContacts();
+    $scope.$on('gotProfile',function(){
+        $scope.loadProfile();
+        console.log(session.profile);
+    });
+
+    $scope.loadProfile();
 
   });

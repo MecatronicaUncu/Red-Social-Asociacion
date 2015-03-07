@@ -1,52 +1,52 @@
 @import 'site-base';
 
 .activity-form {
-	
-	width: 50%;
-	min-width: 450px;
-	@include respond-to(mobile){padding: 0 10px; min-width: 0px; width: 100%};
+
+    width: 50%;
+    min-width: 450px;
+    @include respond-to(mobile){padding: 0 10px; min-width: 0px; width: 100%};
 }
 
 .caret {
-	margin-left: 10px;
+    margin-left: 10px;
 }
 
 #newActWrap * .sign-up-btn {
-	margin: 5px 10px;
-	@include respond-to(mobile){width: 100%; margin: 5px 0;};
+    margin: 5px 10px;
+    @include respond-to(mobile){width: 100%; margin: 5px 0;};
 }
 
 .newActBtn {
-	
-	height: 40px;
-	border: 1px solid #ACACAC;
-	@include border-radius(0);
-	background-color: #FFF;
-	@include edt-search-bar-font;
-	font-size: 0.9em;
-	color: #595959;
-	margin: 5px 10px;
-	max-width: 99px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	text-align: left;
-	@include respond-to(mobile){margin: 5px 0; max-width: none; width: 100%};
+
+    height: 30px;
+    border: 1px solid #ACACAC;
+    @include border-radius(0);
+    background-color: #FFF;
+    @include edt-search-bar-font;
+    font-size: 0.9em;
+    color: #595959;
+    margin: 5px 10px;
+    //max-width: 99px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: left;
+    @include respond-to(mobile){margin: 5px 0; max-width: none; width: 100%};
 }
 
 .newActLbl{
-	
-	border: none;
+    border: none;
+    font-size: 1em;
 }
 
 .newActIcon {
-	
-	color: #595959;
+
+    color: #595959;
 }
 
 .edt-newact-dropdown {
-	
-	background-color: #FFF;
+
+    background-color: #FFF;
     border: 1px solid #595959;
     @include border-radius(0);
     width: auto;
@@ -57,22 +57,75 @@
 }
 
 #newActWhere {
-	
-	width: auto;
-	@include respond-to(mobile){width: 100%}
+
+    width: auto;
+    @include respond-to(mobile){width: 100%}
 }
 
-#newActForm {
+.newActForm {
 
-	margin: 30px 0px;
+    margin: 30px 0px;
+}
+
+.newActForm * .sign-input {
+    max-width: 90px;
 }
 
 #newActWrap {
-	
-	border: 1px solid #ACACAC;
+
+    border: 1px solid #ACACAC;
 }
 
 #WrongAct {
-	
-	@include border-radius(0);
+
+    @include border-radius(0);
+}
+
+.newActDayGroup {
+    border: 1px solid rgb(172, 172, 172);
+    border-left: 1px solid #ACACAC;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-top: 5px;
+}
+
+.newActDayList {
+    height: 40px;
+    padding-top: 10px;
+}
+
+.newActPeriod {
+    border: 1px solid tint(black,50);
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.newActPeriodLabel {
+    font-weight: bold;
+    font-size: 1.5em;
+    max-width: none;
+    padding-top: 5px;
+}
+
+.newActSubmitBtn {
+    font-size: 2.5em;
+    color: #00CB39;
+    background-color: white;
+}
+
+.newActClearBtn {
+    font-size: 2.5em;
+    color: #CB002D;
+    background-color: white;
+}
+
+.newActSubmitGroup {
+    justify-content: flex-end;
+}
+
+.dayOrPeriodActive {
+    color: white;
+    background-color: #ACACAC;
+    border: 1px solid black;
 }

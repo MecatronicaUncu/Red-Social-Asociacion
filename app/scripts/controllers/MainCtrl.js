@@ -20,7 +20,7 @@ App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, se
 			} else {
 				$scope.they = users;
 				$scope.they.forEach(function(el){
-        			el['link']=session.host+':3000/usr/'+el['id'].toString()+'/pic';
+        			el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
    				});	
 			}
 		});
@@ -42,18 +42,11 @@ App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, se
     };  
       
     $scope.signup = function(){
-        var person = {};
-        /*$scope.fields.forEach(function(el){
-           person[el.name] = el.model;
-        });*/
-        
+        $scope.fields.lang = session.lang;
         users.signup($scope.fields,function(err){
         	if(err){
         		console.log(err);
-        	}// else {
-        		//LO HACE EL users.signup
-        		//$scope.login(person);
-        	//}
+            }
         });
       };   
   });

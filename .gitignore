@@ -3,6 +3,7 @@ app/bower_components
 mongodata
 mongodb
 node_modules
+nbproject/
 .project
 .sass-cache
 .tmp
@@ -13,3 +14,8 @@ neo4j*/
 !neo4j*/conf/neo4j-server.properties
 !neo4j*/conf/neo4j.properties
 app/styles
+*.*~
+*/*.*~
+*.log
+*/*.log
+/nbproject/private/

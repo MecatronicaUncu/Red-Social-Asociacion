@@ -2,8 +2,134 @@
 
 var App = angular.module('linkedEnibApp');
 
-App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
-	
+App.controller('EdtCtrl', function ($scope, edt, session, $timeout,$http) {
+    
+    $scope.newAct = {
+        periods: [],
+        whatId: -1
+    };
+    
+    $scope.dayOrPeriod = 'PERIOD';
+    
+    $scope.actAsocs = [];
+    
+    $scope.actTypes = [];
+    
+    $scope.newActDays = [];
+    
+    $scope.daySelected = function(periodIndex){
+        var selected = false;
+        $scope.newActDays[periodIndex].forEach(function(day){
+            if(day)
+                selected = true;
+        });
+        
+        return selected;
+    };
+    
+    $scope.onlyThisDay = function(periodIndex,idx){
+        $scope.newActDays[periodIndex].forEach(function(el,index){
+            $scope.newActDays[periodIndex][index] = false;
+        });
+        $scope.newActDays[periodIndex][idx] = true;
+    };
+    
+    //necesita llamada a getAssociations
+    $scope.selectAsoc = function(asoc){        
+        $scope.newAct.whatId = asoc.instID;
+        $scope.newAct.whatName = asoc.instName;
+        
+        $http({method:'GET', url:session.host+':3000/acttypes', params:{partLabel: asoc.instLabel}})
+        .success(function(acttypes){
+            $scope.actTypes = acttypes;
+            $scope.newAct.periods.forEach(function(period){
+               period.type = $scope.actTypes[0].label; 
+            });
+            return;
+        })
+        .error(function(){
+            return; 
+        });
+    };
+    
+    $scope.selectActType = function(typeLabel,periodIndex){
+        $scope.newAct.periods[periodIndex].type = typeLabel;
+    };
+    
+    //NECESITA llamada a selectAsoc
+    $scope.addRemovePeriod = function(periodIndex){
+        //Add
+        if(periodIndex === -1){
+            $scope.newAct.periods.push({});
+            periodIndex = $scope.newAct.periods.length-1;
+            $scope.newAct.periods[periodIndex].from = {};
+            $scope.newAct.periods[periodIndex].to = {};
+            $scope.newAct.periods[periodIndex].days = [{day:'lu',times:[{}]},
+                {day:'ma',times:[{}]},{day:'mi',times:[{}]},{day:'ju',times:[{}]},
+                {day:'vi',times:[{}]},{day:'sa',times:[{}]}];
+            $scope.newActDays.push([false,false,false,false,false,false]);
+            $scope.newAct.periods[periodIndex].repeat = 'n';
+            $scope.newAct.periods[periodIndex].type = ($scope.actTypes.length>0)?$scope.actTypes[0].label:'NOT_SPECIFIED';
+            //TODO: Se puede hacer mas elegante esto?
+            $timeout(function(){
+                $scope.attachCalendar(periodIndex);
+            },200);
+        }
+        //Remove
+        else {
+            $scope.newAct.periods.splice(periodIndex,1);
+            $scope.newActDays.splice(periodIndex,1);
+        }
+        
+        console.log($scope.newActDays);
+    };
+
+    $scope.addRemoveTime = function(periodIndex,dayIndex,timeIndex){
+        console.log($scope.newAct.periods);
+        console.log(periodIndex,dayIndex,timeIndex);
+        //Add
+        if(timeIndex === -1){
+            $scope.newAct.periods[periodIndex].days[dayIndex].times.push({});
+        }
+        //Remove
+        else{
+            $scope.newAct.periods[periodIndex].days[dayIndex].times.splice(timeIndex,1);
+        }
+    };
+    
+    //Necesita translations..
+    $scope.getAssociations = function(){
+        $http({method:'GET', url:session.host+':3000/asocs'})
+        .success(function(asocs){
+            //TODO: Es necesario? el hecho de que sea PRIVATE la última siempre,
+            //para que buscar el label si sabemos que es PRIVATE?
+            asocs[asocs.length-1].instName = session.translation.labels[asocs[asocs.length-1].instName];
+            $scope.actAsocs = asocs;
+            $scope.selectAsoc(asocs[0]);
+            return;
+        })
+        .error(function(){
+            return; 
+        });
+    };
+    
+    $scope.partSearch = function(){
+        if ($scope.partSearchTerm===''){
+            $scope.partSearchResults = [];
+            return;
+        }
+        var path = session.host+':3000/search?what=Parts&par='+$scope.partSearchTerm+'&nam='+$scope.partSearchTerm;
+        $http({method:'GET', url:path})
+            .success(function (results){
+            	console.log(results);
+                $scope.partSearchResults=results;
+        });
+    };
+    
+    /*****************************************************************/
+    /*****************************************************************/
+    /*****************************************************************/
+    /*****************************************************************/
 
 	/**
 	 * Para que las franjas horarias se adapten automáticamente.
@@ -14,6 +140,24 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			$scope.replot();
 		}
 	});
+    
+    $scope.test = function(){
+        console.log($scope.newActDays);
+        var actToCreate = {};//
+        $.extend(true,actToCreate,$scope.newAct); //Evita cambios en el DOM ! Deep Copy
+        
+        $scope.newActDays.forEach(function(periodDays,periodIndex){
+            var days = periodDays.slice(); //Evita cambios en el DOM
+            days.reverse(); //Porque si sacamos primero el [0], los indices > 0 no tienen relación como antes. (el 1 es el 0)
+            days.forEach(function(daySelected,dayIndex){
+                if(!daySelected){
+                    //TODO: El 6 está impuesto.. Si se agrega el domingo esto anda mal!
+                    actToCreate.periods[periodIndex].days.splice(5-dayIndex,1);
+                }
+            });
+        });
+        console.log(actToCreate);
+    };
 
 	/** @type {Boolean} Decide si se muestra el EDT o el form de nueva actividad */
 	$scope.newActCollapse = true;
@@ -45,14 +189,14 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			return false;
 		var D = DOb.getDay();
 		if (D==0)
-			D=7; // D = ISO DoW
+                    D=7; // D = ISO DoW
 		DOb.setDate(DOb.getDate() + (4-D));   // To nearest Thu, mid-week
 		var YN = DOb.getFullYear();           // YN = ISO W-N Year
 		// uses Jan 1 of YN; -6h allows for Summer Time
 		var ZBDoCY = Math.floor( (DOb.getTime() - new Date(YN, 0, 1, -6)) / 864e5 );
 		var WN = 1 + Math.floor(ZBDoCY/7);
 
-		return [YN, WN, D] /* ISO 8601 */
+		return [YN, WN, D]; /* ISO 8601 */
 	};
 
 	/**
@@ -79,7 +223,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	};
 
 	/**
-	 * Para una semana data como parámetro, o para la semana actual si es
+	 * Para una semana dada como parámetro, o para la semana actual si es
 	 * omitido,	guarda los strings correspondientes a las fechas de esa semana.
 	 * @param {Integer} w
 	 */
@@ -89,22 +233,28 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		var week = (w?[(new Date()).getFullYear(),w,0]:$scope.DobToYWDarr(new Date()));
 
 		$scope.searchWeek = week[1];
+                
+                if(w){
+                    $scope.edtGetTimes({name:$scope.searchTerm}, $scope.searchWeek);
+                    $scope.clearplot();
+                    $scope.replot();
+                } else {
+                    $scope.clearplot();   
+                }
 
-		$scope.days.forEach(function(el,index){
+		$scope.daysToShow.forEach(function(el,index){
 			var jour = $scope.YWDarrToDob([week[0],week[1],index+1]);
 			var d = jour.getDate();
 			var m = (jour.getMonth()+1);
 			var y = jour.getFullYear();
 			el.date = (d<10?'0':'')+d+'/'+(m<10?'0':'')+m+'/'+y;
 		});
-
-		//TODO: PLOTEAR ACA.
-	}
+	};
 
 	/**
 	 * Realiza el pedido de los tipos de elementos a los que se les puede
 	 * consultar horarios, y los guarda en $scope.items
-	 */
+	 *
 	$scope.edtAllTypes = function(){
 		
 		edt.getAllTypes(function(err,data){
@@ -114,7 +264,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				$scope.items.data = data;
 			}
 		});
-	};
+	};*/
 	
 	/**
 	 * Reestablece las variables usadas en la consulta de horarios. Y se vuelven
@@ -132,21 +282,22 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 
 		$scope.searchTerm = 'Elija Tipo';
 		$scope.searchIcon = 'fa-question-circle';
-		$scope.type = '';
-		$scope.subtype = '';
+		//$scope.type = '';
+		//$scope.subtype = '';
 		$scope.newActCollapse = true;
 
-		$scope.edtAllTypes();
+		//$scope.edtAllTypes();
 	};
 	
 	/**
 	 * Posibles opciones para la repetición de actividades al momento de crearlas
 	 * @type {Array}
 	 */
-	$scope.actRepeats = [	{name:'Cada semana', value:'pw'},
-							{name:'Semana próxima', value:'nw'},
-							{name:'Cada dos semanas', value:'2w'},
-							{name:'Nunca', value:'n'}]
+	$scope.actRepeats = {   pw:'Cada semana',
+                            nw:'Semana próxima',
+                            w2:'Cada dos semanas',
+                            n: 'Nunca'
+                        };
 
 	/**
 	 * Días que se muestran en la tabla de horarios. Si se omite uno, no se
@@ -154,27 +305,27 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * (en timeplot())
 	 * @type {Array}
 	 */
-	$scope.days = [{name:'Lunes',
+	$scope.daysToShow = [{name:'lu',
 					date:'',
 					collapsed: true
 				},
-				{	name:'Martes',
+				{	name:'ma',
 					date:'',
 					collapsed: true
 				},
-				{	name:'Miércoles',
+				{	name:'mi',
 					date:'',
 					collapsed: true
 				},
-				{	name:'Jueves',
+				{	name:'ju',
 					date:'',
 					collapsed: true
 				},
-				{	name:'Viernes',
+				{	name:'vi',
 					date:'',
 					collapsed: true
 				},
-				{	name:'Sábado',
+				{	name:'sa',
 					date:'',
 					collapsed: true
 				}];
@@ -183,73 +334,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * Variable deprecated, para testing antes de que los horarios se pidan a la base de datos.
 	 * @type {Array}
 	 */
-	$scope.times = [	{	day:'Jueves',
-							times: [
-							{	ti:'12h30',
-										tf:'13h48',
-										place:'Aula 6',
-										person:'Andrés Manelli',
-										type:'Curso'
-							},
-							{	ti:'08h10',
-								tf:'10h20',
-								place:'Anfiteatro Oeste',
-								person:'Aníbal Mirasso',
-								type:'Clase'
-							},
-							{	ti:'08h30',
-								tf:'10h00',
-								place:'Anfiteatro Oeste',
-								person:'Aníbal Mirasso',
-								type:'Clase'
-							},
-							{	ti:'15h00',
-								tf:'16h30',
-								place:'Asociación de Mecatrónica',
-								person:'Fernando Cladera',
-								type:'Curso'
-							},
-							{	ti:'19h00',
-								tf:'20h00',
-								place:'Anfiteatro Este',
-								person:'Susana Bernasconi',
-								type:'Plenaria'
-							}]
-						},
-						{	day:'Lunes',
-							times: [	
-							{	ti:'14h30',
-								tf:'16h48',
-								place:'Aula 10',
-								person:'Alvaro Alonso',
-								type:'Clase'
-							},
-							{	ti:'17h00',
-								tf:'18h00',
-								place:'Aula 1',
-								person:'Gino Copparoni',
-								type:'TP'
-							},
-							{	ti:'08h40',
-								tf:'09h50',
-								place:'Aula 16',
-								person:'Franco Ardiani',
-								type:'Plenaria'
-							},
-							{	ti:'18h30',
-								tf:'21h50',
-								place:'Asociación de Mecatrónica',
-								person:'Fernando Cladera',
-								type:'Curso'
-							},
-							{	ti:'11h00',
-								tf:'11h45',
-								place:'Aula 5',
-								person:'Maximiliano Badaloni',
-								type:'Examen'
-							}]
-						}];
-	
+	 $scope.times = [];
+     
 	/**
 	 * Devuelve una descripción de la franja horaria en HTML para incrustarla en
 	 * la <div> del día que corresponda
@@ -261,10 +347,10 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	
 		//w = Math.ceil(w);	
 		var info = ['<div style="padding-left: 3px; height: 100%">',
-					'<div style="height: 20%">'+timejson.type.substr(0,15)+'</div>',
+					'<div style="height: 20%">'+timejson.actType.substr(0,15)+'</div>',
 					'<div style="height: 40%">'+timejson.ti+' - '+timejson.tf+'</div>',
-					'<div style="height: 20%">'+timejson.person.split(' ')[0].substr(0,1)+'. '+timejson.person.split(' ')[1]+'</div>',
-					'<div style="height: 20%">'+timejson.place+'</div>',
+					'<div style="height: 20%">'+timejson.who.split(' ')[0].substr(0,1)+'. '+timejson.who.split(' ')[1]+'</div>',
+					'<div style="height: 20%">'+timejson.where+'</div>',
 					'</div>'].join('\n');
 		/*			
 		if(ttip){
@@ -322,6 +408,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 */
 	$scope.timeplot = function(alltimes, config){
 
+		console.log(alltimes);
+
 		var divwidth;
 		var divheight;
 
@@ -341,21 +429,22 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		var tt = end - start;
 
 		alltimes.forEach(function(el){
-			var id = el.day+$scope.suffix;
-			var times = el.times;
+			var id = $scope.daysToShow[el.when.day-1].name+$scope.suffix;
+                        console.log(id);
+			//var times = el.times;
 			//	Transform times
-			times.forEach(function(el){
+			//times.forEach(function(el){
 				el.mti = $scope.getminutes(el.ti);
 				el.mtf = $scope.getminutes(el.tf);
-			});
+			//});
 			
-			times.sort(function(a, b){
-				return a.mti - b.mti;
-			});
+			//times.sort(function(a, b){
+			//	return a.mti - b.mti;
+			//});
 			
 			var pos,htip;
 		
-			if($scope.suffix=='H'){	
+			if($scope.suffix == 'H'){	
 				pos = 'right center';
 				//htip = h - 10;
 
@@ -364,7 +453,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					//htip = h - 10;
 				}
 
-				times.forEach(function(el){
+				//times.forEach(function(el){
 					var x = ((el.mti-start)/tt)*divwidth;
 					var w = ((el.mtf - el.mti)/tt)*divwidth;
 					$scope.divs[$scope.divIndex] = document.createElement('div');
@@ -374,7 +463,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					$($scope.divs[$scope.divIndex]).css('left', x);
 					$($scope.divs[$scope.divIndex]).css('width', w);
 					$($scope.divs[$scope.divIndex]).css('height',divheight);
-					$($scope.divs[$scope.divIndex]).css('background-color', config.types[el.type].color);
+					$($scope.divs[$scope.divIndex]).css('background-color', config.types[el.actType].color);
 					if(w >= 85){
 						$($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
 						$scope.divs[$scope.divIndex].className += ' edt-block-info';
@@ -391,7 +480,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					document.getElementById(id).appendChild($scope.divs[$scope.divIndex]);
 					$scope.divIndex++;
 					//TODO: new row if superposition found
-				});
+				//});
 			} else {
 				pos = 'center bottom';
 				htip = 50;
@@ -403,7 +492,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 
 				var top = 0;
 				var hcum = 0;
-				times.forEach(function(el,index){
+				//times.forEach(function(el,index){
 					var y = ((el.mti-start)/tt)*divheight;
 					var h = ((el.mtf - el.mti)/tt)*divheight;
 					top = y-hcum;
@@ -413,7 +502,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					if(index==0){$($scope.divs[$scope.divIndex]).css('top', top+'px');}
 					$($scope.divs[$scope.divIndex]).css('width', '100%');
 					$($scope.divs[$scope.divIndex]).css('height',h+'px');
-					$($scope.divs[$scope.divIndex]).css('background-color', config.types[el.type].color);
+					$($scope.divs[$scope.divIndex]).css('background-color', config.types[el.actType].color);
 					if(h >= 70){
 						$($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
 						$scope.divs[$scope.divIndex].className += ' edt-block-info';
@@ -431,7 +520,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 					$scope.divIndex++;
 					hcum+=h;
 					//TODO: new row if superposition found
-				});
+				//});
 				
 				$('.edt-ttip').off( "mouseover" ).click(function(){
 					$(this).tooltip('open');
@@ -446,10 +535,10 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * vistas mobile
 	 * 
 	 * @param  {Integer} day Índice del día (ubicación dentro del objeto
-	 *                       $scope.days) del día a desplegar.
+	 *                       $scope.daysToShow) del día a desplegar.
 	 */
 	$scope.showTimesV = function(day) {
-		$scope.days[day].collapsed = !$scope.days[day].collapsed;
+		$scope.daysToShow[day].collapsed = !$scope.daysToShow[day].collapsed;
 	};
 		
 	/**
@@ -459,7 +548,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * 
 	 * @param  {String} item Categoría de elementos.
 	 *                       Por ejemplo: 'Materia', 'Profesor'
-	 */
+	 *
 	$scope.edtSubTypes = function(item){
 		
 		$scope.type = item.name;
@@ -473,7 +562,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				$scope.items.click = 'edtGetTimes';
 			}
 		});
-	};
+	};*/
 	
 	/**
 	 * Teniendo la categoría y el elemento dentro de esa categoría, esta función
@@ -494,7 +583,10 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			} else {
 				console.log('EDT GET TIMES: ');
 				console.log(times);
-			}
+                $scope.times = times.data;
+                $scope.clearplot();
+                $scope.replot();
+        }
 		});
 	};
 	
@@ -512,7 +604,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				config.types.forEach(function(el){
 					($scope.config.types[el.name] = new Object()).color = el.color;
 				});
-				$scope.timeplot($scope.times, $scope.config);
+				//$scope.timeplot($scope.times, $scope.config);
 			}
 		});
 	};
@@ -523,7 +615,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * 
 	 * @param  {String} strDate Fecha con formato: dd/mm/yyyy
 	 */
-	$scope.newActRepeatTo = function(strDate){
+	$scope.newActRepeatTo = function(strDate,periodIndex){
 		var date = strDate.split('/');
 		var day  = date[0];  
 		// month - 1 porque en formato ISO el mes es de 0 a 11
@@ -533,8 +625,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		date = new Date(year,month,day);
 		date = $scope.DobToYWDarr(date);
 
-		$scope.newAct.toWhen = {year:date[0],week:date[1],day:date[2]};
-	}
+		$scope.newAct.periods[periodIndex].to = {year:date[0],week:date[1],day:date[2]};
+	};
 
 	/**
 	 * Ejecutada al seleccionar un elemento del menú desplegable de los posibles
@@ -544,25 +636,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * @param  {Object} repeat Objeto que guarda los strings que definen la
 	 * repetición.
 	 */
-	$scope.newActSelectRepeat = function(repeat){
-		$scope.newActRepeat = repeat;
-		$scope.newAct.repeat = repeat.value;
-
-		/* 	Para llenar el valor del text del <input>. Podria usarse $('#newActWhen').val($scope.today);
-		 *	No se llama a 'onSelect'
-		 */
-		var ref = $scope.newAct.when;
-		var date = $scope.YWDarrToDob([ref.year,ref.week+1,ref.day]);
-		$('#newActToWhen').datepicker('setDate', date);
-
-		/* 	Para que se carguen los valores en $scope.newAct.toWhen.* ; 
-		 *	
-		 */
-		var d = date.getDate();
-		var m = date.getMonth();
-		var y = date.getFullYear();
-		date = (d<10?'0':'')+d+'/'+((parseInt(m)+1)<10?'0':'')+(parseInt(m)+1)+'/'+y;
-		$scope.newActRepeatTo(date);
+	$scope.newActSelectRepeat = function(repeat,periodIndex){
+		$scope.newAct.periods[periodIndex].repeat = repeat;
 	};
 
 	/**
@@ -570,20 +645,21 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * 
 	 * @param  {Object} place Objeto que define el lugar
 	 *                        El formato puede encontrarse en el README.md
-	 */
+	 *
 	$scope.newActSelectActWhere = function(place){
 		$scope.newAct.where = place.name;
-	}
+                $scope.newAct.whereID = place.id;
+	};*/
 
 	/**
 	 * Carga en newAct la categoría de actividad a realizar. Por ejemplo 'Materia', 'Congreso'
 	 * 
 	 * @param  {Object} type Objeto que representa una categoría de actividad.
 	 *                        El formato puede encontrarse en el README.md
-	 */
+	 *
 	$scope.newActSelectActType = function(type){
 		$scope.newAct.actType = type.name;
-	};
+	};*/
 
 	/**
 	 * Carga en newAct la sub-categoría de la actividad a realizar. Por ejemplo
@@ -591,10 +667,11 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * 
 	 * @param  {Object} subcat Objeto que representa una sub-categoría de actividad.
 	 *                         El formato puede encontrarse en el README.md
-	 */
+	 *
 	$scope.newActSelectSubCats = function(subcat){
 		$scope.newAct.what = subcat.name;
-	};
+                $scope.newAct.whatID = subcat.id;
+	};*/
 
 	/**
 	 * Consulta al servidor sobre los tipos de actividades posibles para la
@@ -603,7 +680,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * 
 	 * @param  {Object} cat Objeto que representa una categoría de actividad.
 	 *                      El formato puede encontrarse en el README.md
-	 */
+	 *
 	$scope.newActSubCats = function(cat){
 
 		// Guardar la elección. Importante!
@@ -625,9 +702,10 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			} else {
 				$scope.actSubCats = data;
 				$scope.newAct.what = $scope.actSubCats[0].name;
+                                $scope.newAct.whatID = $scope.actSubCats[0].id;
 			}
 		});
-	};
+	};*/
 
 	/**
 	 * Verifica si lo ingresado en los <input> de horarios de la nueva actividad
@@ -637,6 +715,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 */
 	$scope.checkTimes = function(){
 
+        //TODO: HACERLO FOR EACH PERIOD Y TIME!
 		var msg=null;
 		if($scope.getminutes($scope.newAct.ti) < $scope.getminutes($scope.config.limits.start)){
 			msg = 'La hora inicial no puede ser anterior al inicio general! ('
@@ -650,7 +729,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			$('#WrongAct').prop('hidden',true);
 			return false;
 		}
-		
+
 		if(msg){
 			$('#WrongAct').text(msg).prop('hidden',false);
 			return true;
@@ -658,7 +737,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			$('#WrongAct').prop('hidden',true);
 			return false;
 		}
-	}
+	};
 
 	/**
 	 * Guarda en newAct el valor de la fecha [de inicio] || [de desarrollo] de
@@ -666,7 +745,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 * 
 	 * @param  {String} strDate Fecha en formato: dd/mm/yyyy
 	 */
-	$scope.newActWhen = function(strDate){
+	$scope.newActWhen = function(strDate,periodIndex){
+        console.log(strDate,periodIndex);
 		var date = strDate.split('/');
 		var day  = date[0];  
 		// month - 1 porque en formato ISO el mes es de 0 a 11
@@ -674,23 +754,18 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		var year = date[2]; 
 
 		date = new Date(year,month,day);
-		$('#newActToWhen').datepicker( "option", "minDate", date);
+		$('#newActTo'+periodIndex).datepicker( "option", "minDate", date);
 		date = $scope.DobToYWDarr(date);
-		$scope.newAct.when = {year:date[0],week:date[1],day:date[2]};
+		$scope.newAct.periods[periodIndex].from = {year:date[0],week:date[1],day:date[2]};
 
-		//Auto completar toWhen
-		$scope.newActSelectRepeat($scope.newActRepeat);
 	};
 
 	/**
 	 * Envía al servidor el JSON de la nueva actividad.
 	 * 
-	 * @param  {Object} newAct JSON que contiene todos los campos pertinentes de la actividad.
-	 *                         El formato puede encontrarse en el README.md
-	 *
 	 * TODO: Enviar la actividad
 	 */
-	$scope.newActivity = function(newAct){
+	$scope.newActivity = function(){
 
 		if($scope.checkTimes()){
 			return;
@@ -698,8 +773,13 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			$scope.newAct.whoID = session.getId();
 			$scope.newAct.who = session.getUserName();
 			console.log($scope.newAct);
+                        edt.newActivity($scope.newAct,$scope.weeksInYear(),function(err){
+                           if(err){
+                               console.log(err);
+                           }
+                        });
 		}
-	}
+	};
 
 	/**
 	 * Función recíproca de getminutes. Recibe un entero (cantidad de minutos) y
@@ -715,35 +795,38 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		var m = minutes-h*60;
 
 		return (h<10?'0'+h:h)+'h'+(m<10?'0'+m:m);
-	}
+	};
 
 	/**
 	 * Impide al usuario ingresar cadenas de caracteres erróneas y no conformes al formato de horarios.
 	 * Sólo permite ingresar números, y autocompleta la 'h'. Tampoco permite ingresar por ejemplo, 
 	 * la cifra '7' para las horas.
 	 * 
-	 * @param  {String} el Nombre del campo correspondiente al JSON de hora del objeto newAct.
+	 * @param  {String} Valor de hora
 	 * @return {Bool}    true si la hora fue completada con éxito. false si falta algún dato.
 	 *
 	 * TODO: Permitir ingresar sólo el '7' para '07h00' por ejemplo. Lo mismo para los minutos
 	 */
-	$scope.correctTime = function(el){
-	    
-	    var matches = /([0-2]{0,1})([0-9]{0,1})(h{0,1})([0-5]{0,1})([0-9]{0,1})/g.exec($scope.newAct[el]);
+	$scope.correctTime = function(periodIndex,dayIndex,timeIndex,toFrom){
+        var el = $scope.newAct.periods[periodIndex].days[dayIndex].times[timeIndex][toFrom];
+	    var matches = /([0-2]{0,1})([0-9]{0,1})(h{0,1})([0-5]{0,1})([0-9]{0,1})/g.exec(el);
 	    if(matches[1] == ''){
-	    	$scope.newAct[el] = '';
+	    	el = '';
 	    }else if(matches[2] == '' || parseInt(matches[1]+''+matches[2]) > 23){
-	    	$scope.newAct[el] = matches[1];
+	    	el = matches[1];
 	    }else if(matches[4] == '' ){
-	    	$scope.newAct[el] = matches[1]+''+matches[2]+'h';
+	    	el = matches[1]+''+matches[2]+'h';
 	    }else if(matches[5] == ''){
-	    	$scope.newAct[el] = matches[1]+''+matches[2]+'h'+''+matches[4];
+	    	el = matches[1]+''+matches[2]+'h'+''+matches[4];
 	    }else if(matches[5] != ''){
-	    	$scope.newAct[el] = matches[1]+''+matches[2]+'h'+''+matches[4]+''+matches[5];
+	    	el = matches[1]+''+matches[2]+'h'+''+matches[4]+''+matches[5];
+            $scope.newAct.periods[periodIndex].days[dayIndex].times[timeIndex][toFrom] = el;
 	    	return true;
 	    	//Desabilitar input?
 	    }
-
+        
+        $scope.newAct.periods[periodIndex].days[dayIndex].times[timeIndex][toFrom] = el;
+        
 	    return false;
 	};
 
@@ -762,7 +845,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				end = $scope.minutes2Str(end);
 				$scope.newAct.tf = end;
 
-				if($scope.checkTimes()){$scope.newAct.tf = ''};
+				if($scope.checkTimes()){$scope.newAct.tf = '';}
 			} else if($('#newActStart').parsley().isValid() && $('#newActEnd').parsley().isValid()){
 				var start = $scope.getminutes($('#newActStart').val());
 				var end = $scope.getminutes($('#newActEnd').val());
@@ -770,7 +853,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				dur = $scope.minutes2Str(dur);
 				$scope.newAct.dur = dur;
 
-				if($scope.checkTimes()){$scope.newAct.dur = ''};
+				if($scope.checkTimes()){$scope.newAct.dur = '';}
 			} else if($('#newActDur').parsley().isValid(true) && $('#newActEnd').parsley().isValid()){
 				var dur = $scope.getminutes($('#newActDur').val());
 				var end = $scope.getminutes($('#newActEnd').val());
@@ -778,18 +861,78 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 				start = $scope.minutes2Str(start);
 				$scope.newAct.ti = start;
 
-				if($scope.checkTimes()){$scope.newAct.ti = ''};
+				if($scope.checkTimes()){$scope.newAct.ti = '';}
 			}
 		}
-	}
+	};
 
-	/**
-	 * Borra el texto de todos los <inputs> del form.
-	 */
 	$scope.clearAct = function(){
+        //TODO: MODIFICAR
+		$scope.newAct.periods = [];
+        $scope.newAct.whatId = -1;
+        $scope.newAct.whoId = session.getId();
+        $scope.newAct.whoName = session.profile.firstName[0]+'. '+session.profile.lastName;
+        
+        $scope.newActDays = [];
+        $scope.addRemovePeriod(-1);
+    };
+    
+    $scope.attachCalendar = function(periodIndex){
+        /**
+         * Configuración del calendario de fecha de inicio.
+         * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
+         */
+        $('#newActFrom'+$scope.dayOrPeriod+periodIndex).datepicker({minDate: 0,
+            showWeek: true,
+            dateFormat: 'dd/mm/yy',
+            defaultDate: 0,
+            firstDay: 1
+        });
+        /* 	Para llenar el valor del input. Podria usarse $('#newActWhen').val($scope.today);
+         *	No se llama a 'onSelect'
+         */
+        $('#newActFrom'+$scope.dayOrPeriod+periodIndex).datepicker('setDate', new Date());
 
-		$('#newActForm * input').val('');
-	}
+        /**
+         * Configuración del calendario de fecha de cierre.
+         * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
+         */
+        $('#newActTo'+$scope.dayOrPeriod+periodIndex).datepicker({showWeek: true,
+            dateFormat: 'dd/mm/yy',
+            firstDay: 1,
+            minDate: 0
+        });
+        
+        $('#newActFrom'+$scope.dayOrPeriod+periodIndex).datepicker('setDate', new Date());
+    };
+
+    $scope.$on('login', function () {
+        $scope.newAct.whoId = session.getId();
+    });
+    
+    $scope.$on('gotTranslation',function(){
+       $scope.translation = session.translation; 
+       $scope.getAssociations();
+    });
+    
+    $scope.$on('gotProfile',function(){
+       $scope.newAct.whoName = session.profile.firstName[0]+'. '+session.profile.lastName; 
+    });
+
+    if(session.loggedIn){
+        $scope.newAct.whoId = session.getId();
+    }
+    
+    if(session.translation){
+        $scope.translation = session.translation;
+        $scope.newAct.whatName = session.translation.labels['PRIVATE'];
+        
+        $scope.getAssociations();
+    }
+    
+    if(session.profile){
+        $scope.newAct.whoName = session.profile.firstName[0]+'. '+session.profile.lastName;     
+    }
 
 	/**
 	 * Realiza el pedido de valores por única vez al cargar el controlador,
@@ -800,7 +943,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 	 */
 	$scope.$on('$viewContentLoaded', function () {
 		$scope.clearSearch();
-
+                        
 		/* Como los ids de la tabla del EDT se generan dinámicamente en un ng-repeat,
 		 * el documento tarda un tiempo en verlos. Deberia haber un evento como $viewContentLoaded
 		 * que indique cuándo están accesibles. O se debería cambiar la forma en que está hecho el EDT.
@@ -809,11 +952,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 		$timeout(function(){
 
 			// Si no está definido no se pueden crear los campos al vuelo
-			$scope.newAct = {};
 			$scope.actCats = {};
-			// Si no está definido al datepicker no le gusta
-			$scope.newAct.when = {};
-			$scope.newAct.toWhen = {};
 
 			/* 	TODO:
 			 *	mongoTypes usado para el menú desplegable en edt.html,
@@ -822,25 +961,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			 */
 			$scope.config = { limits: {}, types: {}, mongoTypes: {}};
 			$scope.edtGetConfig();
-
-			edt.getTypes('Activity',function(err,data){
-				if(err){
-					console.log('Error Getting Activities Types');
-				} else {
-					$scope.actCats = data;
-					$scope.newAct.type = $scope.actCats[0].name;
-					$scope.newActSubCats($scope.newAct.type);
-				}
-			});
-
-			edt.getPlaces(function(err,data){
-				if(err){
-					console.log(err);
-				} else {
-					$scope.actPlaces = data;
-					$scope.newAct.where = $scope.actPlaces[0].name;
-				}
-			});
 
 			/*	Cargar las semanas en el año, sólo una vez al cargar el controlador
 			 */
@@ -868,77 +988,18 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout) {
 			$scope.thisWeek = $scope.DobToYWDarr($scope.today)[1];
 
 			/**
-			 * newActRepeat inicializado en 'Nunca' para ocultar el <input> de fecha de cierre.
-			 * 
-			 * @type {String}
-			 *
-			 * TODO: Cuidado si se agregan campos a actRepeats. El índice debe coincidir con 'Nunca'!
-			 */
-			$scope.newActRepeat = $scope.actRepeats[3];
-			$scope.newAct.repeat = $scope.newActRepeat.value;
-
-			/**
 			 * Mostramos el calendario
 			 */
 			$('#edt').prop('hidden',false);
-
-			/**
-			 * Configuración del calendario de fecha de inicio.
-			 * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
-			 */
-			$('#newActWhen').datepicker({	minDate: 0,
-											showWeek: true,
-											dateFormat:'dd/mm/yy',
-											defaultDate: 0,
-											firstDay: 1,
-											onSelect: $scope.newActWhen
-											});
-			/* 	Para llenar el valor del input. Podria usarse $('#newActWhen').val($scope.today);
-			 *	No se llama a 'onSelect'
-			 */
-			$('#newActWhen').datepicker('setDate', new Date());
-
-			/**
-			 * Configuración del calendario de fecha de cierre.
-			 * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
-			 */
-			$('#newActToWhen').datepicker({	showWeek: true,
-											dateFormat:'dd/mm/yy',
-											firstDay: 1,
-											beforeShowDay : function (date) {
-												var rep = $scope.newActRepeat.value;
-												var ref = $scope.newAct.when;
-												date = $scope.DobToYWDarr(date);
-												// Nunca repetir o el DoW no es el mismo
-												if(rep === 'n' || date[2] != ref.day){
-													return [false];
-												} else if(rep === 'pw'){
-													// week check
-        											return [true];
-        										} else if(rep === 'nw'){
-        											// Solo la semana siguiente
-        											return [((date[1]-ref.week) == 1) && (parseInt(date[2]) == ref.day)];
-        										} else if(rep === '2w'){
-        											// Cada dos semanas
-        											return [(date[1]-ref.week)%2 == 0];
-        										}
-    										},
-    										onSelect: $scope.newActRepeatTo
-    										//minDate seteada en $scope.newActWhen()
-			});
-
-			/* 	Para que se carguen los valores en $scope.newAct.when.* ; 
-			 *	Hay que llamarlo después de crear el $('#newActToWhen').datepicker();
-			 */
-			$scope.newActWhen($scope.today);
-
+		
 			/**
 			 * No sé porqué pero es muy necesario hacer esto
 			 *
 			 * TODO: Realmente lo es?
 			 */
 			$('.ui-datepicker').css('margin-top', '0px');
-
+            
+            $scope.addRemovePeriod(-1);
 		}, 200);
 	});
 	

@@ -73,11 +73,12 @@
   
   border: 1px solid #ACACAC;
   margin: 5px 10px;
-  height: 40px;
+  height: 30px;
   width: 100%;
   padding-left: 10px;
   @include respond-to(mobile){
-    margin: 5px 0
+    margin: 5px 0;
+    max-width: 900px;
   }
 }
 

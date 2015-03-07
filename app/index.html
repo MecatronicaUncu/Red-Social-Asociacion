@@ -22,8 +22,11 @@
     <link rel="stylesheet" href="app/styles/signops.css"/>
     <link rel="stylesheet" href="app/styles/navbar.css"/>
     <link rel="stylesheet" href="app/styles/contacts.css"/>
+    <link rel="stylesheet" href="app/styles/about.css"/>
+    <link rel="stylesheet" href="app/styles/checkbox.css"/>
     <link rel="stylesheet" href="app/styles/edt-mecuncu.css"/>
     <link rel="stylesheet" href="app/styles/activity-form.css"/>
+    <link rel="stylesheet" href="app/styles/admin.css"/>
     <link rel="stylesheet" href="app/styles/static/jquery-ui-custom/jquery-ui.min.css"/>
     <link rel="stylesheet" href="bower_components/jQuery.mmenu/src/css/jquery.mmenu.css"/>
     <!-- endbuild -->
@@ -44,7 +47,7 @@
                         <li class="nav-link nav-title">
                             <a></a>
                         </li>
-                        <li class="nav-link hide-mobile" ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible==='true'" ng-class='{"nav-active": navBarItem.active}'>
+                        <li class="nav-link hide-mobile" ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible" ng-class='{"nav-active": navBarItem.active}'>
                             <a ng-href="{{navBarItem.href}}">{{navBarItem.name}}</a>
                         </li>
                     </ul> 
@@ -52,7 +55,7 @@
 
             <nav id="navbar">
                 <ul>
-                    <li ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible==='true'" ng-class='{"nav-active": navBarItem.active}'>
+                    <li ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible" ng-class='{"nav-active": navBarItem.active}'>
                         <a ng-href="{{navBarItem.href}}">{{navBarItem.name}}</a>
                     </li>
                 </ul> 
@@ -66,8 +69,7 @@
 				<img class="pub-pic" src="app/images/pub/pubMECUNCU.jpg" alt="pubMECUNCU"/>
 				<img class="pub-pic" src="app/images/pub/pubUNCUYO.jpg" alt="pubUNCUYO"/>
 				<img class="pub-pic" src="app/images/pub/pubENIB.jpg" alt="pubENIB"/>
-				<img class="pub-pic" src="app/images/pub/pubBMO.jpg" alt="pubBMO"/>
-				<img class="pub-pic" src="app/images/pub/pubYO.png" alt="pubYO"/>
+				<img class="pub-pic" src="app/images/pub/pubFING.png" alt="pubFING"/>				
 			</div>
 			
 			<div ng-view="" class="mobile-margin"></div>
@@ -104,6 +106,7 @@
         <script src="app/scripts/controllers/MainCtrl.js"></script>
         <script src="app/scripts/controllers/NavBarCtrl.js"></script>
         <script src="app/scripts/controllers/EdtCtrl.js"></script>
+        <script src="app/scripts/controllers/AdminCtrl.js"></script>
         <!-- endbuild -->
 </body>
 </html> 

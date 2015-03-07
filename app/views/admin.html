@@ -1,0 +1,117 @@
+<div id="admin">
+    <div id="newNodeBar">
+        <div class="nodeSearchGroup">
+            <div id="nodeTypeSelect" class="dropdown">
+                <button class="nodeSearchBtn dropdown-toggle" type="button">
+                    {{translation.admin['add']}}:
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu scrollable-menu node-search-dropdown" role="menu">
+                    <li class="nav-header" ng-show="reltypes.length > 0">{{translation.admin['rels']}}</li>
+                    <li role="presentation" ng-repeat="reltype in reltypes">
+                        <a role="menuitem" tabindex="-1" ng-click="newRelForm(reltype)">{{translation.labels[reltype.label]}}</a>
+                    </li>
+                    <li class="nav-header" ng-show="nodetypes.length > 0">{{translation.admin['parts']}}</li>
+                    <li role="presentation" ng-repeat="nodetype in nodetypes">
+                        <a role="menuitem" tabindex="-1" ng-click="newNodeForm(nodetype)">{{translation.labels[nodetype.label]}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminNavBar">
+        <button class="nodeSearchBtn nodeNavBtn" type="button"
+                ng-click="getAdminNodes()"> Inicio >
+        </button>
+        <button class="nodeSearchBtn nodeNavBtn" type="button" ng-repeat="nodeNavLevel in nodeNavLevels"
+                ng-click="getNodeContent(nodeNavLevel, $index)">
+            {{nodeNavLevel.nodeData.name}} >
+        </button>
+    </div>
+
+    <div class="newNodeRelWrap" collapse="newRelCollapse">
+
+        <div class="wrongNodeRel" class="alert alert-danger" hidden></div>
+        <div class="input-group">       
+            <input type="text" ng-keyup="nodeSearch()" class="form-control" id="nodeSearchText" placeholder="Buscar...">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="nodeSearch()"><span class="fa fa-search"></span></button>
+            </span>
+        </div>
+
+        <div class="contact-field form-group" ng-repeat="he in nodeSearchResults" ng-click="selectNewRel(he)">
+            <img class="img-thumbnail contact-pic" ng-src="{{he.link}}" alt="contact pic"/>
+            <div class="contact-data">
+                <label>{{he.firstName}}</label>
+                <label>{{he.lastName}}</label><br/>
+                <label>{{he.email}}</label>
+            </div>
+        </div>
+
+        <span class="newRelLabel" ng-show="newRel.firstName">
+            {{translation.admin['define']}} {{newRel.firstName}} {{newRel.lastName}} {{translation.admin['as']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['of']}} {{nodeNavLevels[nodeNavLevels.length - 1].name}} ?</span>
+        <div class="dropdown newActSelect" ng-repeat="(paramIndex, param) in nodeRelToCreate.params" ng-show="newRel.firstName">
+            <span class="edtSearchBtn newActBtn newActLbl">{{translation.params[param.label]}}:</span>
+            <button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+                {{translation[param.selectedValue]}}
+            </button>
+            <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
+                <li role="presentation" ng-repeat="(label,value) in newRel[param.where]">
+                        <a role="menuitem" tabindex="-1" 
+                            ng-click="relParamSelected(label,value,paramIndex)">{{translation.labels[label]}} {{value}}</a>
+                </li>
+            </ul>
+        </div>
+        <button class="sign-up-btn newRelBtn" ng-click="createNewRel()" ng-show="newRel.firstName">Guardar</button>
+        <button class="sign-up-btn newRelBtn" id="clearActBtn" ng-click="cancelNewNodeRel()">Cancelar</button>
+
+    </div>
+
+    <div class="newNodeRelWrap" collapse="newNodeCollapse">
+
+        <div class="wrongNodeRel" class="alert alert-danger" hidden></div>
+
+        <span class="newNodeLabel">
+            {{translation.admin['create']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['in']}} {{nodeNavLevels[nodeNavLevels.length - 1].name}}</span>
+
+        <form id="newNodeForm" ng-submit="createNewPart()" data-parsley-validate>
+            <div class="sign-input-wrap" ng-repeat="field in nodeFields">
+                <input type="text" ng-model="newNode[field]" placeholder="{{translation.forms[field]}}" class="sign-input" data-parsley-ui-enabled="false" required>
+            </div>  
+            <div class="sign-input-wrap">
+                <button  type="submit" form="newNodeForm" class="sign-up-btn">Guardar</button>
+                <button class="sign-up-btn" id="cancelNewNode" ng-click="cancelNewNodeRel()">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="listOfNodes">
+        <label class="nodeRelDataHeading" ng-show="noderelToShow.rels.length != 0">{{translation.admin['rels']}}</label>
+        <div class="relField" ng-repeat="rel in noderelToShow.rels">
+            <img class="nodeRelPic" ng-src="/usr/{{rel.idNEO}}/pic" alt="field pic"/>
+            <div class="nodeRelData">
+                <label id="title">{{rel.nodeData.firstName}}</label> <label id="title">{{rel.nodeData.lastName}}</label><br/>
+                <label id="reltype">{{translation.labels[rel.reltype]}}</label><label id="institution">{{rel.isntName}}</label>
+            </div>
+            <div class="nodeFieldBtns">
+                <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-pencil"></i></button>
+                <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-close"></i></button>
+            </div>
+        </div>
+        <label class="nodeRelDataHeading" ng-show="noderelToShow.parts.length != 0">{{translation.admin['parts']}}</label>
+        <div class="nodeField" ng-repeat="part in noderelToShow.parts">
+            <div class="nodeRelData" ng-click="getNodeContent(part, -1)">
+                <label id="title">{{part.nodeData.name}}</label> <br/>
+                 <label class="partInfo">{{part.parentName}}</label> <label class="partInfo">{{part.nodeData.country}}</label>
+            </div>
+            <div class="nodeFieldBtns">
+                <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-pencil"></i></button>
+                <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-close"></i></button>
+            </div>
+        </div>
+    </div>
+    <div><p class="edt-footer">Asociación de Mecatrónica de Mendoza</p></div>
+</div>

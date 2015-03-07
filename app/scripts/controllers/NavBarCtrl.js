@@ -8,24 +8,41 @@
 
 angular.module('linkedEnibApp')
 .controller('NavBarCtrl',function($scope,$location,session){
-   
-    $scope.update = function(){
-         $scope.navBarItems=[
-             {name:'Inicio', href:'#/', active:$location.path()==='/', visible:'true'},
-             {name:'Buscar', href:'#/search', active:$location.path()==='/search', visible:'true'},
-             {name:'Perfil', href:'#/profile/'+session.getId(), active:$location.path()==='/profile/'+session.getId(), visible:session.isLogged()},
-             {name:'EDT', href:'#/edt/', active:$location.path()==='/edt/', visible:'true'},
-             {name:'Creadores', href:'#/about', active:$location.path()==='/about', visible:'true'}
-         ];
-     };
-   
-    $scope.$on('$locationChangeStart', function(event,newUrl,oldUrl){
-        $scope.update();
-        $(".mm-opened").trigger("close.mm");
+      
+    $scope.updateNavBar = function(){
+        if(session.translation){
+            var translation = session.translation.navBar;
+        
+            $scope.navBarItems=[
+                {name:translation.home, href:'#/', active:$location.path()==='/', visible:true},
+                {name:translation.search, href:'#/search', active:$location.path()==='/search', visible:true},
+                {name:translation.profile, href:'#/profile/', active:$location.path()==='/profile', visible:session.loggedIn},
+                {name:translation.edt, href:'#/edt/', active:$location.path()==='/edt/', visible:true},
+                {name:translation.admin, href:'#/admin/', active:$location.path()==='/admin/', visible:session.admin},
+                {name:translation.aboutus, href:'#/about', active:$location.path()==='/about', visible:true}
+            ];
+        }      
+    };
+      
+    $scope.$on('gotAdmin', function(){
+        $scope.updateNavBar();
     });
     
-    $scope.$on('update',function(){
-        $scope.update();
+    $scope.$on('login', function(){
+        $scope.updateNavBar();
+    });
+    
+    $scope.$on('logout', function(){
+        $scope.updateNavBar();
+    });
+      
+    $scope.$on('gotTranslation', function(){
+        $scope.updateNavBar();
+    });
+      
+    $scope.$on('$locationChangeStart', function(event,newUrl,oldUrl){
+        $scope.updateNavBar();
+        $(".mm-opened").trigger("close.mm");
     });
 
     $scope.toggleMMenu = function(){

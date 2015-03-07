@@ -12,15 +12,16 @@ angular.module('linkedEnibApp')
     $scope.search = function(){
         var text = $('#search_text').val();
         if (text===''){
-            $scope.results = {};
+            $scope.results = [];
             return;
         }
-        var path = session.host+':3000/search?fnm='+text+'&lnm='+text+'&prf='+text;
+        var path = session.host+':3000/search?what=Users&term='+text+'&fnm='+text+'&lnm='+text+'&prf='+text+'&ema='+text;
         $http({method:'GET', url:path})
-            .success(function (data){
-                $scope.results=data.users;
+            .success(function (results){
+            	console.log(results);
+                $scope.results=results;
                 $scope.results.forEach(function(el){
-                    el['link']=session.host+':3000/usr/'+el['id'].toString()+'/pic';
+                    el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
                 }); 
         });
     };

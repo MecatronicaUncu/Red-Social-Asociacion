@@ -15,6 +15,10 @@ angular
         templateUrl: 'views/profile.html',
         controller: 'ProfileCtrl'
       })
+      .when('/profile/', {
+          templateUrl: 'views/profile.html',
+          controller: 'ProfileCtrl'
+      })
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
@@ -26,6 +30,10 @@ angular
       .when('/about',{
         templateUrl: 'views/about.html'
       })
+      .when('/admin',{
+        templateUrl: 'views/admin.html',
+        controller: 'AdminCtrl'
+      })
       .when('/edt',{
         templateUrl: 'views/edt.html',
         controller: 'EdtCtrl'
@@ -34,10 +42,6 @@ angular
         redirectTo: '/'
       });
     $httpProvider.defaults.withCredentials = true;
-    //$httpProvider.defaults.useXDomain = true;
-    //$httpProvider.defaults.xsrfHeaderName 
-    //$httpProvider.defaults.xsrfCookieName = 'XSRF-TOKEN';
-    //$httpProvider.defaults.headers.common['X-CSRF-Token'] = $cookies['XSRF-Token'];
   })
   .directive('caiHomeSignin', function(){
       return {
@@ -98,152 +102,221 @@ angular
       };
   })
   .service('session',function($rootScope,$http,$timeout) {
-    this.loggedIn = 'false';
+    this.loggedIn = false;
+    //Es necesario? No se hace sólo con las cookies?
     this.ID = 0;
-    this.name = '';
-    this.host_LAN = 'https://192.168.3.107';
+    this.host_LAN = 'https://192.168.1.33';
     this.host_LOC = 'https://127.0.0.1';
     this.host_NET = 'https://edt.mecatronicauncu.org';
-    this.host = this.host_LAN;
-
-    this.setUserName = function(name){
-      this.name = name;
-    }
-
-    this.getUserName = function(){
-      return this.name;
-    }
-
+    this.host = this.host_LOC;
+    this.admin = false;
+    this.lang = 'ES_AR';
+    this.profile = null;
+    this.translation = null;
+    
+    this.getMyProfile = function(){
+        var session = this;
+        $http({method:'GET', url:session.host+':3000/profile'})
+	    .success(function (profile){
+            session.profile = profile;
+            $rootScope.$broadcast('gotProfile');
+            return;
+        })
+        .error(function(){
+            console.log('Error getting my profile');
+            return;
+        });
+    };
+    
     this.setUserID = function(id){
         this.ID = id;
     };
     this.log = function(inOut){
         if(inOut==='in'){
-            this.loggedIn = 'true';
+            this.loggedIn = true;
             $rootScope.$broadcast('login');
-            $rootScope.$broadcast('update');
+            //$rootScope.$broadcast('update');
         }
         else if(inOut==='out'){
-            this.loggedIn = 'false';
+            this.loggedIn = false;
+            this.setAdmin(false);
+            this.profile = null;
             this.setUserID(0);
-            this.setUserName('');
             $rootScope.$broadcast('logout');
-            $rootScope.$broadcast('update');
+            //$rootScope.$broadcast('update');
         }
     };
+    this.checkCookies = function() {
+    	var session = this;
+    	$http({method:'GET', url:session.host+':3000/checkCookie'})
+	    .success(function (data){
+	    	console.log(data);
+	      	session.setUserID(data.idNEO);
+            session.getMyProfile();
+	      	session.setLang(data.lang);
+            session.getTranslation();
+	      	session.log('in');
+            //TODO: Necesario?
+            $rootScope.$broadcast('login');
+	      	
+	      	$http({method:'GET', url:session.host+':3000/checkAdminCookie'})
+	      	.success(function(){
+	    		session.setAdmin(true);
+	    		$rootScope.$broadcast('gotAdmin');
+	        })
+	        .error(function(){
+				session.setAdmin(false);
+	        });
+	    })
+	    .error(function(){
+	        session.setUserID(0);
+            session.getTranslation(session.lang);
+	        session.log('out');
+            $rootScope.$broadcast('logout');
+	    });
+    };
+    this.getTranslation = function(){
+        var session = this;
+        $http({method:'GET', url:session.host+':3000/translation/'+session.lang})
+	      	.success(function(data){
+                session.setTranslation(data.translation);
+	        })
+	        .error(function(){
+				console.log('Error getting translations');
+	        });
+    };
+    this.setTranslation = function(translation){
+        this.translation = translation;
+        $rootScope.$broadcast('gotTranslation');
+    };
     this.isLogged =  function() {
-      return this.loggedIn;
-    };  
+    	return this.loggedIn;
+    };
+    this.isAdmin = function(){
+    	return this.admin;  
+    };
+    this.setAdmin = function(admin){
+    	this.admin = admin;
+    };
     this.getId = function() {
         return this.ID;
     };
+    this.setLang = function(lang){
+        this.lang = lang;
+    };
   })
-  .service('users', function($http, session) {
+  .service('users', function($http, $rootScope, session) {
   	
   	var funcs = {
-  		they: function(next){
-	  		$http({method:'GET', url:session.host+':3000/they'})
-	        .success(function (data){
-	            //$scope.they=data.users;
-	            //console.log('GET THEY OK');
-	            //$scope.they.forEach(function(el){
-	                //el['link']=session.host+':3000/usr/'+el['id'].toString()+'/pic';
-	            //});
-	            var err = null;
-	            return next(err,data.users);
-			})
-			.error(function(){
-				var err = 'error';
-				return next(err,{});
-			});  		
-	  	},
-	  	login: function(person,next){
-	        $http({method:'POST',url:session.host+':3000/login',data:person})
-            .success(function(data){
-                if (data.id==null){
+            they: function(next){
+            	$http({method:'GET', url:session.host+':3000/they'})
+            		.success(function (data){
+                		var err = null;
+                		return next(err,data.they);
+                    })
+                    .error(function(){
+                            var err = 'error';
+                            return next(err,{});
+                    });  		
+            },
+            login: function(person,next){
+                $http({method:'POST',url:session.host+':3000/login',data:person})
+                .success(function(data){
+                    if (data.idNEO==null){
+                        return next('Error');
+                    }else{
+                        session.setUserID(data.idNEO);
+                        session.log('in');
+                        $rootScope.$broadcast('login');
+                        //TODO: Por qué checkCookies si ya logeamos??
+                        //Por las de Admin. Sólo checkAdmin?
+                        session.checkCookies();
+                        return next(null);
+                    }
+                })
+                .error(function(data){
                     return next('Error');
-                }
-                session.setUserID(data.id);
-                session.setUserName(data.name);
-                console.log(data);
-                session.log('in');
-                return next(null);
-			})
-            .error(function(data){
-                return next('Error');
-			});
-	  	},
-	    signup: function(person,next){
-	    	$http({method:'POST',url:session.host+':3000/signup',data:person})
-	            .success(function(data){
-	                if (data.id==null){
-	                    return next('ID was null');
-	                }else{
-                      //return next(null);
-	                    return funcs.login(person,next);
-	                }
-	            })
-	            .error(function(data){
-	                return next('Signup Failed');
-	        	});
-	    }
-  	};
+                });
+            },
+            signup: function(person,next){
+                $http({method:'POST',url:session.host+':3000/signup',data:person})
+                .success(function(data){
+                    if (data.idNEO == null){
+                        return next('ID was null');
+                    }else{
+                        return funcs.login(person,next);
+                    }
+                })
+                .error(function(data){
+                    return next('Signup Failed');
+                });
+            }
+        };
   	
-  	return funcs;
+    return funcs;
   })
   .service('edt',function($http, session){
   	
   	var funcs = {
-  		getTypes: function(sub,next){
-  			$http({method:'GET', url:session.host+':3000/types', params:{sub:sub}})
-  				.success(function(data){
-            console.log(data);
-  					return next(null,data.data);
-  				})
-  				.error(function(data){
-  					return next('Error Getting Types',data);
-  				});
-  		},
+            getTypes: function(sub,next){
+                $http({method:'GET', url:session.host+':3000/types', params:{sub:sub}})
+                .success(function(data){
+                    console.log(data);
+                    return next(null,data.data);
+                })
+                .error(function(data){
+                return next('Error Getting Types',data);
+                });
+            },
 
-      getAllTypes: function(next){
-        return funcs.getTypes('',next);
-      },
-  		getSubTypes: function(type, next){
-  			$http({method:'GET', url:session.host+':3000/subtypes', params:{type:type}})
-  				.success(function(data){
-  					return next(null,data.data);
-  				})
-  				.error(function(data){
-  					return next('Error Getting Subtypes',data);
-  				});
-  		},
-  		getTimes: function(name, week, next){
-  			$http({method:'GET', url:session.host+':3000/times', params:{name:name, week:week}})
-  				.success(function(data){
-  					return next(null,data);
-  				})
-  				.error(function(data){
-  					return next('Error Getting Times',data);
-  				});
-  		},
-      getConfig: function(filter,next){
-        $http({method:'GET', url:session.host+':3000/edtconfig', params:{act:filter}})
-          .success(function(data){
-            return next(null,data);
-          })
-          .error(function(data){
-            return next('Error Getting EDT Config',data);
-          });
-      },
-      getPlaces: function(next){
-        $http({method:'GET', url:session.host+':3000/edtplaces'})
-          .success(function(data){
-            return next(null,data.data);
-          })
-          .error(function(data){
-            return next('Error Getting EDT Places',data);
-          });
-      }
+            getAllTypes: function(next){
+                return funcs.getTypes('',next);
+            },
+            getSubTypes: function(type, next){
+                $http({method:'GET', url:session.host+':3000/subtypes', params:{type:type}})
+                .success(function(data){
+                        return next(null,data.data);
+                })
+                .error(function(data){
+                        return next('Error Getting Subtypes',data);
+                });
+            },
+            getTimes: function(name, week, next){
+                $http({method:'GET', url:session.host+':3000/times', params:{name:name, week:week}})
+                .success(function(data){
+                        return next(null,data);
+                })
+                .error(function(data){
+                        return next('Error Getting Times',data);
+                });
+            },
+            getConfig: function(filter,next){
+                $http({method:'GET', url:session.host+':3000/edtconfig', params:{act:filter}})
+                .success(function(data){
+                  return next(null,data);
+                })
+                .error(function(data){
+                  return next('Error Getting EDT Config',data);
+                });
+            },
+            getPlaces: function(next){
+                $http({method:'GET', url:session.host+':3000/edtplaces'})
+                .success(function(data){
+                    return next(null,data.data);
+                })
+                .error(function(data){
+                    return next('Error Getting EDT Places',data);
+                });
+            },
+            newActivity: function(activity,weeksInYear,next){
+                $http({method:'POST', url:session.host+':3000/edtnewact', data:{activity:activity, wiy:weeksInYear}})
+                .success(function(){
+                    return next(null);
+                })
+                .error(function(){
+                    return next('Error Saving New Activity');
+                });
+            }
   	};
 
   	return funcs;
@@ -258,18 +331,6 @@ angular
         return fd;
     };
   })
-  .run(function(session, $http){
-	  $http({method:'GET', url:session.host+':3000/checkCookie'})
-		.success(function (data){
-            session.setUserID(data.id);
-            session.setUserName(data.name);
-            //console.log('Check Cookies Success');
-            session.log('in');
-		})
-		.error(function(){
-			//console.log('No Cookie');
-			session.setUserID(0);
-      session.setUserName('');
-			session.log('out');
-		});
-   });
+  .run(function(session){
+    session.checkCookies();
+  });
