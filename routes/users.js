@@ -469,7 +469,7 @@ exports.activate = function (req, res, next) {
                         res.send(401, 'Wrong email or password');
                         return;
                     }
-                    res.redirect(200,'https://127.0.0.1:3000/#/profile')
+                    res.redirect(200,'http://localhost:9000/#/profile')
                     //res.send(200, {idNEO: results['idNEO'], lang: results.lang});
                     return;
                 });
