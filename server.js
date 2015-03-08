@@ -132,7 +132,7 @@ app.get('/usr/:id/pic', users.getPicture);
 app.get('/profile/:id', users.extractCookieData, users.getProfile);
 app.get('/translation/:lang', mongo.getTranslation);
 app.get('/they', users.getThey);
-app.get('/activate', users.extractCookieData, users.activate);
+app.get('/activate', users.activate);
 app.post('/signup', users.signup);
 app.post('/login', users.extractCookieData, users.login);
 /******************************************************************************/

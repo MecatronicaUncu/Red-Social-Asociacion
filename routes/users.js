@@ -144,12 +144,15 @@ var send_email = function(email,hash){
                 pass: "sampleMail"
               }
             });
-
+            
+            //URL encoding
+            var hashRep = hash.replace("+","%2B");
+            
             // An example users object with formatted email function
             var locals = {
               email: email,
               hash: hash,
-              link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hash
+              link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hashRep
             };
 
             // Send a single email
@@ -448,41 +451,31 @@ exports.activate = function (req, res, next) {
         return;
     }
 
-    User.login(nodeData['email'], function (err, results) {
+    User.getParamByEmail(nodeData['email'], 'password',function (err, value,id) {
         if (err) {
-            res.send(401, 'Wrong email or password');
+            console.log(err);
+            res.send(401, 'Wrong email or password 1');
             return;
         }
 
-        if (nodeData['hash'] !== results['pass']) {
-            res.send(401, 'Wrong email or password');
+        if(value){}
+        else {res.send(401,'aaa');
+            return;}
+
+        if (nodeData['hash'] !== value) {
+            res.send(401, 'Wrong email or password 2');
+            return;
         };
         
-        if (results['idNEO']) {
-            if (!loggedIn(req, res)) {
-                var cook = new cookies(req, res, keys);
-                cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
-                cook.set('LinkedEnibLang', results.lang, {signed: true, maxAge: 9000000});
-                console.log(results['idNEO']);
-                User.changeProperty('active',"1",results.idNEO, function (err){
-                    if (err) {
-                        res.send(401, 'Wrong email or password');
-                        return;
-                    }
-                    res.redirect(200,'http://localhost:9000/#/profile')
-                    //res.send(200, {idNEO: results['idNEO'], lang: results.lang});
-                    return;
-                });
-            }
-            else {
-                res.send(401, 'Another user already logged in');
+        User.changeProperty('active',"1",id, function (sdf){
+            if (sdf) {
+                res.send(401, 'Something went wrong');
                 return;
             }
-        }
-        else {
-            res.send(401, 'Wrong email or password');
+            //res.redirect(200,'http://localhost:9000/#/profile')
+            res.send(200,"Gracias. Recarge la pagina https://127.0.0.1:3000/#/ para iniciar sesion");
             return;
-        }
+        });
     });
 };
 
@@ -670,7 +663,9 @@ exports.login = function (req, res, next) {
             return;
         }
         
-        if (results['active']){
+        console.log(results['active']);
+        
+        if (results['active']!=="1"){
             res.send(401,'Email not activated')
             return;
         }

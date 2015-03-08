@@ -44,8 +44,11 @@ App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, se
     $scope.signup = function(){
         $scope.fields.lang = session.lang;
         users.signup($scope.fields,function(err){
-        	if(err){
-        		console.log(err);
+            if(err){
+                console.log(err);
+            }
+            else {
+                window.alert("Active su cuenta desde su casilla de mail para iniciar sesion");
             }
         });
       };   
