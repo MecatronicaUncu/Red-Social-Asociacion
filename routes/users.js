@@ -11,7 +11,7 @@ exports.CookKeys = keys;
 var fs = require('fs'); //FILESYSTEM
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
-var templatesDir   = path.resolve(path.join(__dirname, 'templates'));
+var templatesDir   = path.resolve(path.join(__dirname, '../templates'));
 var emailTemplates = require('email-templates');
 
 
@@ -147,13 +147,13 @@ var send_email = function(email,hash){
 
             // An example users object with formatted email function
             var locals = {
-              email: req.query.email,
-              hash: req.query.hash,
+              email: email,
+              hash: hash,
               link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hash
             };
 
             // Send a single email
-            template('email-activacion', locals, function(err, html, text) {
+            template('email_activacion', locals, function(err, html, text) {
               if (err) {
                 console.log(err);
                 return false;
@@ -456,20 +456,21 @@ exports.activate = function (req, res, next) {
 
         if (nodeData['hash'] !== results['pass']) {
             res.send(401, 'Wrong email or password');
-        }
-        ;
+        };
+        
         if (results['idNEO']) {
             if (!loggedIn(req, res)) {
                 var cook = new cookies(req, res, keys);
                 cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
                 cook.set('LinkedEnibLang', results.lang, {signed: true, maxAge: 9000000});
                 console.log(results['idNEO']);
-                User.changeProperty('active',1,results.idNEO, function (err){
+                User.changeProperty('active',"1",results.idNEO, function (err){
                     if (err) {
                         res.send(401, 'Wrong email or password');
                         return;
                     }
-                    res.send(200, {idNEO: results['idNEO'], lang: results.lang});
+                    res.redirect(200,'https://127.0.0.1:3000/#/profile')
+                    //res.send(200, {idNEO: results['idNEO'], lang: results.lang});
                     return;
                 });
             }
