@@ -64,6 +64,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout,$http) {
             periodIndex = $scope.newAct.periods.length-1;
             $scope.newAct.periods[periodIndex].from = {};
             $scope.newAct.periods[periodIndex].to = {};
+            $scope.newAct.periods[periodIndex].desc = '';
             $scope.newAct.periods[periodIndex].days = [{day:'lu',times:[{}]},
                 {day:'ma',times:[{}]},{day:'mi',times:[{}]},{day:'ju',times:[{}]},
                 {day:'vi',times:[{}]},{day:'sa',times:[{}]}];
@@ -142,21 +143,41 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout,$http) {
 	});
     
     $scope.test = function(){
-        console.log($scope.newActDays);
-        var actToCreate = {};//
-        $.extend(true,actToCreate,$scope.newAct); //Evita cambios en el DOM ! Deep Copy
+        var actsToCreate = [];
         
-        $scope.newActDays.forEach(function(periodDays,periodIndex){
-            var days = periodDays.slice(); //Evita cambios en el DOM
-            days.reverse(); //Porque si sacamos primero el [0], los indices > 0 no tienen relación como antes. (el 1 es el 0)
-            days.forEach(function(daySelected,dayIndex){
-                if(!daySelected){
-                    //TODO: El 6 está impuesto.. Si se agrega el domingo esto anda mal!
-                    actToCreate.periods[periodIndex].days.splice(5-dayIndex,1);
-                }
-            });
+        $scope.newAct.periods.forEach(function(period,periodIndex){
+            var wstep = 1;
+            var wto = period.to.week;
+            var wfrom = period.from.week;
+            if(period.repeat === 'nw'){
+                wto = period.from.week+1;
+            }else if(period.repeat === 'n'){
+                wto = wfrom;
+            }
+            if(period.repeat === 'w2'){
+                wstep = 2;
+            }
+            
+            var thisYear = new Date().getFullYear()
+            console.log(period);
+            console.log(wfrom,wto,wstep);
+            for(var w=wfrom;w<=wto;w+=wstep){
+                period.days.forEach(function(day,dayIndex){
+                    console.log(day);
+                    if($scope.newActDays[periodIndex][dayIndex]){
+                        day.times.forEach(function(time){
+                            actsToCreate.push({
+                                date: {day: dayIndex+1, week: w, year: thisYear},
+                                type: period.type,
+                                desc: period.desc,
+                                time: {from: time.from, to: time.to}
+                            });
+                        });
+                    }
+                });
+            }
         });
-        console.log(actToCreate);
+        console.log(actsToCreate);
     };
 
 	/** @type {Boolean} Decide si se muestra el EDT o el form de nueva actividad */
@@ -754,7 +775,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout,$http) {
 		var year = date[2]; 
 
 		date = new Date(year,month,day);
-		$('#newActTo'+periodIndex).datepicker( "option", "minDate", date);
+		$('#newActTo'+$scope.dayOrPeriod+periodIndex).datepicker( "option", "minDate", date);
 		date = $scope.DobToYWDarr(date);
 		$scope.newAct.periods[periodIndex].from = {year:date[0],week:date[1],day:date[2]};
 
@@ -867,9 +888,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout,$http) {
 	};
 
 	$scope.clearAct = function(){
-        //TODO: MODIFICAR
 		$scope.newAct.periods = [];
-        $scope.newAct.whatId = -1;
+        $scope.newAct.whatId = $scope.actAsocs[0].instID;
         $scope.newAct.whoId = session.getId();
         $scope.newAct.whoName = session.profile.firstName[0]+'. '+session.profile.lastName;
         
@@ -892,6 +912,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout,$http) {
          *	No se llama a 'onSelect'
          */
         $('#newActFrom'+$scope.dayOrPeriod+periodIndex).datepicker('setDate', new Date());
+        $scope.newActWhen($('#newActFrom'+$scope.dayOrPeriod+periodIndex).val(),periodIndex);
 
         /**
          * Configuración del calendario de fecha de cierre.
@@ -900,7 +921,23 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout,$http) {
         $('#newActTo'+$scope.dayOrPeriod+periodIndex).datepicker({showWeek: true,
             dateFormat: 'dd/mm/yy',
             firstDay: 1,
-            minDate: 0
+            minDate: 0,
+//            function(){
+//                var idx = 0;
+//                $scope.newActDays[periodIndex].some(function(day,ind){idx=ind;return day;});
+//                return idx;
+//            },
+            beforeShowDay : function (date) {
+                var rep = $scope.newAct.periods[periodIndex].repeat;
+                var ref = $scope.newAct.periods[periodIndex].from;
+                date = $scope.DobToYWDarr(date);
+                if(rep === 'w2'){
+                    // Cada dos semanas
+                    return [((date[1]-ref.week)%2 === 0) && $scope.newActDays[periodIndex][date[2]-1]];
+                }else{
+                    return [$scope.newActDays[periodIndex][date[2]-1]];
+                }
+            }
         });
         
         $('#newActFrom'+$scope.dayOrPeriod+periodIndex).datepicker('setDate', new Date());
