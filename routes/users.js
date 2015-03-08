@@ -429,6 +429,16 @@ exports.activate = function (req, res, next) {
 /*                          POST METHODS                                      */
 /******************************************************************************/
 
+exports.newActivity = function(req,res,next){  
+    var col = db.collection('Activities');
+    //console.log(req.body);
+    var acts = req.body.activities;
+    /** Weeks in year */
+    var wiy = req.body.wiy;
+    
+    
+};
+
 exports.updateProfile = function (req, res, next) {
 
     if (!sameUser(req.body.id, req, res)) {
