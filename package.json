@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "ejs": ">= 0.0.1",
+    "email-templates": "^1.2.0",
     "express": "~3.3.4",
     "grunt-contrib-compass": "^1.0.1",
     "grunt-contrib-sass": "^0.8.1",

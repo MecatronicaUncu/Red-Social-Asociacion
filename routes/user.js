@@ -484,6 +484,7 @@ User.signup = function (nodeData, callback) {
         if(nodeData.hasOwnProperty(key))
             params += (key+':"'+nodeData[key]+'", ');
     }
+    // Saca el ultimo ", "
     params = params.slice(0,-2);
 
     var query = [
@@ -514,7 +515,7 @@ User.login = function (email, callback) {
         'MATCH (user:User)',
         'WHERE user.email={email}',
         'RETURN ID(user) AS idNEO, user.password AS pass,',
-        'user.salt AS salt, user.lang AS lang'
+        'user.salt AS salt, user.lang AS lang, user.active AS active'
     ].join('\n');
 
     var params = {

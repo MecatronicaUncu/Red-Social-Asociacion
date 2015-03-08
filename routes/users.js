@@ -10,6 +10,9 @@ var keys = keygrip(["Andres", "Franco"]);
 exports.CookKeys = keys;
 var fs = require('fs'); //FILESYSTEM
 var crypto = require('crypto');
+var nodemailer = require('nodemailer');
+var templatesDir   = path.resolve(__dirname, '..', 'templates');
+var emailTemplates = require('../../');
 
 
 /******************************************************************************/
@@ -366,6 +369,62 @@ exports.search = function (req, res, next) {
     });
 };
 
+/**
+ * Activates account
+ * @param {Object} req: The HTTP request's headers
+ * @param {Object} res: The HTTP request's response headers
+ * @param {Function} next: Function that executes next
+ * @returns {void} Nothing.
+ */
+exports.activate = function (req, res, next) {
+    
+    var nodeData = req.query;
+    if (!nodeData.hasOwnProperty('hash') || nodeData['hash'] == '') {
+        res.send(400, 'Missing password');
+        return;
+    }
+    if (!nodeData.hasOwnProperty('email') || nodeData['email'] == '') {
+        res.send(400, 'Missing email');
+        return;
+    }
+
+    User.login(nodeData['email'], function (err, results) {
+        if (err) {
+            res.send(401, 'Wrong email or password');
+            return;
+        }
+
+        if (nodeData['hash'] !== results['pass']) {
+            res.send(401, 'Wrong email or password');
+        }
+        ;
+        if (results['idNEO']) {
+            if (!loggedIn(req, res)) {
+                var cook = new cookies(req, res, keys);
+                cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
+                cook.set('LinkedEnibLang', results.lang, {signed: true, maxAge: 9000000});
+                console.log(results['idNEO']);
+                User.changeProperty('active',1,results.idNEO, function (err){
+                    if (err) {
+                        res.send(401, 'Wrong email or password');
+                        return;
+                    }
+                    res.send(200, {idNEO: results['idNEO'], lang: results.lang});
+                    return;
+                });
+            }
+            else {
+                res.send(401, 'Another user already logged in');
+                return;
+            }
+        }
+        else {
+            res.send(401, 'Wrong email or password');
+            return;
+        }
+    });
+};
+
 /******************************************************************************/
 /*                          POST METHODS                                      */
 /******************************************************************************/
@@ -490,8 +549,10 @@ exports.signup = function (req, res, next) {
     var tempPass = hash(nodeData['password'], null);
     nodeData.password = tempPass['pass'];
     nodeData.salt = tempPass['salt'];
+    nodeData['active']=0;
     var queryData = 'email:"' + nodeData['email'] + '", password:"' +
-        tempPass['pass'] + '", salt:"' + tempPass['salt'] + '"';
+        tempPass['pass'] + '", salt:"' + tempPass['salt'] + 
+        '", active:"' + tempPass['active'] + '"';
     // ES NECESARIO VERIFICAR ?
     //if (temp.hasOwnProperty('firstName') && temp['firstName']) query = query + ', firstName:"' + temp['firstName'] + '"';
     //if (temp.hasOwnProperty('lastName') && temp['lastName']) query = query + ', lastName:"' + temp['lastName'] + '"';
@@ -501,6 +562,10 @@ exports.signup = function (req, res, next) {
             res.send(400, 'email taken');
             return;
         } else if (idNEO) {
+            if(!send_email(nodeData['email'],tempPass['pass'])){
+                res.send(400, 'Activation mail error');
+                return;
+            }
             console.log(idNEO);
             res.send(200, {idNEO: userID});
             return;
@@ -523,6 +588,53 @@ exports.signup = function (req, res, next) {
     });
 };
 
+send_mail = function(email,hash){
+
+    // ## Send a single email
+
+    // Prepare nodemailer transport object
+    var transport = nodemailer.createTransport("SMTP", {
+      service: "Gmail",
+      auth: {
+        user: "samplesample978@gmail.com",
+        pass: "sampleMail"
+      }
+    });
+
+    // An example users object with formatted email function
+    var locals = {
+      email: req.query.email,
+      hash: req.query.hash,
+      link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hash
+    };
+
+    // Send a single email
+    template('email-activacion', locals, function(err, html, text) {
+      if (err) {
+        console.log(err);
+        return FALSE;
+      } else {
+        transport.sendMail({
+          from: 'Admin <admin@admin.com>',
+          to: locals.email,
+          subject: 'Activacion',
+          html: html,
+          // generateTextFromHTML: true,
+        }, function(err, responseStatus) {
+          if (err) {
+            console.log(err);
+            return FALSE;
+          } else {
+            console.log(responseStatus.message);
+          }
+        });
+      }
+    });
+    
+    return TRUE;
+  };
+
+
 /**
  * POST /login -> LOG IN
  */
@@ -541,6 +653,11 @@ exports.login = function (req, res, next) {
     User.login(nodeData['email'], function (err, results) {
         if (err) {
             res.send(401, 'Wrong email or password');
+            return;
+        }
+        
+        if (results['active']){
+            res.send(401,'Email not activated')
             return;
         }
 
