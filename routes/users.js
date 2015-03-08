@@ -11,8 +11,8 @@ exports.CookKeys = keys;
 var fs = require('fs'); //FILESYSTEM
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
-var templatesDir   = path.resolve(__dirname, '..', 'templates');
-var emailTemplates = require('../../');
+var templatesDir   = path.resolve(path.join(__dirname, 'templates'));
+var emailTemplates = require('email-templates');
 
 
 /******************************************************************************/
@@ -118,6 +118,66 @@ exports.extractCookieData = function (req, res, next) {
 
     return next();
 };
+
+/**
+ * Sends mail.
+ * @param {string} email: The user's mail adress
+ * @param {string} hash: The user's hashed password
+ * @returns {bool} Success state.
+ */
+var send_email = function(email,hash){
+
+    emailTemplates(templatesDir, function(err, template) {
+
+        if (err) {
+          console.log(err);
+          return false;
+        } else {
+
+            // ## Send a single email
+
+            // Prepare nodemailer transport object
+            var transport = nodemailer.createTransport("SMTP", {
+              service: "Gmail",
+              auth: {
+                user: "samplesample978@gmail.com",
+                pass: "sampleMail"
+              }
+            });
+
+            // An example users object with formatted email function
+            var locals = {
+              email: req.query.email,
+              hash: req.query.hash,
+              link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hash
+            };
+
+            // Send a single email
+            template('email-activacion', locals, function(err, html, text) {
+              if (err) {
+                console.log(err);
+                return false;
+              } else {
+                transport.sendMail({
+                  from: 'Admin <admin@admin.com>',
+                  to: locals.email,
+                  subject: 'Activacion',
+                  html: html,
+                  // generateTextFromHTML: true,
+                }, function(err, responseStatus) {
+                  if (err) {
+                    console.log(err);
+                    return false;
+                  } else {
+                    console.log(responseStatus.message);
+                  }
+                });
+              }
+            });
+        }
+    });
+    return true;
+  };
 
 /******************************************************************************/
 /*                          GET METHODS                                       */
@@ -577,7 +637,7 @@ exports.signup = function (req, res, next) {
                 return;
             }
             console.log(idNEO);
-            res.send(200, {idNEO: userID});
+            res.send(200, {idNEO: idNEO});
             return;
             /*
             Mongo.register(idNEO, nodeData, 'Users', function (err, userID) {
@@ -597,53 +657,6 @@ exports.signup = function (req, res, next) {
         }
     });
 };
-
-send_mail = function(email,hash){
-
-    // ## Send a single email
-
-    // Prepare nodemailer transport object
-    var transport = nodemailer.createTransport("SMTP", {
-      service: "Gmail",
-      auth: {
-        user: "samplesample978@gmail.com",
-        pass: "sampleMail"
-      }
-    });
-
-    // An example users object with formatted email function
-    var locals = {
-      email: req.query.email,
-      hash: req.query.hash,
-      link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hash
-    };
-
-    // Send a single email
-    template('email-activacion', locals, function(err, html, text) {
-      if (err) {
-        console.log(err);
-        return FALSE;
-      } else {
-        transport.sendMail({
-          from: 'Admin <admin@admin.com>',
-          to: locals.email,
-          subject: 'Activacion',
-          html: html,
-          // generateTextFromHTML: true,
-        }, function(err, responseStatus) {
-          if (err) {
-            console.log(err);
-            return FALSE;
-          } else {
-            console.log(responseStatus.message);
-          }
-        });
-      }
-    });
-    
-    return TRUE;
-  };
-
 
 /**
  * POST /login -> LOG IN
