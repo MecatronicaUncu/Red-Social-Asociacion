@@ -74,7 +74,7 @@ App.controller('AdminCtrl', function ($scope, session, $http) {
         
         $http({method:'POST', url:session.host+':3000/newrel', data:{usrID:$scope.newRel.idNEO,
                 relType:$scope.nodeRelToCreate.label,
-                inst:inst}})
+                instId:inst.idNEO}})
         .success(function(data){
             $scope.cancelNewNodeRel();
             $scope.getNodeContent(inst,$scope.nodeNavLevels.length-2);

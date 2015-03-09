@@ -558,7 +558,7 @@ exports.updateProfile = function (req, res, next) {
  */
 exports.newRel = function (req, res, next) {
     var relData = req.body;
-    if (!relData.hasOwnProperty('inst')) {
+    if (!relData.hasOwnProperty('instId')) {
         res.send(400, 'Missing Organism');
         return;
     }
@@ -572,19 +572,13 @@ exports.newRel = function (req, res, next) {
         res.send(400, 'Missing Relationship Details');
         return;
     }
-
+    console.log(relData);
     User.newRel(relData, function (err) {
         if (err) {
             res.send(400, 'Error Creating Rel');
             return;
         } else {
-            Mongo.newRel(relData, function (err) {
-                if (err) {
-                    res.send(500, 'Database Error');
-                } else {
-                    res.send(200);
-                }
-            });
+            res.send(200,'OK');
         }
     });
 };

@@ -168,7 +168,7 @@ User.getNodeContents = function(idNEO, callback){
 	var query = [
         'MATCH (e)-[r:PARTOF]->(u) WHERE ID(u)='+idNEO.toString(),
 		'RETURN distinct e as nodeData, ID(e) AS idNEO, LABELS(e) AS label,',
-		'TYPE(r) AS reltype, extract(name in collect(e.name) | name) AS instName',
+		'TYPE(r) AS reltype, \'\' AS instName',
 		'UNION',
 		'MATCH (e)-[r]->(u) WHERE ID(u)='+idNEO.toString(),
 		'AND NOT TYPE(r) IN ["PARTOF","ADMINS","MEMBER","SUBSCRIBED"]',
@@ -194,12 +194,15 @@ User.getNodeContents = function(idNEO, callback){
             results.forEach(function(res){
                 res.nodeData = res.nodeData._data.data;
                 if(res.reltype === 'PARTOF'){
-                   contents.parts.push(res);
+                    res.label = res.label[0];
+                    contents.parts.push(res);
                 }else{
                     if(res.nodeData.hasOwnProperty('password')){
                         delete res.nodeData.password;
                         delete res.nodeData.salt;
                         delete res.nodeData.c;
+                        delete res.nodeData.active;
+                        res.label = res.label[0];
                     }
                     contents.rels.push(res);
                 }
@@ -538,7 +541,7 @@ User.updateProfile = function(idNEO, changes, callback){
 User.newRel = function(relData,callback){
   
     var params = {
-        instID: relData.inst.idNEO,
+        instID: relData.instId,
         usrID: relData.usrID
     };
   
