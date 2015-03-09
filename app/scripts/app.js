@@ -79,8 +79,18 @@ angular
         restrict: 'E', // Element Name
         templateUrl: '/components/contact-field.html',
         scope: {
-          	people: '=people',
-          	ops:	'=ops'
+          	person: '=',
+          	ops:	'='
+        }
+      };
+  })
+  .directive('partField', function(){
+      return {
+        restrict: 'E', // Element Name
+        templateUrl: '/components/part-field.html',
+        scope: {
+          	part: '=',
+          	ops:	'='
         }
       };
   })
@@ -101,11 +111,24 @@ angular
         templateUrl: '/components/cai-user-contacts.html'
       };
   })
+  .directive('edtEnter', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                if(event.which === 13) {
+                    scope.$apply(function (){
+                        scope.$eval(attrs.edtEnter);
+                    });
+
+                    event.preventDefault();
+                }
+            });
+        };
+    })
   .service('session',function($rootScope,$http,$timeout) {
     this.loggedIn = false;
     //Es necesario? No se hace sólo con las cookies?
     this.ID = 0;
-    this.host_LAN = 'https://192.168.3.106';
+    this.host_LAN = 'https://192.168.0.6';
     this.host_LOC = 'https://127.0.0.1';
     this.host_NET = 'https://edt.mecatronicauncu.org';
     this.host = this.host_LAN;

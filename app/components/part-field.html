@@ -2,12 +2,14 @@
 
 
 <div class="relField">
-    <img class="nodeRelPic" ng-src="/usr/{{person.idNEO}}/pic" alt="field pic"/>
+    <img class="nodeRelPic" ng-src="/usr/{{part.idNEO}}/pic" alt="field pic"/>
     <div class="nodeRelData">
-        <label id="title">{{person.firstName}}</label>&nbsp &nbsp<label id="title">{{person.lastName}}</label><br/>
+        <label id="title">{{part.name}}</label><br/>
+        <label class="partInfo">{{part.parentName}}</label>
     </div>
     <div class="nodeFieldBtns">
-        <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-user-plus"></i></button>
+        <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-star-o"></i></button>
+        <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-calendar"></i></button>
     </div>
 </div>
 

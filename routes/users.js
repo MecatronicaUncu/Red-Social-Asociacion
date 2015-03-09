@@ -442,22 +442,22 @@ exports.isFriend = function (req, res, next) {
  * @returns {void} Nothing.
  */
 exports.search = function (req, res, next) {
-    var temp = [];
+//    var temp = {}
 
-    if (req.query.hasOwnProperty('fnm'))
-        temp.push({label: 'firstName', value: req.query['fnm']});
-    if (req.query.hasOwnProperty('lnm'))
-        temp.push({label: 'lastName', value: req.query['lnm']});
-    if (req.query.hasOwnProperty('prf'))
-        temp.push({label: 'profession', value: req.query['prf']});
-    if (req.query.hasOwnProperty('ema'))
-        temp.push({label: 'email', value: req.query['ema']});
-    if (req.query.hasOwnProperty('nam'))
-        temp.push({label: 'name', value: req.query['nam']});
-    if (req.query.hasOwnProperty('par'))
-        temp.push({label: 'parent', value: req.query['par']});
+//    if (req.query.hasOwnProperty('fnm'))
+//        temp.firstName = req.query['fnm'];
+//    if (req.query.hasOwnProperty('lnm'))
+//        temp.lastName = req.query['lnm'];
+//    if (req.query.hasOwnProperty('prf'))
+//        temp.profession = req.query['prf'];
+//    if (req.query.hasOwnProperty('ema'))
+//        temp.email = req.query['ema'];
+//    if (req.query.hasOwnProperty('nam'))
+//        temp.name =  req.query['nam'];
+//    if (req.query.hasOwnProperty('par'))
+//        temp.parent = req.query['par'];
 
-    User.search(req.query.what, temp, req.id, function (err, results) {
+    User.search(req.query.what, req.query.term, req.id, function (err, results) {
         if (err) {
             res.send(500, 'Error');
             return;

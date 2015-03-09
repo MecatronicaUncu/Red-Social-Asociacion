@@ -379,38 +379,49 @@ User.isFriend = function (id, friend, callback) {
     });
 };
 
-User.search = function (what, data, id, callback) {
+User.search = function (what, term, usrId, callback) {
       
     var i = 0;
-    var temp = "(";
-    for (var i = 0; i<data.length; i++){
-        temp += 'n.' + data[i].label + ' =~ "(?i)' + data[i].value + '.*" OR ';
-    }
-    if (i==0)
-        temp = "";
-    else
-        temp += 'null)';// and ';
+
+    var userData = ['(n.firstName =~ ".*(?i)'+term+'.*" OR',
+        'n.lastName =~ ".*(?i)'+term+'.*" OR',
+        'n.email =~ ".*(?i)'+term+'.*" OR',
+        'n.profession =~ ".*(?i)'+term+'.*")'].join(' ');
     
+    var partData = '(n.name =~ ".*(?i)'+term+'.*")';
+    
+//    for (var label in data) {
+//        if(data.hasOwnProperty(label)){
+//            if(label != 'parent')
+//                temp += 'n.' + label + ' =~ "(?i)' + data[label] + '.*" OR ';
+//        }
+//    }
+//    //si se busca WHERE (null) no pasa nada !
+//    temp += 'null)';
+//    
     //temp += 'ID(n)<>'+ id.toString();
     
     var userQuery = [
         'MATCH (n:User)',
-        'WHERE ' + temp,
+        'WHERE ' + userData,
         'WITH n',
         'OPTIONAL MATCH (p:User)-[rel:FRIENDS*1..2]-(n)',
-        'WHERE ID(p)='+id,
+        'WHERE ID(p)='+usrId,
         'RETURN distinct n, ID(n) AS idNEO, COUNT(rel)',
         'ORDER BY COUNT(rel) DESC LIMIT '+limit
     ].join('\n');
     
     var partQuery = [
-        'MATCH (n),(p) WHERE NOT n:User AND ID(p)='+id,
+        'MATCH (n),(p) WHERE NOT n:User AND ID(p)='+usrId,
+        'AND ' + partData,
+        'OPTIONAL MATCH (par)<-[:PARTOF]-(n)',
+        'OPTIONAL MATCH (par)<-[:PARTOF]-(n) WHERE par.name =~ ".*(?i)'+term+'.*"',
         'OPTIONAL MATCH (n)<-[relA:SUBSCRIBED]-(p)',
         'OPTIONAL MATCH (p)-[relB:FRIENDS*1..2]-(m)-[relC:SUBSCRIBED]->(n)',
         'OPTIONAL MATCH (p)-[relD:SUBSCRIBED]-()-[relE:PARTOF*]->(n)',
         'OPTIONAL MATCH (p)-[relF:FRIENDS*1..2]-(m)-[relG:SUBSCRIBED]->()-[relH:PARTOF*]->(n)',
-        'WITH n, COUNT(distinct relA) AS crelA, COUNT(distinct relB) AS crelB, COUNT(distinct relD) AS crelD, COUNT(distinct relF) AS crelF, COUNT(distinct relG) AS crelG',
-        'RETURN distinct n, ID(n) AS idNEO,crelA,crelB,crelD,crelF,crelG',
+        'WITH n, par, COUNT(distinct relA) AS crelA, COUNT(distinct relB) AS crelB, COUNT(distinct relD) AS crelD, COUNT(distinct relF) AS crelF, COUNT(distinct relG) AS crelG',
+        'RETURN distinct n, ID(n) AS idNEO,par.name AS parentName,crelA,crelB,crelD,crelF,crelG',
         'ORDER BY crelA DESC,crelB DESC,crelD DESC,crelF DESC,crelG DESC LIMIT '+limit
         ].join('\n');
     
@@ -425,7 +436,7 @@ User.search = function (what, data, id, callback) {
     console.log(query,what);
     db.query(query,null,function(err,results){
         if (err) {
-            console.log("err get by");
+            console.log("err USER search");
             return callback(err);
         }        
         var nodes = [];
@@ -434,10 +445,13 @@ User.search = function (what, data, id, callback) {
             if (temp.hasOwnProperty('password')){
                 //Si tiene password, tiene el resto...
                 delete temp.password;
+                delete temp.email;
                 delete temp.salt;
                 delete temp.c;
+                delete temp.active;
             }
             temp['idNEO']=el.idNEO;
+            temp['parentName']=el.parentName;
             nodes.push(temp);
         });
         return callback(null,nodes);

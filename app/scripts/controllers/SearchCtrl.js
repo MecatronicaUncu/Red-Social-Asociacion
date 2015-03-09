@@ -15,12 +15,21 @@ angular.module('linkedEnibApp')
             $scope.results = [];
             return;
         }
-        var path = session.host+':3000/search?what=Users&term='+text+'&fnm='+text+'&lnm='+text+'&prf='+text+'&ema='+text;
+        var path = session.host+':3000/search?what=Users&term='+text;
         $http({method:'GET', url:path})
             .success(function (results){
             	console.log(results);
-                $scope.results=results;
-                $scope.results.forEach(function(el){
+                $scope.people=results;
+                $scope.people.forEach(function(el){
+                    el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
+                }); 
+        });
+        path = session.host+':3000/search?what=Parts&term='+text;
+        $http({method:'GET', url:path})
+            .success(function (results){
+            	console.log(results);
+                $scope.parts=results;
+                $scope.parts.forEach(function(el){
                     el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
                 }); 
         });
