@@ -244,7 +244,8 @@ angular
                     if (data.idNEO == null){
                         return next('ID was null');
                     }else{
-                        return funcs.login(person,next);
+                        //return funcs.login(person,next);
+                        return next(null);
                     }
                 })
                 .error(function(data){

@@ -329,6 +329,30 @@ User.getParam = function (id, field, callback) {
     });
 };
 
+User.getParamByEmail = function (email, field, callback) {
+    var query = [
+        'MATCH (user)',
+        'WHERE user.email="'+email+'"',
+        'RETURN user.'+ field + ' AS value, ID(user) AS id'
+    ].join('\n');
+    
+    db.query(query, null, function (err, results,id) {
+        if (err){
+            throw err;
+            console.log('err get Param');
+            return callback(err);
+        }
+//        var value;
+//        if (results.length>0){
+//            if (results[0]['value']){
+//                value = results[0]['value'];
+//            }
+//        }
+//        console.log(value);
+        return callback(null, results[0]['value'],results[0]['id']);
+    });
+};
+
 User.isFriend = function (id, friend, callback) {
     var query = [
         'MATCH (u:User),(p:User)',
@@ -497,7 +521,7 @@ User.updateProfile = function(idNEO, changes, callback){
 
     db.query(query, null, function (err, results) {
         if (err){
-			throw err;
+            throw err;
             console.log("err USER updateProfile");
             return callback(err);
         }else{
@@ -582,10 +606,10 @@ User.signup = function (nodeData, callback) {
             console.log('err sign up');
             return callback(err);
         }
-		if (results[0].c == 1)
-			return callback(true);
+        if (results[0].c == 1)
+                return callback(true);
 			
-	    return callback(null, results[0].idNEO);
+        return callback(null, results[0].idNEO);
     });
 
 };
