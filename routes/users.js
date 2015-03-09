@@ -125,7 +125,7 @@ exports.extractCookieData = function (req, res, next) {
  * @param {string} hash: The user's hashed password
  * @returns {bool} Success state.
  */
-var send_email = function(email,hash){
+var sendActivationEmail = function(email,hash){
 
     emailTemplates(templatesDir, function(err, template) {
 
@@ -151,7 +151,7 @@ var send_email = function(email,hash){
             // An example users object with formatted email function
             var locals = {
               email: email,
-              hash: hash,
+              //hash: hash,
               link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hashRep
             };
 
@@ -165,7 +165,7 @@ var send_email = function(email,hash){
                   from: 'Admin <admin@admin.com>',
                   to: locals.email,
                   subject: 'Activacion',
-                  html: html,
+                  html: html
                   // generateTextFromHTML: true,
                 }, function(err, responseStatus) {
                   if (err) {
@@ -616,7 +616,7 @@ exports.signup = function (req, res, next) {
             res.send(400, 'email taken');
             return;
         } else if (idNEO) {
-            if(!send_email(nodeData['email'],tempPass['pass'])){
+            if(!sendActivationEmail(nodeData['email'],tempPass['pass'])){
                 res.send(400, 'Activation mail error');
                 return;
             }
