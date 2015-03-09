@@ -49,6 +49,9 @@ App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, se
             }
             else {
                 window.alert("Active su cuenta desde su casilla de mail para iniciar sesion");
+                $scope.fields = {};
+                $scope.hideSignUp = true;
+                $scope.hideSignIn = false;
             }
         });
       };   

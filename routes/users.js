@@ -168,11 +168,11 @@ var sendActivationEmail = function(email,hash){
                   html: html
                   // generateTextFromHTML: true,
                 }, function(err, responseStatus) {
-                  if (err) {
-                    console.log(err);
-                    return false;
-                } else {
-                    transport.sendMail({
+                    if (err) {
+                        console.log(err);
+                        return false;
+                    } else {
+                        transport.sendMail({
                         from: 'Admin <admin@admin.com>',
                         to: locals.email,
                         subject: 'Activacion',
@@ -187,7 +187,9 @@ var sendActivationEmail = function(email,hash){
                         }
                     });
                 }
-            });
+                });
+            }
+        });
         }
     });
     return true;

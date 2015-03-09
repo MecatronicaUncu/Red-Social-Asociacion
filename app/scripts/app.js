@@ -105,7 +105,7 @@ angular
     this.loggedIn = false;
     //Es necesario? No se hace sólo con las cookies?
     this.ID = 0;
-    this.host_LAN = 'https://192.168.0.6';
+    this.host_LAN = 'https://192.168.3.106';
     this.host_LOC = 'https://127.0.0.1';
     this.host_NET = 'https://edt.mecatronicauncu.org';
     this.host = this.host_LAN;
