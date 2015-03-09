@@ -105,10 +105,10 @@ angular
     this.loggedIn = false;
     //Es necesario? No se hace sólo con las cookies?
     this.ID = 0;
-    this.host_LAN = 'https://192.168.1.33';
+    this.host_LAN = 'https://192.168.0.6';
     this.host_LOC = 'https://127.0.0.1';
     this.host_NET = 'https://edt.mecatronicauncu.org';
-    this.host = this.host_LOC;
+    this.host = this.host_LAN;
     this.admin = false;
     this.lang = 'ES_AR';
     this.profile = null;
@@ -258,42 +258,21 @@ angular
   .service('edt',function($http, session){
   	
   	var funcs = {
-            getTypes: function(sub,next){
-                $http({method:'GET', url:session.host+':3000/types', params:{sub:sub}})
-                .success(function(data){
-                    console.log(data);
-                    return next(null,data.data);
-                })
-                .error(function(data){
-                return next('Error Getting Types',data);
-                });
-            },
-
-            getAllTypes: function(next){
-                return funcs.getTypes('',next);
-            },
-            getSubTypes: function(type, next){
-                $http({method:'GET', url:session.host+':3000/subtypes', params:{type:type}})
-                .success(function(data){
-                        return next(null,data.data);
-                })
-                .error(function(data){
-                        return next('Error Getting Subtypes',data);
-                });
-            },
-            getTimes: function(name, week, next){
-                $http({method:'GET', url:session.host+':3000/times', params:{name:name, week:week}})
-                .success(function(data){
-                        return next(null,data);
+            getTimes: function(whatId,whoId,week,year, next){
+                $http({method:'GET', url:session.host+':3000/times',
+                    params:{whatId:whatId, whoId:whoId, week:week, year:year}})
+                .success(function(times){
+                        return next(null,times);
                 })
                 .error(function(data){
                         return next('Error Getting Times',data);
                 });
             },
-            getConfig: function(filter,next){
-                $http({method:'GET', url:session.host+':3000/edtconfig', params:{act:filter}})
-                .success(function(data){
-                  return next(null,data);
+            getConfig: function(next){
+                $http({method:'GET', url:session.host+':3000/edtconfig'})
+                .success(function(config){
+                    console.log(config);
+                    return next(null,config);
                 })
                 .error(function(data){
                   return next('Error Getting EDT Config',data);
@@ -308,13 +287,13 @@ angular
                     return next('Error Getting EDT Places',data);
                 });
             },
-            newActivity: function(activity,weeksInYear,next){
-                $http({method:'POST', url:session.host+':3000/edtnewact', data:{activity:activity, wiy:weeksInYear}})
+            newActivity: function(activities,next){
+                $http({method:'POST', url:session.host+':3000/edtnewact', data:{activities:activities}})
                 .success(function(){
                     return next(null);
                 })
                 .error(function(){
-                    return next('Error Saving New Activity');
+                    return next('Error Saving New Activities');
                 });
             }
   	};

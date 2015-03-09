@@ -11,7 +11,7 @@ exports.CookKeys = keys;
 var fs = require('fs'); //FILESYSTEM
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
-var templatesDir   = path.resolve(path.join(__dirname, 'templates'));
+var templatesDir = path.resolve(path.join(__dirname, 'templates'));
 var emailTemplates = require('email-templates');
 
 
@@ -125,81 +125,103 @@ exports.extractCookieData = function (req, res, next) {
  * @param {string} hash: The user's hashed password
  * @returns {bool} Success state.
  */
-var send_email = function(email,hash){
+var send_email = function (email, hash) {
 
-    emailTemplates(templatesDir, function(err, template) {
+    emailTemplates(templatesDir, function (err, template) {
 
         if (err) {
-          console.log(err);
-          return false;
+            console.log(err);
+            return false;
         } else {
 
             // ## Send a single email
 
             // Prepare nodemailer transport object
             var transport = nodemailer.createTransport("SMTP", {
-              service: "Gmail",
-              auth: {
-                user: "samplesample978@gmail.com",
-                pass: "sampleMail"
-              }
+                service: "Gmail",
+                auth: {
+                    user: "samplesample978@gmail.com",
+                    pass: "sampleMail"
+                }
             });
 
             // An example users object with formatted email function
             var locals = {
-              email: req.query.email,
-              hash: req.query.hash,
-              link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hash
+                email: req.query.email,
+                hash: req.query.hash,
+                link: 'https://127.0.0.1:3000/activate?email=' + email + '&hash=' + hash
             };
 
             // Send a single email
-            template('email-activacion', locals, function(err, html, text) {
-              if (err) {
-                console.log(err);
-                return false;
-              } else {
-                transport.sendMail({
-                  from: 'Admin <admin@admin.com>',
-                  to: locals.email,
-                  subject: 'Activacion',
-                  html: html,
-                  // generateTextFromHTML: true,
-                }, function(err, responseStatus) {
-                  if (err) {
+            template('email-activacion', locals, function (err, html, text) {
+                if (err) {
                     console.log(err);
                     return false;
-                  } else {
-                    console.log(responseStatus.message);
-                  }
-                });
-              }
+                } else {
+                    transport.sendMail({
+                        from: 'Admin <admin@admin.com>',
+                        to: locals.email,
+                        subject: 'Activacion',
+                        html: html,
+                        // generateTextFromHTML: true,
+                    }, function (err, responseStatus) {
+                        if (err) {
+                            console.log(err);
+                            return false;
+                        } else {
+                            console.log(responseStatus.message);
+                        }
+                    });
+                }
             });
         }
     });
     return true;
-  };
+};
 
 /******************************************************************************/
 /*                          GET METHODS                                       */
 /******************************************************************************/
 
-exports.getAsocs = function(req, res, next){
-    
-    if(!req.id){
-        res.send(401,'Unauthorized');
+exports.getTimes = function(req, res, next){
+  
+    var timeData = {
+        whatId: req.query.whatId,
+        whoId: req.query.whoId,
+        week: req.query.week,
+        year: req.query.year,
+    };
+      
+    User.getTimes(timeData, function (err, times) {
+        if (err) {
+            console.log(err);
+            res.send(500, 'Error');
+            return;
+        } else {
+            console.log(times);
+            res.send(200, times);
+            return;
+        }
+    });
+};
+
+exports.getAsocs = function (req, res, next) {
+
+    if (!req.id) {
+        res.send(401, 'Unauthorized');
         return;
     }
-    
-    User.getAsocs(req.id,function(err,asocs){
-       if(err) {
-           console.log(err);
-           res.send(500, 'Error');
-           return;
-       }else{
-           console.log(asocs);
-           res.send(200, asocs);
-           return;
-       }
+
+    User.getAsocs(req.id, function (err, asocs) {
+        if (err) {
+            console.log(err);
+            res.send(500, 'Error');
+            return;
+        } else {
+            console.log(asocs);
+            res.send(200, asocs);
+            return;
+        }
     });
 };
 
@@ -437,7 +459,7 @@ exports.search = function (req, res, next) {
  * @returns {void} Nothing.
  */
 exports.activate = function (req, res, next) {
-    
+
     var nodeData = req.query;
     if (!nodeData.hasOwnProperty('hash') || nodeData['hash'] == '') {
         res.send(400, 'Missing password');
@@ -464,7 +486,7 @@ exports.activate = function (req, res, next) {
                 cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
                 cook.set('LinkedEnibLang', results.lang, {signed: true, maxAge: 9000000});
                 console.log(results['idNEO']);
-                User.changeProperty('active',1,results.idNEO, function (err){
+                User.changeProperty('active', 1, results.idNEO, function (err) {
                     if (err) {
                         res.send(401, 'Wrong email or password');
                         return;
@@ -489,14 +511,18 @@ exports.activate = function (req, res, next) {
 /*                          POST METHODS                                      */
 /******************************************************************************/
 
-exports.newActivity = function(req,res,next){  
-    var col = db.collection('Activities');
-    //console.log(req.body);
+exports.newActivity = function (req, res, next) {
     var acts = req.body.activities;
-    /** Weeks in year */
-    var wiy = req.body.wiy;
-    
-    
+
+    User.newActivity(acts, function (err, result) {
+        if (err) {
+            res.send(500, 'Error Creating Activities');
+            return;
+        } else {
+            res.send(200, 'OK');
+            return;
+        }
+    });
 };
 
 exports.updateProfile = function (req, res, next) {
@@ -619,9 +645,9 @@ exports.signup = function (req, res, next) {
     var tempPass = hash(nodeData['password'], null);
     nodeData.password = tempPass['pass'];
     nodeData.salt = tempPass['salt'];
-    nodeData['active']=0;
+    nodeData['active'] = 0;
     var queryData = 'email:"' + nodeData['email'] + '", password:"' +
-        tempPass['pass'] + '", salt:"' + tempPass['salt'] + 
+        tempPass['pass'] + '", salt:"' + tempPass['salt'] +
         '", active:"' + tempPass['active'] + '"';
     // ES NECESARIO VERIFICAR ?
     //if (temp.hasOwnProperty('firstName') && temp['firstName']) query = query + ', firstName:"' + temp['firstName'] + '"';
@@ -632,7 +658,7 @@ exports.signup = function (req, res, next) {
             res.send(400, 'email taken');
             return;
         } else if (idNEO) {
-            if(!send_email(nodeData['email'],tempPass['pass'])){
+            if (!send_email(nodeData['email'], tempPass['pass'])) {
                 res.send(400, 'Activation mail error');
                 return;
             }
@@ -640,17 +666,17 @@ exports.signup = function (req, res, next) {
             res.send(200, {idNEO: idNEO});
             return;
             /*
-            Mongo.register(idNEO, nodeData, 'Users', function (err, userID) {
-                if (err) {
-                    console.log(err);
-                    res.send(500, 'Database error');
-                    return;
-                } else {
-                    res.send(200, {idNEO: userID});
-                    return;
-                }
-            });
-            */
+             Mongo.register(idNEO, nodeData, 'Users', function (err, userID) {
+             if (err) {
+             console.log(err);
+             res.send(500, 'Database error');
+             return;
+             } else {
+             res.send(200, {idNEO: userID});
+             return;
+             }
+             });
+             */
         } else {
             res.send(500, 'Database error');
             return;
@@ -678,9 +704,9 @@ exports.login = function (req, res, next) {
             res.send(401, 'Wrong email or password');
             return;
         }
-        
-        if (results['active']){
-            res.send(401,'Email not activated')
+
+        if (results['active']) {
+            res.send(401, 'Email not activated')
             return;
         }
 

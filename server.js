@@ -96,10 +96,10 @@ app.configure('development', function () {
 
 /****************************    EDT REQUESTS   *******************************/
 app.get('/acttypes', mongo.getTypes);
-app.get('/times', mongo.getTimes);
+app.get('/times', users.getTimes);
 app.get('/edtconfig', mongo.getConfig);
 app.get('/edtplaces', mongo.getPlaces);
-app.post('/edtnewact', mongo.newActivity);
+app.post('/edtnewact', users.newActivity);
 /******************************************************************************/
 
 /****************************   COOKIES REQUESTS   ****************************/

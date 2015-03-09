@@ -97,31 +97,21 @@ exports.getTimes = function(req, res, next){
  */
 exports.getConfig = function(req, res, next){
 
-	var col = db.collection('Config');
-	var act = req.query.act;
-	var filter;
-	if(act){
-		filter = new RegExp(act+'.*');
-	} else {
-		filter = new RegExp('.*');
-	}
-	console.log(filter);
-	var types;
+	var col = db.collection('Config');	
 	var limits;
-	col.find({name: 'limits'}).toArray(function(err,lim) {
+	col.find({label: 'EDT_LIMITS'},{_id:0}).toArray(function(err,lim) {
 		if(err) {
 			res.send(500,'Error MONGO getConfig 1');
 			return;
 		} else {
-			limits = lim[0];
-			col.find({name: {$not: /limits/}, Activity: filter}).toArray(function(err,docs) {
+			limits = lim[0].limits;
+			col.find({label: 'EDT_COLORS'},{_id:0}).toArray(function(err,docs) {
 				if(err) {
 					res.send(500,'Error MONGO getConfig 2');
 					return;
 				} else {
-					types = docs;
-					console.log(docs);
-					res.send(200, {limits:limits, types:docs});
+					console.log(docs[0].colors);
+					res.send(200, {limits:limits, colors:docs[0].colors});
 				}
 			});
 		}
@@ -155,34 +145,21 @@ exports.newActivity = function(req, res, next){
   
     var col = db.collection('Activities');
     //console.log(req.body);
-    var act = req.body.activity;
+    var acts = req.body.activities;
     /** Weeks in year */
     var wiy = req.body.wiy;
-    if(act.repeat === 'n'){
-        console.log('Never Repeat');
-        /** Never repeat this activity */
-        col.insert(act, function(err){
-            if(err){
-                res.send(500,'Error MONGO newActivity');
-                return;
-            } else {
-                res.send(200);
-                return;
-            }
-        });
-    } else {
-        var step;
-        console.log('Repeat some time');
-        
-        if((act.repeat == 'nw') || (act.repeat == 'pw')){
-            step = 1;
-        } else if(act.repeat == '2w'){
-            step = 2;
+    
+    res.send(500);
+    /*
+    acts.forEach(function(act){
+       // Check if next year 
+        if(act.date.week == wiy){
+            act.date.week = step;
+            act.date.year++;
+        } else {
+            act.date.week += step;
         }
-    
-        console.log(step);
-        console.log(wiy);
-    
+
         console.log('inserting:');
         console.log(act);
         col.insert(act, function(err){
@@ -190,34 +167,9 @@ exports.newActivity = function(req, res, next){
                 res.send(500,'Error MONGO newActivity');
                 return;
             }
-        });
-    
-        do{
-            
-            /** Check if next year */
-            if(act.when.week == wiy){
-                act.when.week = step;
-                act.when.year++;
-            } else {
-                act.when.week += step;
-            }
-            
-            console.log('inserting:');
-            console.log(act);
-            col.insert(act, function(err){
-                if(err){
-                    res.send(500,'Error MONGO newActivity');
-                    return;
-                }
-            });
-                        
-        } while(  act.when.year != act.toWhen.year ||
-                act.when.week != act.toWhen.week ||
-                act.when.day != act.toWhen.day);
-        
-        res.send(200);
-        return;
-    }
+        }); 
+    });
+    */
 };
 
 // Dejar para el registro de universidades y ADMINS

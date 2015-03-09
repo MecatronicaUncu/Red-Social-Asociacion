@@ -8,7 +8,7 @@
 .body-wrap {
   //width: 60%;
   //min-width: 550px;
-  @include respond-to(mobile){width: 100%; margin: 0px 10px};
+  @include respond-to(mobile){width: 100%; max-width: 250px; margin: 0px 10px};
   @include respond-to(big-mobile){width: 450px};
   @include respond-to(tablets){width: 700px};
   @include respond-to(wide){width: 900px};

@@ -1,5 +1,5 @@
 <div id="edt" hidden>
-    <div id="edtSearchBar">
+    <div class="edtBar" id="edtSearchBar">
         <div class="edtSearchGroup" ng-show="newActCollapse">
             <div id="edtSearchSelect" class="dropdown">
                 <button class="edtSearchBtn dropdown-toggle" type="button">
@@ -13,14 +13,13 @@
                     </li>
                 </ul>
             </div>
-
+            
             <button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()" ng-show="newActCollapse">
                 <i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
             </button>
         </div>
-
-        <div class="edtSearchGroup" ng-show="newActCollapse">
-            <div class="input-group">       
+        <div class="edtSearchGroup" ng-show="newActCollapse">        
+            <div class="input-group" id="edtPartSearch">       
                 <input type="text" ng-keyup="partSearch()" ng-model="partSearchTerm" class="form-control edtSearchInput" placeholder="Buscar...">
                 <span class="input-group-btn">
                     <button class="btn btn-default edtSearchBtn" type="button"><span class="fa fa-search"></span></button>
@@ -28,7 +27,20 @@
             </div>
         </div>    
 
-        <div class="edtSearchGroup" ng-show="newActCollapse">
+        <div class="edtSearchGroup">
+            <button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse = !newActCollapse" ng-show="session.loggedIn">
+                <i id="newActivityIcon" class="fa fa-fw" ng-class="{'fa-plus': newActCollapse, 'fa-calendar': !newActCollapse}"></i>
+            </button>
+        </div>    
+    </div>
+    
+    <div id="edtNavBar" class="edtBar" ng-show="newActCollapse">
+        <div class="edtSearchGroup">
+            <button class="edtSearchBtn" ng-click="setDates(searchWeek-1)">
+                <i class="fa fa-fw fa-backward"></i>
+            </button>
+        </div>  
+        <div class="edtSearchGroup">
             <div id="edtWeekSelect" class="dropdown">
                 <button class="edtSearchBtn dropdown-toggle" type="button">
                     <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>
@@ -43,15 +55,13 @@
             </div>
         </div>
         <div class="edtSearchGroup">
-            <button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse = !newActCollapse" ng-show="session.loggedIn">
-                <i id="newActivityIcon" class="fa fa-fw" ng-class="{'fa-plus': newActCollapse, 'fa-calendar': !newActCollapse}"></i>
+            <button class="edtSearchBtn" ng-click="setDates(searchWeek+1)">
+                <i class="fa fa-fw fa-forward"></i>
             </button>
-        </div>    
+        </div>
     </div>
 
     <div id="newActWrap" collapse="newActCollapse">
-
-        <div id="WrongAct" class="alert alert-danger" hidden></div>
 
         <div class="sign-form activity-form">
 
@@ -85,7 +95,7 @@
 
             </div>
 
-            <form id="newActFormDAY" class="newActForm" ng-submit="test()" data-parsley-validate ng-show="dayOrPeriod==='DAY'">
+            <form id="newActFormDAY" class="newActForm" ng-submit="newActivity()" data-parsley-validate ng-show="dayOrPeriod==='DAY'">
 
                 <div ng-repeat="(periodIndex, period) in newAct.periods" class="newActPeriod">
                     <div class="sign-input-wrap">
@@ -166,7 +176,7 @@
                 </div>
             </form>            
 
-            <form id="newActFormPERIOD" class="newActForm" ng-submit="test()" data-parsley-validate ng-show="dayOrPeriod==='PERIOD'">
+            <form id="newActFormPERIOD" class="newActForm" ng-submit="newActivity()" data-parsley-validate ng-show="dayOrPeriod==='PERIOD'">
 
                 <div ng-repeat="(periodIndex, period) in newAct.periods" class="newActPeriod">
                     <div class="sign-input-wrap">
@@ -270,6 +280,9 @@
                     </div>                    
                 </div>
             </form>
+            
+             <div id="WrongAct" class="alert alert-danger" hidden></div>
+            
             <div class="sign-input-wrap newActSubmitGroup">
                 <button class="edtSearchBtn newActSubmitBtn dropdown-toggle" 
                         type="submit" form="newActForm{{dayOrPeriod}}">
@@ -286,9 +299,9 @@
     <div collapse="!newActCollapse">
         <table id="timeTable">
             <thead class="edt-head">
-            <th class="edt-head-wrap">Día</td>
-            <th class="edt-head-time-h" id="Hora">Hora</td>
-                </thead>			
+                <th class="edt-head-wrap">Día</th>
+                <th class="edt-head-time-h" id="Hora">Hora</th>
+            </thead>
             <tbody>
                 <tr ng-repeat="day in daysToShow">
                     <td class="edt-days">
