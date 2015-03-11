@@ -1,37 +1,32 @@
-<!--label class="nodeRelDataHeading" ng-show="noderelToShow.rels.length != 0">{{translation.admin['rels']}}</label-->
-
-
 <div class="relField">
     <img class="nodeRelPic" ng-src="/usr/{{person.idNEO}}/pic" alt="field pic"/>
     <div class="nodeRelData">
         <label id="title">{{person.firstName}}</label>&nbsp &nbsp<label id="title">{{person.lastName}}</label><br/>
     </div>
     <div class="nodeFieldBtns">
-        <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-user-plus"></i></button>
+        <button class="nodeFieldBtn edtSearchBtn" ng-show="session.loggedIn && !users.requested(person.idNEO) && !users.demanded(person.idNEO)"
+                ng-click="users.isFriend(person.idNEO)?users.deleteFriend(person.idNEO):users.makeFriend(person.idNEO)">
+            <i class="fa fa-fw" 
+               ng-class="users.isFriend(person.idNEO)?'fa-user-times':'fa-user-plus'">
+            </i>
+        </button>
+        <button class="nodeFieldBtn edtSearchBtn" 
+                ng-click="users.deleteFriend(person.idNEO)"
+                ng-show="session.loggedIn && users.demanded(person.idNEO)">
+            <i class="fa fa-fw fa-user-times">
+            </i>
+        </button>
+        <button class="nodeFieldBtn edtSearchBtn" 
+                ng-click="users.makeFriend(person.idNEO)"
+                ng-show="session.loggedIn && users.requested(person.idNEO)">
+            <i class="fa fa-fw fa-user-plus">
+            </i>
+        </button>
+        <button class="nodeFieldBtn edtSearchBtn" 
+                ng-click="users.deleteFriend(person.idNEO)"
+                ng-show="session.loggedIn && users.requested(person.idNEO)">
+            <i class="fa fa-fw fa-user-times">
+            </i>
+        </button>
     </div>
 </div>
-
-<!--div class="contact-field form-group" ng-repeat="person in people" >
-    <img class="img-thumbnail contact-pic" ng-src="{{person.link}}" alt="contact pic"/>
-    <div class="contact-data">
-        <a ng-href="#/profile/{{person.idNEO}}"><label>{{person.firstName}}</label>
-            <label>{{person.lastName}}</label><br/></a>
-        <label>{{person.profession}}</label> - 
-        <label>{{person.phone}}</label>
-    </div>
-    <ul  class="contact-field-buttons">
-        <li><button class="btn btn-danger contact-field-button" ng-click="ops.deleteFriend(person.id)">Delete</button></li>
-    </ul>
-</div-->
-
-<!--label class="nodeRelDataHeading" ng-show="noderelToShow.parts.length != 0">{{translation.admin['parts']}}</label>
-<div class="nodeField" ng-repeat="part in noderelToShow.parts">
-    <div class="nodeRelData" ng-click="getNodeContent(part, -1)">
-        <label id="title">{{part.nodeData.name}}</label> <br/>
-         <label class="partInfo">{{part.parentName}}</label> <label class="partInfo">{{part.nodeData.country}}</label>
-    </div>
-    <div class="nodeFieldBtns">
-        <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-pencil"></i></button>
-        <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-close"></i></button>
-    </div>
-</div-->

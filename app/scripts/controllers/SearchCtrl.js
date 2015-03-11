@@ -5,9 +5,11 @@
 'use strict';
 
 angular.module('linkedEnibApp')
-.controller('SearchCtrl', function ($scope,$http,session,formDataObject) {
+.controller('SearchCtrl', function ($scope,$http,session,users,formDataObject) {
 
     $scope.results = [];
+
+    $scope.users = users;
 
     $scope.search = function(){
         var text = $('#search_text').val();

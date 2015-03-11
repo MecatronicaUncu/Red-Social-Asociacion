@@ -269,3 +269,15 @@
     text-align: left;
     @include respond-to(mobile){margin: 5px 0; max-width: none; width: 100%};
 }
+
+.partFieldIcon{
+    color: $edtSearchBarBgColor;
+}
+
+.fa-user-plus {
+    color: #00CB39;
+}
+
+.fa-user-times {
+    color: #CB002D;
+}

@@ -13,6 +13,15 @@ angular.module('linkedEnibApp')
         $scope.image = session.host+':3000/usr/' + session.getId() + '/pic';
     }
     
+    $scope.fields = [
+        {label:'Nombre', name:'firstName', model:'', icon:'fa-user'},
+        {label:'Apellido', name:'lastName', model:'', icon:'fa-user'},
+        {label:'Dirección', name:'address', model:'', icon:'fa-home'},
+        {label:'Número', name:'phone', model:'', icon: 'fa-phone'},
+        {label:'Edad', name:'age', model:'', icon: 'fa-calendar'},
+        {label:'Profesión', name:'profession', model:'', icon: 'fa-graduation-cap'}
+      ];
+            
     $scope.profileNavItems=[
         {name:'Perfil'},
         {name:'Contactos'},
@@ -22,15 +31,6 @@ angular.module('linkedEnibApp')
       ];
 
     $scope.profileTab = 'Perfil';
-
-    $scope.fields = [
-        {label:'Nombre', name:'firstName', model:'', icon:'fa-user'},
-        {label:'Apellido', name:'lastName', model:'', icon:'fa-user'},
-        {label:'Dirección', name:'address', model:'', icon:'fa-home'},
-        {label:'Número', name:'phone', model:'', icon: 'fa-phone'},
-        {label:'Edad', name:'age', model:'', icon: 'fa-calendar'},
-        {label:'Profesión', name:'profession', model:'', icon: 'fa-graduation-cap'}
-      ];
 
     $scope.filtered = [];
     $scope.friends = [];
@@ -95,58 +95,49 @@ angular.module('linkedEnibApp')
                 console.log('Error loading profile');
             });
         }else{
-            //TODO: CAMBIAR POR LOS CAMPOS DIRECTAMENTE QUE VIENEN DEL SERVER
-            if(session.profile){
-                $scope.fields.forEach(function(el){
-                    el.model=session.profile[el.name];
-                });
-            }
+            //Se hace solo al cargar el controlador
         }
    	};
     $scope.updateContacts = function(){
-        console.log($scope.profileTab);
-        var path = session.host+':3000/contacts/' + session.getId();
-        $http({method:'GET', url:path})
-        .success(function (data){
-            var results = data.results;
-            console.log(results);
-            if ($scope.showNavBar){
-				$scope.friends = [];
-                results.friends.forEach( function(el){
-                    var temp = el.data;
-                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
-                    temp['id'] = el['id'];
-                    $scope.friends.push(temp);
-                });
+        var results = session.contacts;
+        console.log(results);
+        if ($scope.showNavBar){
+            $scope.friends = [];
+            results.friends.forEach( function(el){
+                var temp = el.data;
+                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['idNEO'] = el['idNEO'];
+                $scope.friends.push(temp);
+            });
 
-				$scope.suggestedFriends = [];
-                results.suggested.forEach( function(el){
-                    var temp = el.data;
-                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
-                    temp['id'] = el['id'];
-                    $scope.suggestedFriends.push(temp);
-                });
+            $scope.suggestedFriends = [];
+            results.suggested.forEach( function(el){
+                var temp = el.data;
+                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['idNEO'] = el['idNEO'];
+                $scope.suggestedFriends.push(temp);
+            });
 
-				$scope.requestedFriends = [];
-                results.requested.forEach( function(el){
-                    var temp = el.data;
-                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
-                    temp['id'] = el['id'];
-                    $scope.requestedFriends.push(temp);
-                });
+            $scope.requestedFriends = [];
+            results.requested.forEach( function(el){
+                var temp = el.data;
+                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['idNEO'] = el['idNEO'];
+                $scope.requestedFriends.push(temp);
+            });
 
-				$scope.demandedFriends = [];
-                results.demanded.forEach( function(el){
-                    var temp = el.data;
-                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
-                    temp['id'] = el['id'];
-                    $scope.demandedFriends.push(temp);
-                });
+            $scope.demandedFriends = [];
+            results.demanded.forEach( function(el){
+                var temp = el.data;
+                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['idNEO'] = el['idNEO'];
+                $scope.demandedFriends.push(temp);
+            });
 
-                $scope.filtered = $scope.friends;
-                console.log($scope.profileTab);
-            };
-        });
+            $scope.filtered = $scope.friends;
+            console.log($scope.profileTab);
+            console.log($scope.requestedFriends);
+        };
     };
        
     $scope.click = function(clicked){
@@ -168,7 +159,7 @@ angular.module('linkedEnibApp')
             return;
         }
         else if(clicked.name==='Contactos'){
-            $scope.updateContacts();
+            //$scope.updateContacts();
         }
         $scope.profileTab = clicked.name;
     };
@@ -177,17 +168,15 @@ angular.module('linkedEnibApp')
         var ids = {idUsr:session.getId(),idFriend:id};
         $http({method:'POST' , url:session.host+':3000/friend', data:ids})
             .success(function (data){
-                $scope.updateContacts();
-                console.log("verify");   
+                session.getContacts();
         });
     };
       
     $scope.deleteFriend = function(id){
-        var path = session.host+':3000/delFriend/' + id + '/' + session.getId();
+        var path = session.host+':3000/delFriend';
         $http({method:'POST',url:path})
             .success(function (data){
                 $scope.updateContacts();
-                console.log('verify');   
         });
     };
         
@@ -239,11 +228,27 @@ angular.module('linkedEnibApp')
             });
     };
 
-    $scope.$on('gotProfile',function(){
-        $scope.loadProfile();
-        console.log(session.profile);
+    $scope.$on('gotContacts',function(){
+        $scope.updateContacts();
     });
 
+    $scope.$on('gotProfile',function(){
+        $scope.fields.forEach(function(el){
+            el.model=session.profile[el.name];
+        });
+    });
+
+    //TODO: CAMBIAR POR LOS CAMPOS DIRECTAMENTE QUE VIENEN DEL SERVER
+    if(session.profile){
+        $scope.fields.forEach(function(el){
+            el.model=session.profile[el.name];
+        });
+    }
+    
     $scope.loadProfile();
+    
+    if(session.contacts){
+        $scope.updateContacts();
+    }
 
   });

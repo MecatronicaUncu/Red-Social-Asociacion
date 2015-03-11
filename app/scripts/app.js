@@ -78,9 +78,12 @@ angular
       return {
         restrict: 'E', // Element Name
         templateUrl: '/components/contact-field.html',
+        controller: function($scope,users,session){
+            $scope.users = users;
+            $scope.session = session;
+        },
         scope: {
-          	person: '=',
-          	ops:	'='
+          	person: '='
         }
       };
   })
@@ -88,9 +91,12 @@ angular
       return {
         restrict: 'E', // Element Name
         templateUrl: '/components/part-field.html',
+        controller: function($scope,users,session){
+            $scope.users = users;
+            $scope.session = session;
+        },
         scope: {
-          	part: '=',
-          	ops:	'='
+          	part: '='
         }
       };
   })
@@ -136,6 +142,37 @@ angular
     this.lang = 'ES_AR';
     this.profile = null;
     this.translation = null;
+    this.subscriptions = null;
+    this.contacts = null;
+    
+    this.getContacts = function(){
+        var session = this;
+        $http({method:'GET', url:session.host+':3000/contacts'})
+	    .success(function (contacts){
+            session.contacts = contacts;
+            $rootScope.$broadcast('gotContacts');
+            return;
+        })
+        .error(function(){
+            console.log('Error getting contacts');
+            return;
+        });
+    };
+    
+    this.getSubscriptions = function(){
+        var session = this;
+        $http({method:'GET', url:session.host+':3000/subscriptions'})
+	    .success(function (subsc){
+            session.subscriptions = subsc;
+            console.log('SUBSC',subsc);
+            $rootScope.$broadcast('gotSubscriptions');
+            return;
+        })
+        .error(function(){
+            console.log('Error getting subscriptions');
+            return;
+        });
+    };
     
     this.getMyProfile = function(){
         var session = this;
@@ -164,6 +201,8 @@ angular
             this.loggedIn = false;
             this.setAdmin(false);
             this.profile = null;
+            this.subscriptions = null;
+            this.contacts = null;
             this.setUserID(0);
             $rootScope.$broadcast('logout');
             //$rootScope.$broadcast('update');
@@ -176,6 +215,8 @@ angular
 	    	console.log(data);
 	      	session.setUserID(data.idNEO);
             session.getMyProfile();
+            session.getContacts();
+            session.getSubscriptions();
 	      	session.setLang(data.lang);
             session.getTranslation();
 	      	session.log('in');
@@ -273,6 +314,110 @@ angular
                 })
                 .error(function(data){
                     return next('Signup Failed');
+                });
+            },
+            makeFriend: function(friendId,next){
+                var ids = {idUsr:session.getId(),idFriend:friendId};
+                $http({method:'POST' , url:session.host+':3000/friend', data:ids})
+                .success(function (data){
+                    session.getContacts();
+                })
+                .error(function(){
+                    console.log('Error making new Friend');
+                });
+            },
+            deleteFriend: function(friendId){
+                var path = session.host+':3000/delFriend';
+                $http({method:'POST',url:path,data:{idFriend:friendId}})
+                .success(function (data){
+                    session.getContacts();
+                })
+                .error(function(){
+                    console.log('Error deleting Friend');
+                });
+            },
+            isFriend: function(idNEO){
+                var is = false;
+                if(session.contacts){
+                    session.contacts['friends'].some(function(usr){
+                        if(usr.idNEO === idNEO){
+                            is = true;
+                            return true;
+                        }else
+                            return false;
+                    });
+                
+                    return is;
+                }else{
+                    return is;
+                }
+            },
+            requested: function(idNEO){
+                var is = false;
+                if(session.contacts){
+                    session.contacts['requested'].some(function(usr){
+                        if(usr.idNEO === idNEO){
+                            is = true;
+                            return true;
+                        }else
+                            return false;
+                    });
+                    
+                    return is;
+                }else{
+                    return is;
+                }
+            },
+            demanded: function(idNEO){
+                var is = false;
+                if(session.contacts){
+                    session.contacts['demanded'].some(function(usr){
+                        if(usr.idNEO === idNEO){
+                            is = true;
+                            return true;
+                        }else
+                            return false;
+                    });
+                    
+                    return is;
+                }else{
+                    return is;
+                }
+            },
+            isSubscribed: function(idNEO){
+                var is = false;
+                if(session.subscriptions){
+                    session.subscriptions.some(function(inst){
+                        if(inst.idNEO === idNEO){
+                            is = true;
+                            return true;
+                        }else
+                            return false;
+                    });
+
+                    return is;
+                }else{
+                    return is;
+                }
+            },
+            subscribe: function(instId){
+                var path = session.host+':3000/subscribe';
+                $http({method:'POST',url:path,data:{instId:instId}})
+                .success(function (data){
+                    session.getSubscriptions();
+                })
+                .error(function(){
+                    console.log('Error subscribing');
+                });
+            },
+            unsubscribe: function(instId){
+                var path = session.host+':3000/unsubscribe';
+                $http({method:'POST',url:path,data:{instId:instId}})
+                .success(function (data){
+                    session.getSubscriptions();
+                })
+                .error(function(){
+                    console.log('Error unsubscribing');
                 });
             }
         };

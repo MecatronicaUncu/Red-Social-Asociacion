@@ -260,20 +260,12 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
      * la consulta.
      */
     $scope.clearSearch = function () {
-        $scope.items = {
-            click: 'edtSubTypes',
-            data: []
-        };
-
+        
         $scope.setDates();
-
-        $scope.searchTerm = 'Elija Tipo';
-        $scope.searchIcon = 'fa-question-circle';
-        //$scope.type = '';
-        //$scope.subtype = '';
         $scope.newActCollapse = true;
 
-        //$scope.edtAllTypes();
+        $scope.edtGetTimes(session.getId(), session.getId(), $scope.thisWeek, $scope.thisYear);
+
     };
 
     /**
@@ -912,6 +904,11 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
         $scope.newAct.whoId = session.getId();
     });
 
+    $scope.$on('gotSubscriptions', function () {
+        $scope.subscriptions = session.subscriptions;
+        console.log($scope.subscriptions);
+    });
+
     $scope.$on('gotTranslation', function () {
         $scope.translation = session.translation;
         $scope.getAssociations();
@@ -920,6 +917,10 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
     $scope.$on('gotProfile', function () {
         $scope.newAct.whoName = session.profile.firstName[0] + '. ' + session.profile.lastName;
     });
+
+    if(session.subscriptions){
+        $scope.subscriptions = session.subscriptions;
+    }
 
     if (session.loggedIn) {
         $scope.newAct.whoId = session.getId();
@@ -944,7 +945,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
      * en ParentCtrl.js porque sino, cada vez que tocamos 'EDT' vuelve a cargar esto!
      */
     $scope.$on('$viewContentLoaded', function () {
-        $scope.clearSearch();
+        $scope.setDates();
+        $scope.newActCollapse = true;
 
         /* Como los ids de la tabla del EDT se generan dinámicamente en un ng-repeat,
          * el documento tarda un tiempo en verlos. Deberia haber un evento como $viewContentLoaded

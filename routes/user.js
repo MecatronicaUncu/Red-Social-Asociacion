@@ -285,22 +285,34 @@ User.getContacts = function(id,callback){
             }
             else */if (el.NODES.hasOwnProperty('friend')){
                 delete el.NODES.friend._data.data['password'];
-                var tmp = {'data' : el.NODES.friend._data.data, 'id' : el.NODES.id};
+                delete el.NODES.friend._data.data['salt'];
+                delete el.NODES.friend._data.data['active'];
+                delete el.NODES.friend._data.data['c'];
+                var tmp = {'data' : el.NODES.friend._data.data, 'idNEO' : el.NODES.id};
                 fri.push(tmp);
             }
             else if (el.NODES.hasOwnProperty('requested')){
                 delete el.NODES.requested._data.data['password'];
-                var tmp = {'data' : el.NODES.requested._data.data, 'id' : el.NODES.id};
+                delete el.NODES.requested._data.data['salt'];
+                delete el.NODES.requested._data.data['active'];
+                delete el.NODES.requested._data.data['c'];
+                var tmp = {'data' : el.NODES.requested._data.data, 'idNEO' : el.NODES.id};
                 req.push(tmp);
             }
             else if (el.NODES.hasOwnProperty('demanded')){
                 delete el.NODES.demanded._data.data['password'];
-                var tmp = {'data' : el.NODES.demanded._data.data, 'id' : el.NODES.id};
+                delete el.NODES.demanded._data.data['salt'];
+                delete el.NODES.demanded._data.data['active'];
+                delete el.NODES.demanded._data.data['c'];
+                var tmp = {'data' : el.NODES.demanded._data.data, 'idNEO' : el.NODES.id};
                 dem.push(tmp);
             }
             else{
                 delete el.NODES.suggested._data.data['password'];
-                var tmp = {'data' : el.NODES.suggested._data.data, 'id' : el.NODES.id};
+                delete el.NODES.suggested._data.data['salt'];
+                delete el.NODES.suggested._data.data['active'];
+                delete el.NODES.suggested._data.data['c'];
+                var tmp = {'data' : el.NODES.suggested._data.data, 'idNEO' : el.NODES.id};
                 sug.push(tmp);
             }
         });
@@ -379,10 +391,32 @@ User.isFriend = function (id, friend, callback) {
     });
 };
 
+User.getSubscriptions = function (idNEO, callback){
+    
+    var query = [
+        'MATCH (n:User)-[:SUBSCRIBED]->(s) WHERE ID(n)='+idNEO,
+        'RETURN distinct s, ID(s) AS idNEO'
+    ].join('\n');
+    
+    console.log(query);
+    
+    db.query(query,null,function(err,results){
+        if (err) {
+            console.log("err USER getSubscriptions");
+            return callback(err);
+        }        
+        var subsc = [];
+        results.forEach(function(el){
+            var temp = el.s._data.data;
+            temp['idNEO']=el.idNEO;
+            subsc.push(temp);
+        });
+        return callback(null,subsc);
+    });
+};
+
 User.search = function (what, term, usrId, callback) {
       
-    var i = 0;
-
     var userData = ['(n.firstName =~ ".*(?i)'+term+'.*" OR',
         'n.lastName =~ ".*(?i)'+term+'.*" OR',
         'n.email =~ ".*(?i)'+term+'.*" OR',
@@ -411,18 +445,22 @@ User.search = function (what, term, usrId, callback) {
         'ORDER BY COUNT(rel) DESC LIMIT '+limit
     ].join('\n');
     
+    
+    // Lo comentado lo saqué por si es más rápido. (no me consta..)
+    // Si se agrega, se ordenan según relevancia de contactos.
     var partQuery = [
-        'MATCH (n),(p) WHERE NOT n:User AND ID(p)='+usrId,
-        'AND ' + partData,
+        'MATCH (n),(p) WHERE NOT n:User AND ' + partData,
         'OPTIONAL MATCH (par)<-[:PARTOF]-(n)',
-        'OPTIONAL MATCH (par)<-[:PARTOF]-(n) WHERE par.name =~ ".*(?i)'+term+'.*"',
-        'OPTIONAL MATCH (n)<-[relA:SUBSCRIBED]-(p)',
-        'OPTIONAL MATCH (p)-[relB:FRIENDS*1..2]-(m)-[relC:SUBSCRIBED]->(n)',
-        'OPTIONAL MATCH (p)-[relD:SUBSCRIBED]-()-[relE:PARTOF*]->(n)',
-        'OPTIONAL MATCH (p)-[relF:FRIENDS*1..2]-(m)-[relG:SUBSCRIBED]->()-[relH:PARTOF*]->(n)',
-        'WITH n, par, COUNT(distinct relA) AS crelA, COUNT(distinct relB) AS crelB, COUNT(distinct relD) AS crelD, COUNT(distinct relF) AS crelF, COUNT(distinct relG) AS crelG',
-        'RETURN distinct n, ID(n) AS idNEO,par.name AS parentName,crelA,crelB,crelD,crelF,crelG',
-        'ORDER BY crelA DESC,crelB DESC,crelD DESC,crelF DESC,crelG DESC LIMIT '+limit
+        //'OPTIONAL MATCH (par)<-[:PARTOF]-(n) WHERE par.name =~ ".*(?i)'+term+'.*"',
+        'OPTIONAL MATCH (ppar)<-[:PARTOF*]-(n) WHERE NOT (ppar)-[:PARTOF]->()',
+        //'OPTIONAL MATCH (p) WHERE ID(p)='+usrId,
+        //'OPTIONAL MATCH (n)<-[relA:SUBSCRIBED]-(p) WHERE ID(p)='+usrId,
+        //'OPTIONAL MATCH (p)-[relB:FRIENDS*1..2]-(m)-[relC:SUBSCRIBED]->(n) WHERE ID(p)='+usrId,
+        //'OPTIONAL MATCH (p)-[relD:SUBSCRIBED]-()-[relE:PARTOF*]->(n) WHERE ID(p)='+usrId,
+        //'OPTIONAL MATCH (p)-[relF:FRIENDS*1..2]-(m)-[relG:SUBSCRIBED]->()-[relH:PARTOF*]->(n) WHERE ID(p)='+usrId,
+        'WITH n, par, ppar',//, COUNT(distinct relA) AS crelA, COUNT(distinct relB) AS crelB, COUNT(distinct relD) AS crelD, COUNT(distinct relF) AS crelF, COUNT(distinct relG) AS crelG',
+        'RETURN distinct n, ID(n) AS idNEO,par.name AS parentName, ppar.name AS gparentName LIMIT '+limit//, crelA,crelB,crelD,crelF,crelG',
+        //'ORDER BY crelA DESC,crelB DESC,crelD DESC,crelF DESC,crelG DESC LIMIT '+limit
         ].join('\n');
     
     var query;
@@ -452,6 +490,7 @@ User.search = function (what, term, usrId, callback) {
             }
             temp['idNEO']=el.idNEO;
             temp['parentName']=el.parentName;
+            temp['gparentName']=el.gparentName;
             nodes.push(temp);
         });
         return callback(null,nodes);
@@ -462,6 +501,52 @@ User.search = function (what, term, usrId, callback) {
 /******************************************************************************/
 /*                          POST METHODS                                      */
 /******************************************************************************/
+
+User.unsubscribe = function(idNEO, instId, callback){
+    
+    var params = {
+        instID: instId,
+        usrID: idNEO
+    };
+  
+    var query = [
+    'MATCH (u)-[r:SUBSCRIBED]->(i) WHERE ID(u)={usrID} AND ID(i)={instID}',
+    'DELETE r'
+    ].join('\n');
+    
+    db.query(query, params, function (err, results) {
+        if (err){
+            console.log(err);
+            console.log('Err User unsubscribe');
+            return callback(err);
+        }else{
+            return callback(null);
+        }
+    });    
+};
+
+User.subscribe = function(idNEO, instId, callback){
+    
+    var params = {
+        instID: instId,
+        usrID: idNEO
+    };
+  
+    var query = [
+    'MATCH (u),(i) WHERE ID(u)={usrID} AND ID(i)={instID}',
+    'MERGE (u)-[:SUBSCRIBED]->(i)'
+    ].join('\n');
+    
+    db.query(query, params, function (err, results) {
+        if (err){
+            console.log(err);
+            console.log('Err User subscribe');
+            return callback(err);
+        }else{
+            return callback(null);
+        }
+    });    
+};
 
 User.newActivity = function(acts, callback){
     
@@ -744,8 +829,9 @@ User.deleteFriend = function (userId, otherId, callback) {
         if(err){
             console.log("err del friend");
             return callback(err);
+        }else{
+            return callback(null);
         }
-        return callback(null);
     });
 };
 

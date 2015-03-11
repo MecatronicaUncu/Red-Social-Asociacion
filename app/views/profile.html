@@ -40,16 +40,16 @@
 					<button class="btn btn-default" type="button" ng-click="applyFilter = !applyFilter" ng-show="!applyFilter"><span class="fa fa-search"></span></button>
 				</span>
 				
-				<contact-field people="filtered" ops="ops"></contact-field>
+				<contact-field person="person" ng-repeat="person in filtered"></contact-field>
 			</accordion-group>
 			<accordion-group heading="Contact Demands">
-				<contact-field people="demandedFriends" ops="ops"></contact-field>
+				<contact-field person="person" ng-repeat="person in demandedFriends"></contact-field>
 			</accordion-group>
 			<accordion-group heading="Contact Requests">
-				<contact-field people="requestedFriends" ops="ops"></contact-field>
+				<contact-field person="person" ng-repeat="person in requestedFriends"></contact-field>
 			</accordion-group>
 			<accordion-group heading="Some Suggestions...">
-				<contact-field people="suggestedFriends" ops="ops"></contact-field>
+				<contact-field person="person" ng-repeat="person in suggestedFriends"></contact-field>
 			</accordion-group>
 		</accordion>
 	</div>

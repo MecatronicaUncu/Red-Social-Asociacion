@@ -99,6 +99,7 @@ app.get('/acttypes', mongo.getTypes);
 app.get('/times', users.getTimes);
 app.get('/edtconfig', mongo.getConfig);
 app.get('/edtplaces', mongo.getPlaces);
+app.get('/subscriptions', users.extractCookieData, users.getSubscriptions);
 app.post('/edtnewact', users.newActivity);
 /******************************************************************************/
 
@@ -138,14 +139,16 @@ app.post('/login', users.extractCookieData, users.login);
 /******************************************************************************/
 
 /**************************  LOGGED USERS' REQUESTS   *************************/
-app.get('/contacts/:id', users.extractCookieData, users.getContacts);
+app.get('/contacts', users.extractCookieData, users.getContacts);
 app.get('/profile', users.extractCookieData, users.getProfile);
 app.get('/fields/:label', mongo.getFields);
 app.get('/asocs', users.extractCookieData, users.getAsocs);
 app.get('/usr/:id/isFriend', users.extractCookieData, users.isFriend);
 app.post('/profilepic/:id', users.extractCookieData, users.uploadPic);
 app.post('/friend', users.extractCookieData, users.friend);
-app.post('/delFriend/:friendId/:userId', users.extractCookieData, users.deleteFriend);
+app.post('/delFriend', users.extractCookieData, users.deleteFriend);
+app.post('/subscribe', users.extractCookieData, users.subscribe);
+app.post('/unsubscribe', users.extractCookieData, users.unsubscribe);
 app.post('/delUser/:id', users.extractCookieData, users.deleteUser, function (req, res, next) {
     if (req.id) {
         res.clearCookie('LinkedEnibId');

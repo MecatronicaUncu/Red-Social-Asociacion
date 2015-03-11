@@ -306,17 +306,22 @@ exports.getThey = function (req, res, next) {
  * Object.
  */
 exports.getContacts = function (req, res, next) {
-    User.getContacts(req.params.id, function (err, user) {
+    
+    if(req.id){
+        ;
+    }else{
+        res.send(401, 'Unauthorized');
+        return;
+    }
+    
+    User.getContacts(req.id, function (err, contacts) {
         if (err) {
             res.send(500, 'Error');
             return;
-        }
-        if (user) {
-            res.send(200, {results: user});
+        }else {
+            res.send(200, contacts);
             return;
         }
-        res.send(500, 'Error');
-        return;
     });
 };
 
@@ -433,6 +438,27 @@ exports.isFriend = function (req, res, next) {
     });
 };
 
+exports.getSubscriptions = function (req, res, next){
+    
+    if (req.id) {
+        ;
+    } else {
+        res.send(401, 'Unauthorized');
+        return;
+    }
+    
+    User.getSubscriptions(req.id, function(err, subsc){
+        if(err){
+            console.log(err);
+            res.send(500, 'ERROR');
+            return;
+        }else{
+            res.send(200, subsc);
+            return;
+        }
+    });
+};
+
 /**
  * Searches in the database for nodes matching the search string and sends them.
  * Matches for: first name, last name, email, profession
@@ -456,6 +482,12 @@ exports.search = function (req, res, next) {
 //        temp.name =  req.query['nam'];
 //    if (req.query.hasOwnProperty('par'))
 //        temp.parent = req.query['par'];
+
+    if(req.id){
+        ;
+    }else{
+        req.id = 0;
+    }
 
     User.search(req.query.what, req.query.term, req.id, function (err, results) {
         if (err) {
@@ -502,7 +534,7 @@ exports.activate = function (req, res, next) {
             return;
         };
         
-        User.changeProperty('active',"1",id, function (sdf){
+        User.changeProperty('active',1,id, function (sdf){
             if (sdf) {
                 res.send(401, 'Something went wrong');
                 return;
@@ -517,6 +549,43 @@ exports.activate = function (req, res, next) {
 /******************************************************************************/
 /*                          POST METHODS                                      */
 /******************************************************************************/
+exports.unsubscribe = function(req, res, next){
+    
+    if (req.id && req.body.instId){
+        ;
+    }else{
+        res.send(401, 'Unauthorized');
+        return;
+    }
+    
+    User.unsubscribe(req.id, req.body.instId, function(err){
+        if(err){
+            console.log(err);
+            res.send(500, 'ERROR');
+        }else{
+            res.send(200, 'OK');
+        }
+    });
+};
+
+exports.subscribe = function(req, res, next){
+    
+    if (req.id && req.body.instId){
+        ;
+    }else{
+        res.send(401, 'Unauthorized');
+        return;
+    }
+    
+    User.subscribe(req.id, req.body.instId, function(err){
+        if(err){
+            console.log(err);
+            res.send(500, 'ERROR');
+        }else{
+            res.send(200, 'OK');
+        }
+    });
+};
 
 exports.newActivity = function (req, res, next) {
     var acts = req.body.activities;
@@ -608,17 +677,6 @@ exports.newPart = function (req, res, next) {
             res.send(400, 'Error Creating Node');
             return;
         } else if (partID) {
-            /*
-             Mongo.register(partID, partData.nodeData, 'Parts', function (err, partID) {
-             if (err) {
-             console.log(err);
-             res.send(500, 'Database error');
-             return;
-             } else {
-             res.send(200, {idNEO: partID});
-             return;
-             }
-             });*/
             res.send(200, {idNEO: partID});
             return;
         } else {
@@ -666,18 +724,6 @@ exports.signup = function (req, res, next) {
             console.log(idNEO);
             res.send(200, {idNEO: idNEO});
             return;
-            /*
-             Mongo.register(idNEO, nodeData, 'Users', function (err, userID) {
-             if (err) {
-             console.log(err);
-             res.send(500, 'Database error');
-             return;
-             } else {
-             res.send(200, {idNEO: userID});
-             return;
-             }
-             });
-             */
         } else {
             res.send(500, 'Database error');
             return;
@@ -708,7 +754,7 @@ exports.login = function (req, res, next) {
         
         console.log(results['active']);
         
-        if (results['active']!=="1"){
+        if (results['active']!==1){
             res.send(401,'Email not activated')
             return;
         }
@@ -742,11 +788,15 @@ exports.login = function (req, res, next) {
  * POST /friend -> FRIEND SOMEBODY
  */
 exports.friend = function (req, res, next) {
-    if (!sameUser(req.body['idUsr'], req, res)) {
+    
+    if (req.id && req.body.idFriend && (req.body.idFriend != req.id)) {
+        ;
+    }else{
         res.send(401, 'Unauthorized');
         return;
     }
-    User.friend(req.body['idUsr'], req.body['idFriend'], function (err) {
+
+    User.friend(req.id, req.body['idFriend'], function (err) {
         if (err) {
             res.send(500, 'Error');
             return;
@@ -858,20 +908,25 @@ exports.changePassword = function (req, res, next) {
 /******************************************************************************/
 
 /**
- * DELETE /delFriend/:friendId/:userId -> DELETE FRIENDSHIP
+ * DELETE /delFriend -> DELETE FRIENDSHIP
  */
 exports.deleteFriend = function (req, res, next) {
-    if (!sameUser(req.params.userId, req, res)) {
+    
+    if (req.id && req.body.idFriend && (req.body.idFriend != req.id)) {
+        ;
+    }else{
         res.send(401, 'Unauthorized');
         return;
     }
-    User.deleteFriend(req.params.userId, req.params.friendId, function (err) {
+    
+    User.deleteFriend(req.id, req.body.idFriend, function (err) {
         if (err) {
             res.send(500, 'Error');
             return;
+        }else{
+            res.send(200, 'OK');
+            return;
         }
-        res.send(200, 'OK');
-        return;
     });
 };
 

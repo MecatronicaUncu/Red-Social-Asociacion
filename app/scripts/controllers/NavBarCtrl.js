@@ -18,8 +18,8 @@ angular.module('linkedEnibApp')
                 {name:translation.search, href:'#/search', active:$location.path()==='/search', visible:true},
                 {name:translation.profile, href:'#/profile/', active:$location.path()==='/profile', visible:session.loggedIn},
                 {name:translation.edt, href:'#/edt/', active:$location.path()==='/edt/', visible:true},
-                {name:translation.admin, href:'#/admin/', active:$location.path()==='/admin/', visible:session.admin},
-                {name:translation.aboutus, href:'#/about', active:$location.path()==='/about', visible:true}
+                {name:translation.admin, href:'#/admin/', active:$location.path()==='/admin/', visible:session.admin}
+                //{name:translation.aboutus, href:'#/about', active:$location.path()==='/about', visible:true}
             ];
         }      
     };
