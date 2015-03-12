@@ -351,7 +351,7 @@ User.getParamByEmail = function (email, field, callback) {
         'RETURN user.'+ field + ' AS value, ID(user) AS id'
     ].join('\n');
     
-    db.query(query, null, function (err, results,id) {
+    db.query(query, null, function (err, results) {
         if (err){
             throw err;
             console.log('err get Param');
@@ -684,18 +684,24 @@ User.newPart = function(data,callback){
 };
 
 User.signup = function (nodeData, callback) {
+    /*
+     * Solo hacer MATCH con email, porque si las demás propiedades
+     * difieren, el server se clava. Las demás agregarlas en ON CREATE
+     */
+    var email = nodeData.email;
+    delete nodeData.email;
     
     var params = '';
     for(var key in nodeData){
         if(nodeData.hasOwnProperty(key))
-            params += (key+':"'+nodeData[key]+'", ');
+            params += ('user.'+key+'="'+nodeData[key]+'", ');
     }
     // Saca el ultimo ", "
     params = params.slice(0,-2);
 
     var query = [
-	'MERGE (user:User {'+params+'})',
-	'ON CREATE SET user.c=0',
+	'MERGE (user:User {email:"'+email+'"})',
+	'ON CREATE SET user.c=0, '+params+', user.active=0',
 	'ON MATCH SET user.c=1',
 	'RETURN ID(user) AS idNEO, user.c AS c'
     ].join('\n');
@@ -752,6 +758,23 @@ User.friend = function (userId, otherId, callback) {
     db.query(query, null, function (err) {
         if(err){
             console.log("err friend sbdy");
+            return callback(err);
+        }
+        return callback(null);
+    });
+};
+
+User.activate = function(id,callback){
+    
+    var query = [
+        'MATCH (u)',
+        'WHERE ID(u)='+ id,
+        'SET u.active=1'
+    ].join('\n');
+    
+    db.query(query, null, function (err) {
+        if(err){
+            console.log("err USER activate");
             return callback(err);
         }
         return callback(null);

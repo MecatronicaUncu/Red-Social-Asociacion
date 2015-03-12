@@ -534,7 +534,7 @@ exports.activate = function (req, res, next) {
             return;
         };
         
-        User.changeProperty('active',1,id, function (sdf){
+        User.activate(id, function (sdf){
             if (sdf) {
                 res.send(401, 'Something went wrong');
                 return;
@@ -700,14 +700,12 @@ exports.signup = function (req, res, next) {
         res.send(400, 'Missing email');
         return;
     }
-
+    
+    var email = nodeData.email;
     var tempPass = hash(nodeData['password'], null);
     nodeData.password = tempPass['pass'];
     nodeData.salt = tempPass['salt'];
-    nodeData['active'] = 0;
-    var queryData = 'email:"' + nodeData['email'] + '", password:"' +
-        tempPass['pass'] + '", salt:"' + tempPass['salt'] +
-        '", active:"' + tempPass['active'] + '"';
+    //nodeData['active'] = 0;
     // ES NECESARIO VERIFICAR ?
     //if (temp.hasOwnProperty('firstName') && temp['firstName']) query = query + ', firstName:"' + temp['firstName'] + '"';
     //if (temp.hasOwnProperty('lastName') && temp['lastName']) query = query + ', lastName:"' + temp['lastName'] + '"';
@@ -717,7 +715,7 @@ exports.signup = function (req, res, next) {
             res.send(400, 'email taken');
             return;
         } else if (idNEO) {
-            if(!sendActivationEmail(nodeData['email'],tempPass['pass'])){
+            if(!sendActivationEmail(email,tempPass['pass'])){
                 res.send(400, 'Activation mail error');
                 return;
             }
@@ -859,18 +857,6 @@ exports.changeProperty = function (req, res, next) {
     if (tmp.hasOwnProperty('password')) {
         next();
     }
-
-    //Mongo.changeProfile(req,res);
-    /*
-     User.changeProperty(tmp['field'],tmp['value'],tmp['id'],function(err){
-     if (err){
-     res.send(500,'Error');
-     return;
-     }
-     res.send(200,'OK');
-     return;
-     });
-     */
 };
 
 exports.verifyPassword = function (req, res, next) {
