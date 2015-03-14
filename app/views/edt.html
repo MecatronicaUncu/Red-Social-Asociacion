@@ -74,7 +74,7 @@
                         {{newAct.whatName}}
                     </button>
                     <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
-                        <li role="presentation" ng-repeat="asoc in actAsocs| filter : {reltype:'!MEMBER'}">
+                        <li role="presentation" ng-repeat="asoc in actAsocs">
                             <a role="menuitem" tabindex="-1" 
                                ng-click="selectAsoc(asoc)">{{asoc.instName}}</a>
                         </li>

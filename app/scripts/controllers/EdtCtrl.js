@@ -49,6 +49,9 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
     $scope.selectAsoc = function (asoc) {
         $scope.newAct.whatId = asoc.instID;
         $scope.newAct.whatName = asoc.instName;
+        
+        console.log($scope.newAct.whatId);
+        console.log($scope.newAct.whoId);
 
         $http({method: 'GET', url: session.host + ':3000/acttypes', params: {partLabel: asoc.instLabel}})
             .success(function (acttypes) {
@@ -880,6 +883,7 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
     $scope.clearAct = function () {
         $scope.newAct.periods = [];
         $scope.newAct.whatId = $scope.actAsocs[0].instID;
+        $scope.newAct.whatName = $scope.actAsocs[0].instName;
         $scope.newAct.whoId = session.getId();
         $scope.newAct.whoName = session.profile.firstName[0] + '. ' + session.profile.lastName;
 
