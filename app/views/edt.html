@@ -9,7 +9,7 @@
                 </button>
                 <ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
                     <li role="presentation" ng-repeat="sub in subscriptions">
-                        <a role="menuitem" tabindex="-1" ng-click="edtGetTimes(sub.idNEO, 0, searchWeek, thisYear);">{{sub.name}}</a>
+                        <a role="menuitem" tabindex="-1" ng-click="selectFav(sub)">{{sub.name}}</a>
                     </li>
                 </ul>
             </div>

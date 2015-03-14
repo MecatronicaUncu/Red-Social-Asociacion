@@ -219,6 +219,14 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
         return week == 1 ? $scope.DobToYWDarr(d.setDate(24))[1] : week;
     };
 
+    $scope.selectFav = function(fav){
+        
+        $scope.whoIdToSearch = 0;
+        $scope.whatIdToSearch = fav.idNEO;
+        
+        $scope.edtGetTimes();
+    };
+
     /**
      * Para una semana dada como parámetro, o para la semana actual si es
      * omitido,	guarda los strings correspondientes a las fechas de esa semana.
@@ -232,7 +240,7 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
         $scope.searchWeek = week[1];
 
         if (w) {
-            $scope.edtGetTimes($scope.whatIdToSearch, $scope.whoIdToSearch, $scope.searchWeek, $scope.thisYear);
+            $scope.edtGetTimes();
             $scope.clearplot();
             $scope.replot();
         } else {
@@ -274,7 +282,10 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
         $scope.setDates();
         $scope.newActCollapse = true;
 
-        $scope.edtGetTimes(session.getId(), session.getId(), $scope.thisWeek, $scope.thisYear);
+        $scope.whoIdToSearch = session.getId();
+        $scope.whatIdToSearch = 0;
+
+        $scope.edtGetTimes();
 
     };
 
@@ -549,9 +560,13 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
      * 
      * TODO: Se tendría que consultar por ID, no por nombre!
      */
-    $scope.edtGetTimes = function (whatId, whoId, week, year) {
+    $scope.edtGetTimes = function () {
 
-        edt.getTimes(whatId, whoId, week, year, function (err, times) {
+        edt.getTimes(   $scope.whatIdToSearch, 
+                        $scope.whoIdToSearch, 
+                        $scope.searchWeek, 
+                        $scope.thisYear, 
+                        function (err, times) {
             if (err) {
                 console.log(err);
             } else {
@@ -1043,7 +1058,7 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
             $('.ui-datepicker').css('margin-top', '0px');
 
             $scope.addRemovePeriod(-1);
-            $scope.edtGetTimes($scope.whatIdToSearch, $scope.whoIdToSearch, $scope.thisWeek, $scope.thisYear);
+            $scope.edtGetTimes();
         }, 200);
     });
 
