@@ -1,6 +1,6 @@
 <div id="edt" hidden>
     <div class="edtBar" id="edtSearchBar">
-        <div class="edtSearchGroup" ng-show="newActCollapse">
+        <div class="edtSearchGroup" ng-show="newActCollapse && session.loggedIn">
             <div id="edtSearchSelect" class="dropdown">
                 <button class="edtSearchBtn dropdown-toggle" type="button">
                     <i id="edtSearchIcon" class="fa fa-fw fa-star"></i>
@@ -13,10 +13,6 @@
                     </li>
                 </ul>
             </div>
-            
-            <button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()" ng-show="newActCollapse">
-                <i id="edtSearchIcon" class="fa fa-fw fa-close"></i>
-            </button>
         </div>
         <div class="edtSearchGroup" ng-show="newActCollapse">        
             <div class="input-group" id="edtPartSearch">       
@@ -24,11 +20,17 @@
                 <span class="input-group-btn">
                     <button class="btn btn-default edtSearchBtn" type="button"><span class="fa fa-search"></span></button>
                 </span>
-            </div>
+            </div>            
         </div>    
-
+        
         <div class="edtSearchGroup">
-            <button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse = !newActCollapse" ng-show="session.loggedIn">
+            <button class="edtSearchBtn" id="clearSearchBtn" ng-click="clearSearch()" ng-show="newActCollapse">
+                <i id="clearSearchIcon" class="fa fa-fw fa-close"></i>
+            </button>
+        </div>
+
+        <div class="edtSearchGroup" ng-show="session.loggedIn">
+            <button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse = !newActCollapse">
                 <i id="newActivityIcon" class="fa fa-fw" ng-class="{'fa-plus': newActCollapse, 'fa-calendar': !newActCollapse}"></i>
             </button>
         </div>    

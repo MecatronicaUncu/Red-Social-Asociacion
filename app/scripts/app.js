@@ -34,6 +34,10 @@ angular
         templateUrl: 'views/admin.html',
         controller: 'AdminCtrl'
       })
+      .when('/edt/:id',{
+        templateUrl: 'views/edt.html',
+        controller: 'EdtCtrl'
+      })
       .when('/edt',{
         templateUrl: 'views/edt.html',
         controller: 'EdtCtrl'
@@ -91,9 +95,10 @@ angular
       return {
         restrict: 'E', // Element Name
         templateUrl: '/components/part-field.html',
-        controller: function($scope,users,session){
+        controller: function($scope,$location,users,session){
             $scope.users = users;
             $scope.session = session;
+            $scope.location = $location;
         },
         scope: {
           	part: '='

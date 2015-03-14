@@ -2,7 +2,18 @@
 
 var App = angular.module('linkedEnibApp');
 
-App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
+App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout, $http) {
+
+    $scope.whatIdToSearch = 0;
+    $scope.whoIdToSearch = 0;
+    
+    if($routeParams.id){
+        $scope.whatIdToSearch = $routeParams.id;
+        $scope.whoIdToSearch = $routeParams.id;
+    }else{
+        $scope.whatIdToSearch = 0;
+        $scope.whoIdToSearch = 0;
+    }
 
     $scope.newAct = {
         periods: [],
@@ -221,8 +232,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
         $scope.searchWeek = week[1];
 
         if (w) {
-            //TODO: Los ids segun lo que se elija! Favorito, en la busqueda.. etc.
-            $scope.edtGetTimes(session.getId(), session.getId(), $scope.searchWeek, $scope.thisYear);
+            $scope.edtGetTimes($scope.whatIdToSearch, $scope.whoIdToSearch, $scope.searchWeek, $scope.thisYear);
             $scope.clearplot();
             $scope.replot();
         } else {
@@ -858,6 +868,18 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
         $scope.newAct.whoId = session.getId();
         $scope.newAct.whoName = session.profile.firstName[0] + '. ' + session.profile.lastName;
 
+        if($routeParams.id){
+            $scope.whatIdToSearch = $routeParams.id;
+            $scope.whoIdToSearch = $routeParams.id;
+        }else{
+            $scope.whatIdToSearch = 0;
+            if(session.loggedIn){
+                $scope.whoIdToSearch = session.getId();
+            }else{
+                $scope.whoIdToSearch = 0;
+            }
+        }
+
         $scope.newActDays = [];
         $scope.addRemovePeriod(-1);
     };
@@ -906,6 +928,11 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
 
     $scope.$on('login', function () {
         $scope.newAct.whoId = session.getId();
+        if($routeParams.id){
+            $scope.whoIdToSearch = $routeParams.id;
+        }else{
+            $scope.whoIdToSearch = session.getId();
+        }
     });
 
     $scope.$on('gotSubscriptions', function () {
@@ -928,6 +955,11 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
 
     if (session.loggedIn) {
         $scope.newAct.whoId = session.getId();
+        if($routeParams.id){
+            $scope.whoIdToSearch = $routeParams.id;
+        }else{
+            $scope.whoIdToSearch = session.getId();
+        }
     }
 
     if (session.translation) {
@@ -1011,7 +1043,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
             $('.ui-datepicker').css('margin-top', '0px');
 
             $scope.addRemovePeriod(-1);
-            $scope.edtGetTimes(session.getId(), session.getId(), $scope.thisWeek, $scope.thisYear);
+            $scope.edtGetTimes($scope.whatIdToSearch, $scope.whoIdToSearch, $scope.thisWeek, $scope.thisYear);
         }, 200);
     });
 
