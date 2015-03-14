@@ -171,14 +171,14 @@ User.getNodeContents = function(idNEO, callback){
 		'TYPE(r) AS reltype, \'\' AS instName',
 		'UNION',
 		'MATCH (e)-[r]->(u) WHERE ID(u)='+idNEO.toString(),
-		'AND NOT TYPE(r) IN ["PARTOF","ADMINS","MEMBER","SUBSCRIBED"]',
+		'AND NOT TYPE(r) IN ["PARTOF","ADMINS","SUBSCRIBED"]',
 		'RETURN distinct e as nodeData, ID(e) AS idNEO, LABELS(e) AS label,',
-        'TYPE(r) AS reltype, \'\' AS instName',
-		'UNION',
-		'MATCH (e)-[r]->(u) WHERE ID(u)='+idNEO.toString()+' WITH e, r.memberAs AS label',
-		'MATCH (e)-[r]->(inst) WHERE TYPE(r)=label',
-		'RETURN distinct e as nodeData, ID(e) AS idNEO, LABELS(e) AS label,',
-		'TYPE(r) AS reltype, inst.name AS instName'
+        'TYPE(r) AS reltype, \'\' AS instName'
+//		'UNION',
+//		'MATCH (e)-[r]->(u) WHERE ID(u)='+idNEO.toString()+' WITH e, r.memberAs AS label',
+//		'MATCH (e)-[r]->(inst) WHERE TYPE(r)=label',
+//		'RETURN distinct e as nodeData, ID(e) AS idNEO, LABELS(e) AS label,',
+//		'TYPE(r) AS reltype, inst.name AS instName'
     ].join('\n');
 
     db.query(query, null, function (err, results) {
@@ -645,11 +645,13 @@ User.newRel = function(relData,callback){
     };
   
     var query = [
-    'MATCH (u),(i) WHERE ID(u)={usrID} AND ID(i)={instID}',
+    'MATCH (u),(i) WHERE ID(u)=' + relData.usrID.toString() +' AND ID(i)=' + relData.instId.toString(),
     'CREATE (u)-[:'+relData.relType + ']->(i)'
     ].join('\n');
     
-    db.query(query, params, function (err, results) {
+    console.log(query);
+    
+    db.query(query, null, function (err, results) {
         if (err){
             console.log(err);
             console.log('Err User newRel');
