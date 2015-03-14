@@ -109,7 +109,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="sign-input-wrap newActDayList">
+                    <!--div class="sign-input-wrap newActDayList">
                         <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">Día:</span>
                         </div>
@@ -117,7 +117,7 @@
                             <input id="DAY{{day.name}}{{periodIndex}}" type="checkbox" ng-model="newActDays[periodIndex][idx]" ng-change="onlyThisDay(periodIndex,idx)"/>
                             <label for="DAY{{day.name}}{{periodIndex}}">{{translation.edt[day.name + 'Min']}}</label>
                         </div>
-                    </div>
+                    </div-->
                     <div class="sign-input-wrap">
                         <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">Tipo de actividad:</span>
@@ -140,11 +140,11 @@
                                    placeholder="...">
                         </div>
                     </div>
-                    <div class="sign-input-wrap" ng-show="daySelected(periodIndex)">
+                    <div class="sign-input-wrap">
                         <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">Fecha:</span>
                             <input id="newActFromDAY{{periodIndex}}" type="text" 
-                                   placeholder="Desde" 
+                                   placeholder="Fecha" 
                                    class="sign-input" data-parsley-ui-enabled="false" 
                                    ng-model="dummy[periodIndex]"
                                    ng-change="newActWhen(dummy[periodIndex], periodIndex)"

@@ -676,6 +676,11 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
         date = new Date(year, month, day);
         $('#newActTo' + $scope.dayOrPeriod + periodIndex).datepicker("option", "minDate", date);
         date = $scope.DobToYWDarr(date);
+        
+        // Evita la necesidad de checkboxes para un sólo día
+        $scope.newActDays[periodIndex] = [false,false,false,false,false,false];
+        $scope.newActDays[periodIndex][date[2]-1] = true;
+        
         $scope.newAct.periods[periodIndex].from = {year: date[0], week: date[1], day: date[2]};
 
     };
@@ -685,6 +690,7 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
      * 
      */
     $scope.newActivity = function () {
+        
         var actsToCreate = [];
         var error = false;
         if ($scope.newAct.periods.length === 0)
@@ -711,14 +717,14 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
             var toYear = period.to.year;
             var yearToInsert = fromYear;
             var weekToInsert = -1;
-            console.log(wfrom, wto, wstep, yearToInsert);
+            
             for (var w = wfrom; w <= wto; w += wstep) {
                 weekToInsert = w;
                 if (w > $scope.weeksInYear()) {
                     weekToInsert = w - $scope.weeksInYear();
                     yearToInsert = toYear;
                 }
-                console.log(wfrom, wto, wstep, yearToInsert);
+                
                 period.days.forEach(function (day, dayIndex) {
                     if (error)
                         return;
@@ -868,8 +874,8 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
             firstDay: 1
         });
 
-        $('#newActFrom' + $scope.dayOrPeriod + periodIndex).datepicker('setDate', new Date());
-        $scope.newActWhen($('#newActFrom' + $scope.dayOrPeriod + periodIndex).val(), periodIndex);
+        //$('#newActFrom' + $scope.dayOrPeriod + periodIndex).datepicker('setDate', new Date());
+        //$scope.newActWhen($('#newActFrom' + $scope.dayOrPeriod + periodIndex).val(), periodIndex);
 
         /**
          * Configuración del calendario de fecha de cierre.
@@ -896,8 +902,6 @@ App.controller('EdtCtrl', function ($scope, edt, session, $timeout, $http) {
                 }
             }
         });
-
-        $('#newActFrom' + $scope.dayOrPeriod + periodIndex).datepicker('setDate', new Date());
     };
 
     $scope.$on('login', function () {
