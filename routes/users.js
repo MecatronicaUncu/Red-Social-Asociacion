@@ -860,18 +860,21 @@ exports.changeProperty = function (req, res, next) {
 };
 
 exports.verifyPassword = function (req, res, next) {
+    
     User.verifyPassword(req.body['id'], function (err, results) {
         if (err) {
             res.send(500, 'Error');
             return;
+        }else{
+            var tmp = hash(req.body['password'], results['salt']);
+            if (tmp['pass'] !== results['pass']) {
+                res.send(401, 'Wrong username or password');
+                return;
+            }else{
+                next();
+                return;
+            }
         }
-        var tmp = hash(req.body['password'], results['salt']);
-        if (tmp['pass'] !== results['pass']) {
-            res.send(401, 'Wrong username or password');
-        }
-        ;
-        next();
-        return;
     });
 };
 

@@ -817,7 +817,7 @@ User.verifyPassword = function (id,callback){
     });
 };
 
-User.changePassword = function (oldP,newP,newS,id,callback){
+User.changePassword = function (newP,newS,id,callback){
     
     var query = [
         'MATCH (u)',
@@ -829,11 +829,12 @@ User.changePassword = function (oldP,newP,newS,id,callback){
         if(err){
             console.log("err change prop");
             return callback(err);
-        }
+        }else{
         /*if (results[0].u._data.data.hasOwnProperty('password')){
             return callback(null);
         }*/
-        return callback(null);
+            return callback(null);
+        }
     });
 };
 
