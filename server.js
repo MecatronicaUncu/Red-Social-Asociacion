@@ -99,6 +99,7 @@ app.get('/acttypes', mongo.getTypes);
 app.get('/times', users.getTimes);
 app.get('/edtconfig', mongo.getConfig);
 app.get('/edtplaces', mongo.getPlaces);
+app.get('/getTimesIcal', users.getTimesIcal);
 app.get('/subscriptions', users.extractCookieData, users.getSubscriptions);
 app.post('/edtnewact', users.newActivity);
 /******************************************************************************/

@@ -302,7 +302,13 @@
         <table id="timeTable">
             <thead class="edt-head">
                 <th class="edt-head-wrap">Día</th>
-                <th class="edt-head-time-h" id="Hora">Hora</th>
+                <th class="edt-head-time-h" id="Hora">Hora
+                    <a id="iCalDownload" target="_self"
+                       href="/getTimesIcal?whoId={{whoIdToSearch}}&whatId={{whatIdToSearch}}&week={{searchWeek}}&year={{thisYear}}&whatName=Test"
+                       download="calendar.ics">
+                        iCal
+                    </a>
+                </th>
             </thead>
             <tbody>
                 <tr ng-repeat="day in daysToShow">

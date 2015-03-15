@@ -6,6 +6,8 @@ var Mongo = require('./mongo.js');
 var path = require('path');
 var cookies = require('cookies');
 var keygrip = require('keygrip');
+var VCalendar = require('cozy-ical').VCalendar;
+var VEvent = require('cozy-ical').VEvent;
 var keys = keygrip(["Andres", "Franco"]);
 exports.CookKeys = keys;
 var fs = require('fs'); //FILESYSTEM
@@ -90,6 +92,31 @@ var isAdmin = function (id, next) {
     });
 };
 exports.isAdmin = isAdmin;
+
+/**
+* Toma un string de formato 'XXhXX' (donde X es un dígito [0-9]) y devuelve
+* horas y minutos.
+* @param  {String} t
+* @return {Array} [hora,minutos]
+*/
+var getminutes = function (t) {
+   var mt = t.split('h');
+   return [parseInt(mt[0]), parseInt(mt[1])];
+};
+
+/**
+* Convierte un array de tipo [Year, Week, DayOfWeek] (ISO 8601) en un objeto de
+* tipo Date
+* @param {Array} AYWD ([Year, Week, DayOfWeek])
+* @return {Date Object} Dob
+*/
+var YWDarrToDob = function (AYWD) { // Arg : ISO 8601 : [Y, W, D]
+   var DOb = new Date(+AYWD[0], 0, 3);  // Jan 3
+   if (isNaN(DOb))
+       return false;
+   DOb.setDate(3 - DOb.getDay() + (AYWD[1] - 1) * 7 + +AYWD[2]);
+   return DOb;
+};
 
 /*
  * Method to extract cookies
@@ -198,6 +225,87 @@ var sendActivationEmail = function(email,hash){
 /******************************************************************************/
 /*                          GET METHODS                                       */
 /******************************************************************************/
+
+exports.getTimesIcal = function(req, res, next){
+    
+    if( req.query.whatId && req.query.whoId && 
+        req.query.week && req.query.year && req.query.whatName)
+        ;
+    else{
+        res.send(401, 'Missing information');
+        return;
+    }
+    
+    var timeData = {
+        //TODO: Extender a array de whats
+        whatName: req.query.whatName,
+        //whoName: req.query.whoName,
+        whatId: req.query.whatId,
+        whoId: req.query.whoId,
+        week: req.query.week,
+        year: req.query.year,
+    };
+      
+    User.getTimes(timeData, function (err, times) {
+        if (err) {
+            console.log(err);
+            res.send(500, 'Error');
+            return;
+        } else {
+            console.log(times);
+            var cal = new VCalendar({
+                organization: 'TimesApp',
+                title: timeData.whatName
+            });
+            var tmpDate,tmpHMin,startDate,endDate;
+            times.forEach(function(time){
+                tmpDate = YWDarrToDob([time.year,time.week,time.day])
+                tmpHMin = getminutes(time.from);
+                startDate = new Date(   tmpDate.getFullYear(), 
+                                        tmpDate.getMonth(),
+                                        tmpDate.getDate(),
+                                        tmpHMin[0], tmpHMin[1], 0);
+                tmpHMin = getminutes(time.to);                        
+                endDate = new Date(     tmpDate.getFullYear(), 
+                                        tmpDate.getMonth(),
+                                        tmpDate.getDate(),
+                                        tmpHMin[0], tmpHMin[1], 0);
+                                        
+                var vevent = new VEvent({
+                    stampDate: 0,
+                    startDate: startDate,
+                    endDate: endDate,
+                    summary: time.type,
+                    description: time.desc,
+                    //location: "Test Location",
+                    uid: time.idNEO
+                });
+
+                cal.add(vevent);
+            });
+
+            console.log(cal.toString());
+
+            fs.writeFile("/tmp/ical.ics", cal.toString(), function(err) {
+                if(err) {
+                    return console.log(err);
+                    res.send(500);
+                }else{
+                    var stat = fs.statSync('/tmp/ical.ics');
+                    res.writeHead(200, {
+                          'Content-Type': 'text/calendar', 
+                          'Content-Length': stat.size,
+                          'Content-disposition' : 'attachment; filename="calendar.ics"'
+                    });
+                    var stream = fs.createReadStream( '/tmp/ical.ics', { bufferSize: 64 * 1024 });
+                    //res.attachment('/tmp/ical.ics');
+                    stream.pipe(res);
+        //            res.download('/tmp/ical.ics','calendar.ics');
+                }
+            }); 
+        }
+    });
+};
 
 exports.getTimes = function(req, res, next){
   

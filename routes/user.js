@@ -62,7 +62,7 @@ User.getTimes = function(timeData, callback){
         'MATCH (a:ACTIVITY)',
         'WHERE (a.whatId='+timeData.whatId+' OR a.whoId='+timeData.whoId+')',
         'AND a.week='+timeData.week+' AND a.year='+timeData.year,
-        'RETURN a AS time'
+        'RETURN a AS time, ID(a) AS idNEO'
     ].join('\n');
     
     db.query(query, null, function (err, res) {
@@ -73,6 +73,7 @@ User.getTimes = function(timeData, callback){
         }else{
             var times = [];
             res.forEach(function(time){
+                time.time._data.data['idNEO']=time.idNEO;
                 times.push(time.time._data.data);
             });
             return callback(null, times);
