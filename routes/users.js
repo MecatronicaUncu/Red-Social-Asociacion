@@ -264,12 +264,12 @@ exports.getTimesIcal = function(req, res, next){
                 startDate = new Date(   tmpDate.getFullYear(), 
                                         tmpDate.getMonth(),
                                         tmpDate.getDate(),
-                                        tmpHMin[0], tmpHMin[1], 0);
+                                        tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
                 tmpHMin = getminutes(time.to);                        
                 endDate = new Date(     tmpDate.getFullYear(), 
                                         tmpDate.getMonth(),
                                         tmpDate.getDate(),
-                                        tmpHMin[0], tmpHMin[1], 0);
+                                        tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
                                         
                 var vevent = new VEvent({
                     stampDate: 0,

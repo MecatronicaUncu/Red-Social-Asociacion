@@ -17,9 +17,10 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
 
     $scope.newAct = {
         periods: [],
-        whatId: -1
+        whatId: -1,
+        timezone: new Date().getTimezoneOffset()
     };
-
+    
     $scope.dayOrPeriod = 'PERIOD';
 
     $scope.actAsocs = [];
@@ -414,7 +415,9 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
     $scope.timeplot = function (alltimes, config) {
 
         console.log(alltimes);
-
+        if(alltimes.length == 0)
+            return;
+        
         var divwidth;
         var divheight;
 
@@ -772,7 +775,8 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
                                 whatName: $scope.newAct.whatName,
                                 whoName: $scope.newAct.whatName,
                                 from: time.from,
-                                to: time.to
+                                to: time.to,
+                                timezone: $scope.newAct.timezone
                             });
                         });
                     }
