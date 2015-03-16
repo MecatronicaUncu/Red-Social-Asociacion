@@ -39,12 +39,12 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
         return selected;
     };
 
-    $scope.onlyThisDay = function (periodIndex, idx) {
-        $scope.newActDays[periodIndex].forEach(function (el, index) {
-            $scope.newActDays[periodIndex][index] = false;
-        });
-        $scope.newActDays[periodIndex][idx] = true;
-    };
+//    $scope.onlyThisDay = function (periodIndex, idx) {
+//        $scope.newActDays[periodIndex].forEach(function (el, index) {
+//            $scope.newActDays[periodIndex][index] = false;
+//        });
+//        $scope.newActDays[periodIndex][idx] = true;
+//    };
 
     //necesita llamada a getAssociations
     $scope.selectAsoc = function (asoc) {
@@ -773,7 +773,7 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
                                 whatId: $scope.newAct.whatId,
                                 whoId: $scope.newAct.whoId,
                                 whatName: $scope.newAct.whatName,
-                                whoName: $scope.newAct.whatName,
+                                whoName: $scope.newAct.whoName,
                                 from: time.from,
                                 to: time.to,
                                 timezone: $scope.newAct.timezone
