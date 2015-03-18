@@ -9,6 +9,8 @@
 angular.module('linkedEnibApp')
 .controller('NavBarCtrl',function($scope,$location,session){
       
+    $scope.session = session;
+      
     $scope.updateNavBar = function(){
         if(session.translation){
             var translation = session.translation.navBar;
@@ -22,6 +24,13 @@ angular.module('linkedEnibApp')
                 //{name:translation.aboutus, href:'#/about', active:$location.path()==='/about', visible:true}
             ];
         }      
+    };
+    
+    $scope.avLangs = ['ar','us','fr'];
+    
+    $scope.selectLang = function(lang){
+        console.log(lang);
+        session.setLang(lang);
     };
       
     $scope.$on('gotAdmin', function(){

@@ -132,3 +132,20 @@
     horizontal-align: middle;
     color: blue;
 }
+
+#langButton {
+    background-color: transparent;
+    border: 1px solid #FFF;
+    @include box-shadow(0px 0px 3px 1px #FFFFFF);
+}
+
+.langField {
+    margin: auto 5px;
+    cursor: pointer;
+}
+
+#langDropDown {
+    min-width: 0;
+    top: 50%;
+    left: 20%;
+}

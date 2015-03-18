@@ -132,12 +132,10 @@ exports.extractCookieData = function (req, res, next) {
 
     var cook = new cookies(req, res, keys);
     var idCookie = cook.get('LinkedEnibId');
-    var langCookie = cook.get('LinkedEnibLang');
 
-    if (idCookie && langCookie) {
+    if (idCookie) {
 
         req.id = parseInt(idCookie);
-        req.lang = langCookie;
     }
     else {
         console.log('Cookies Errors');
@@ -875,7 +873,6 @@ exports.login = function (req, res, next) {
             if (!loggedIn(req, res)) {
                 var cook = new cookies(req, res, keys);
                 cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
-                cook.set('LinkedEnibLang', results.lang, {signed: true, maxAge: 9000000});
                 console.log(results['idNEO']);
                 res.send(200, {idNEO: results['idNEO'], lang: results.lang});
                 return;
@@ -958,13 +955,22 @@ exports.uploadPic = function (req, res, next) {
 exports.changeProperty = function (req, res, next) {
     var tmp = req.body;
 
-    if (!sameUser(tmp['id'], req, res)) {
-        res.send(401, 'Unauthorized');
-        return;
-    }
     if (tmp.hasOwnProperty('password')) {
         next();
     }
+    if(req.id && tmp.field && tmp.value)
+        ;
+    else
+        res.send(401);
+    
+    User.changeProperty(tmp.field, tmp.value, req.id, function(err){
+        if(err){
+            console.log(err);
+            res.send(500);
+        }else{
+            res.send(200);
+        }
+    });
 };
 
 exports.verifyPassword = function (req, res, next) {

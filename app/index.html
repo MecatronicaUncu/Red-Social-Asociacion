@@ -40,6 +40,20 @@
         <!-- BARRA DE NAVEGACIÓN -->
         <div ng-controller="NavBarCtrl">
             <div class="header">
+                    <div class="dropdown newActSelect">
+                        <button id="langButton" class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+                            <img src="images/lang/{{session.lang}}.png"
+                                    height="11" width="16" alt="language">
+                        </button>
+                        <ul id="langDropDown" class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
+                            <li role="presentation" ng-repeat="lang in avLangs">
+                                <img src="/images/lang/{{lang}}.png" role="menuitem" tabindex="-1"
+                                   ng-click="selectLang(lang)" height="11" width="16"
+                                   class="langField">
+                            </li>
+                        </ul>
+                    </div>
+                
                     <ul class="header-wrap">
                         <li class="nav-link nav-menu">
                             <a id="mobilemenu" ng-click="toggleMMenu()"><i class="fa fa-fw fa-bars"></i></a>

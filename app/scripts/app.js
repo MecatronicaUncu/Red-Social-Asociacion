@@ -144,7 +144,7 @@ angular
     this.host_NET = 'https://edt.mecatronicauncu.org';
     this.host = this.host_LAN;
     this.admin = false;
-    this.lang = 'ES_AR';
+    this.lang = 'ar';
     this.profile = null;
     this.translation = null;
     this.subscriptions = null;
@@ -184,6 +184,8 @@ angular
         $http({method:'GET', url:session.host+':3000/profile'})
 	    .success(function (profile){
             session.profile = profile;
+            session.lang = profile.lang;
+            session.getTranslation();
             $rootScope.$broadcast('gotProfile');
             return;
         })
@@ -222,8 +224,6 @@ angular
             session.getMyProfile();
             session.getContacts();
             session.getSubscriptions();
-	      	session.setLang(data.lang);
-            session.getTranslation();
 	      	session.log('in');
             //TODO: Necesario?
             $rootScope.$broadcast('login');
@@ -258,6 +258,16 @@ angular
         this.translation = translation;
         $rootScope.$broadcast('gotTranslation');
     };
+    this.saveLang = function(){
+        var session = this;
+        $http({method:'POST', url:session.host+':3000/change', data:{field:'lang', value:session.lang}})
+	      	.success(function(){
+                
+	        })
+	        .error(function(){
+				console.log('Error saving language...');
+	        });
+    };
     this.isLogged =  function() {
     	return this.loggedIn;
     };
@@ -272,6 +282,9 @@ angular
     };
     this.setLang = function(lang){
         this.lang = lang;
+        this.getTranslation();
+        if(this.loggedIn)
+            this.saveLang();
     };
   })
   .service('users', function($http, $rootScope, session) {
