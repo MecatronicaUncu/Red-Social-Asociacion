@@ -14,8 +14,8 @@ Con el agregado del algoritmo SHA-256 para encriptar las contraseñas, la base d
 
 Por ahora se puede usar la que está en el repo, pero muy pronto se va a eliminar.
 
-Al momento de crear o resetear la base de datos, es VITAL que se ejecute esta query de Cypher:
- - ```CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE;```
+Al momento de crear o resetear la base de datos, es muy importante que se ejecute esta query de Cypher:
+ - ```CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;```
 
 Cómo utilizar en linux
 ===================
@@ -50,46 +50,36 @@ Cómo utilizar en Windows
 
 TODO
 
-Files
+Archivos
 ===================
 
-The folder ```app``` contains everything to develop.
+La carpeta ```app``` contiene todo lo referido al Front-End de la web.
 
-The file ```app/server.js``` contains the [express](http://expressjs.com/) server configuration and the routes to the functions.
+El archivo ```server.js``` contiene la configuración del servidor [express](http://expressjs.com/) y las direcciones que llaman a las diferentes funciones del Back-End.
 
-The file ```app/routes/users.js``` implements the functions needed to ensure the working of the site, as is the cookies and the link between the express server and the [neo4j](http://neo4j.org/) database.
+El archivo ```routes/users.js``` implementa las funciones necesarias para asegurar el funcionamiento del sitio, como el manejo de cookies, la verificación de permisos, y la conección entre el servidor [express](http://expressjs.com/) y la base de datos [neo4j](http://neo4j.org/).
 
-The file ```app/routes/user.js``` implements the functions to query the [neo4j](http://neo4j.org/) database.
+El archivo ```routes/user.js``` implementa las funciones que consultan la base de datos [neo4j](http://neo4j.org/).
 
-The folder ```app/routes/upload``` contains the user's profile images.
+La carpeta ```routes/upload``` contiene las imágnes de perfil de los usuarios.
 
-The folder ```app/views``` contains the html files for the frontend.
+La carpeta ```app/views``` contiene los archivos html del Front-End
 
-The folder ```app/scripts``` contains the javascript files for the frontend.
+La carpeta ```app/scripts``` contiene los archivos javascripts que permiten el funcionamiento del Front-End
+
+La carpeta ```app/sass``` contiene los arhivos de estilo [Sass](http://sass-lang.com/) sin compilar
 
 TODO
 ===================
 
-- [ ] Normalize the way the _ids_ are passed to the _GET_ and _POST_ methods. (Sometimes in _req.params_, sometimes in _req.body_)
-- [ ] Refresh the search bar when a contact has been demanded.
-- [x] Use only one cypher query by function, so as to not worry about callbacks.
+- [ ] ~~Normalize the way the _ids_ are passed to the _GET_ and _POST_ methods. (Sometimes in _req.params_, sometimes in _req.body_)~~ **No se puede enviar en _req.body_ si es un método _GET_**
 - [ ] Show an error message when the signup process fails.
-- [x] Links to users profiles by clicking on their names
-- [x] Allow images other than .jpeg.
-- [x] Allow password change.
+- [ ] Links to users profiles by clicking on their names
 - [ ] Allow password recovery.
 - [ ] COMMENT CODE
-- [x] Ask for email on signup.
 - [ ] Refresh profile.
-- [x] Refresh progile pic when new uploaded.
-- [x] Validación de los campos en signup.
 - [ ] Tamaño de imagenes.
-- [x] En el perfil aparece asd asd asd
 - [ ] Esqueleto para agregar utilities.
-- [x] Undefined on formulario signup
-- [x] Guardar en la bdd el link a la imagen relativo al server. (sino aparecen sólo en la Asoc) 
-- [x] Agregar SSL
-- [ ] Agregar ```CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;``` cuando ande el signup con email
 - [ ] Enviar Errores verbose desde express al sing(up/in) para mostrarlos directamente en el mensaje de error.
 - [ ] Limpiar el Gruntfile.js
 - [ ] Arreglar los warning de deprecated
