@@ -1,7 +1,7 @@
 Red-Social-Asociacion
 ==========
 
-Este proyecto se inicia en el marco del módulo de "Conception des Aplications Interactives", de la [Escuela de Ingenieros de Brest - ENIB -](http://www.enib.fr/index.php/en/).
+Este proyecto se inicia en el marco del módulo de "Conception d'Aplications Interactives", de la [Escuela de Ingenieros de Brest - ENIB -](http://www.enib.fr/index.php/en/).
 
 Originalmente se diseña una webapp para el contacto profesional entre estudiantes del [ENIB](http://www.enib.fr/index.php/en/).
 
