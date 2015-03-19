@@ -1,7 +1,7 @@
 Red-Social-Asociacion
 ==========
 
-Este proyecto se inicia en el marco del módulo de "Conception des Aplications Interactives", de la [Escuela de Ingenieros de Brest - ENIB -](http://www.enib.fr/index.php/en/).
+Este proyecto se inicia en el marco del módulo de "Conception d'Aplications Interactives", de la [Escuela de Ingenieros de Brest - ENIB -](http://www.enib.fr/index.php/en/).
 
 Originalmente se diseña una webapp para el contacto profesional entre estudiantes del [ENIB](http://www.enib.fr/index.php/en/).
 
@@ -14,9 +14,6 @@ Con el agregado del algoritmo SHA-256 para encriptar las contraseñas, la base d
 
 Por ahora se puede usar la que está en el repo, pero muy pronto se va a eliminar.
 
-Al momento de crear o resetear la base de datos, es muy importante que se ejecute esta query de Cypher:
- - ```CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;```
-
 Cómo utilizar en linux
 ===================
 
@@ -28,6 +25,7 @@ Cómo utilizar en linux
 6. Configurar [neo4j](http://neo4j.org/): 
   1. ```/$NEO4J/conf/neo4j-server.properties``` : Cambiar la propiedad "database directory" para que apunte hacia la carpeta ```graph.db``` dentro de la carpeta del proyecto. Por default, la carpeta graph.db debe estar ubicada en ```/$NEO4J/data/graph.db```
   2. ```/$NEO4J/conf/neo4j.properties``` : Descomentar ```allow_store_upgrade=true```.
+  3. Al momento de crear o resetear la base de datos, es muy importante que se ejecute esta query de Cypher: ```CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;```
 7. Instalar [Ruby](https://www.ruby-lang.org/es/).
 8. Instalar [Sass](http://sass-lang.com/) y [Compass](http://compass-style.org):
   1. ```gem install sass```
