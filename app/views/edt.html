@@ -16,11 +16,20 @@
         </div>
         <div class="edtSearchGroup" ng-show="newActCollapse">        
             <div class="input-group" id="edtPartSearch">       
-                <input type="text" ng-keyup="partSearch()" ng-model="partSearchTerm" class="form-control edtSearchInput" placeholder="Buscar...">
+                <input type="text" edt-enter="partSearch()" ng-model="partSearchTerm"
+                       class="form-control edtSearchInput" placeholder="<Enter> para buscar...">
+                <div class="dropdown" id="partSearchDDToggle">
+                    <button data-toggle="dropdown" hidden></button>
+                    <ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
+                        <li role="presentation" ng-repeat="part in partSearchResults">
+                            <a role="menuitem" tabindex="-1" ng-click="selectFav(part)">{{part.name}}</a>
+                        </li>
+                    </ul>
+                </div>
                 <span class="input-group-btn">
                     <button class="btn btn-default edtSearchBtn" type="button"><span class="fa fa-search"></span></button>
                 </span>
-            </div>            
+            </div>
         </div>    
         
         <div class="edtSearchGroup">

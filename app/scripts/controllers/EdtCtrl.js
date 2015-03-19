@@ -4,6 +4,8 @@ var App = angular.module('linkedEnibApp');
 
 App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout, $http) {
 
+    $scope.partSearchResults = [];
+
     $scope.whatIdToSearch = 0;
     $scope.whoIdToSearch = 0;
     
@@ -130,16 +132,24 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
     };
 
     $scope.partSearch = function () {
+        
+        if($('#partSearchDDToggle').hasClass("open")){
+            ;
+        }else{
+            $('#partSearchDDToggle').addClass('open');
+        }
+        
         if ($scope.partSearchTerm === '') {
+            $('#partSearchDDToggle').removeClass('open');
             $scope.partSearchResults = [];
             return;
         }
-        var path = session.host + ':3000/search?what=Parts&par=' + $scope.partSearchTerm + '&nam=' + $scope.partSearchTerm;
+        var path = session.host + ':3000/search?what=Parts&term=' + $scope.partSearchTerm;
         $http({method: 'GET', url: path})
-            .success(function (results) {
-                console.log(results);
-                $scope.partSearchResults = results;
-            });
+        .success(function (results) {
+            console.log(results);
+            $scope.partSearchResults = results;
+        });
     };
 
     /*****************************************************************/
@@ -224,7 +234,6 @@ App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout
     };
 
     $scope.selectFav = function(fav){
-        
         $scope.whoIdToSearch = 0;
         $scope.whatIdToSearch = fav.idNEO;
         
