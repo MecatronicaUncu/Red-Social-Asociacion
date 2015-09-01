@@ -224,6 +224,24 @@ var sendActivationEmail = function(email,hash){
 /*                          GET METHODS                                       */
 /******************************************************************************/
 
+exports.getEdtConfig = function(req, res, next){
+    
+    //TODO: Configuracion personal del usuario
+    
+    var configFile = path.resolve(path.join(__dirname, '../config/edtConfig.json'));
+    
+    fs.readFile(configFile, 'utf-8', function (err, config) {
+        if (err){
+            console.log(err);
+            res.send(500);
+        }
+        else{
+            console.log(config);
+            res.send(200, config);
+        }
+    });  
+};
+
 exports.getTimesIcal = function(req, res, next){
     
     if( req.query.whatId && req.query.whoId && 

@@ -33,6 +33,7 @@ var allowCrossDomain = function (req, res, next) {
     //res.header("Access-Control-Allow-Headers", "DNT, X-Mx-ReqToken, Keep-Alive, User-Agent, If-Modified-Since, Cache-Control, Origin, X-Requested-With, Content-Type,Accept,Authorization,X-HTTP-Method-Override");
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Max-Age', 3600);
+    console.log('NEXT:',next);
     next();
 };
 
@@ -97,7 +98,7 @@ app.configure('development', function () {
 /****************************    EDT REQUESTS   *******************************/
 app.get('/acttypes', mongo.getTypes);
 app.get('/times', users.getTimes);
-app.get('/edtconfig', mongo.getConfig);
+app.get('/edtconfig', users.getEdtConfig);
 app.get('/edtplaces', mongo.getPlaces);
 app.get('/getTimesIcal', users.getTimesIcal);
 app.get('/subscriptions', users.extractCookieData, users.getSubscriptions);

@@ -5,8 +5,23 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(
     process.env['NEO4J_URL'] ||
     process.env['GRAPHENEDB_URL'] ||
-    'http://localhost:7474'
+    'http://neo4j:neo@localhost:7474'
 );
+
+(function(){
+    var query = [
+        'MATCH (u:User)',
+        'RETURN u'].join('\n');
+
+    db.query(query, null, function(err, results) {
+        if(err){
+            throw err;
+            console.log('err test');
+        }else{
+            console.log('anda');
+        }
+    });
+})();
 
 var maxNode = 15;
 var counter = 11;
@@ -226,7 +241,7 @@ User.getThey = function (callback) {
 
     db.query(query, null, function (err, results) {
         if (err){
-			throw err;
+	    throw err;
             console.log("err get All");
             return callback(err);
         }

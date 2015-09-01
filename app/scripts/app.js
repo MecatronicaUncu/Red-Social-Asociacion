@@ -142,7 +142,7 @@ angular
     this.host_LAN = 'https://192.168.0.6';
     this.host_LOC = 'https://127.0.0.1';
     this.host_NET = 'https://edt.mecatronicauncu.org';
-    this.host = this.host_LAN;
+    this.host = this.host_LOC;
     this.admin = false;
     this.lang = 'ar';
     this.profile = null;
