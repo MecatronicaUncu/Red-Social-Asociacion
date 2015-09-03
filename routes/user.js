@@ -8,21 +8,6 @@ var db = new neo4j.GraphDatabase(
     'http://neo4j:neo@localhost:7474'
 );
 
-(function(){
-    var query = [
-        'MATCH (u:User)',
-        'RETURN u'].join('\n');
-
-    db.query(query, null, function(err, results) {
-        if(err){
-            throw err;
-            console.log('err test');
-        }else{
-            console.log('anda');
-        }
-    });
-})();
-
 var maxNode = 15;
 var counter = 11;
 var limit = 5;
@@ -413,8 +398,6 @@ User.getSubscriptions = function (idNEO, callback){
         'MATCH (n:User)-[:SUBSCRIBED]->(s) WHERE ID(n)='+idNEO,
         'RETURN distinct s, ID(s) AS idNEO'
     ].join('\n');
-    
-    console.log(query);
     
     db.query(query,null,function(err,results){
         if (err) {

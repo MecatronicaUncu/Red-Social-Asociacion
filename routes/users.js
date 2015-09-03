@@ -16,6 +16,21 @@ var nodemailer = require('nodemailer');
 var templatesDir   = path.resolve(path.join(__dirname, '../templates'));
 var emailTemplates = require('email-templates');
 
+/******************************************************************************/
+/*                          LOAD TRANSLATIONS                                 */
+/******************************************************************************/
+var translations;
+
+var transFile = path.resolve(path.join(__dirname, '../config/translations.json'));
+    
+fs.readFile(transFile, 'utf-8', function (err, t) {
+    if (err){
+        throw err;
+    }
+    else{
+        translations = JSON.parse(t);
+    }
+});  
 
 /******************************************************************************/
 /*                          COOKIES & SECURITY                                */
@@ -223,6 +238,19 @@ var sendActivationEmail = function(email,hash){
 /******************************************************************************/
 /*                          GET METHODS                                       */
 /******************************************************************************/
+
+exports.getTranslation = function(req,res,next){
+    
+    var lang = req.params.lang;
+    if(!lang){
+        res.send(500, 'Error');
+    }else if(translations.hasOwnProperty(lang)){
+        res.send(200, {translation: translations[lang]});
+    }else{
+        res.send(404, 'translation for:'+lang+'not found');
+    }
+
+};
 
 exports.getEdtConfig = function(req, res, next){
     

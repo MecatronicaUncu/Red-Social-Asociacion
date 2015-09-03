@@ -2,7 +2,7 @@
     <div class="edtBar" id="edtSearchBar">
         <div class="edtSearchGroup" ng-show="newActCollapse && session.loggedIn">
             <div id="edtSearchSelect" class="dropdown">
-                <button class="edtSearchBtn dropdown-toggle" type="button">
+                <button class="edtSearchBtn dropdown-toggle" data-toggle="dropdown" type="button">
                     <i id="edtSearchIcon" class="fa fa-fw fa-star"></i>
                     Favoritos
                     <span class="caret"></span>
@@ -53,7 +53,7 @@
         </div>  
         <div class="edtSearchGroup">
             <div id="edtWeekSelect" class="dropdown">
-                <button class="edtSearchBtn dropdown-toggle" type="button">
+                <button class="edtSearchBtn dropdown-toggle" data-toggle="dropdown" type="button">
                     <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>
                     Semana {{searchWeek}}
                     <span class="caret"></span>
@@ -79,7 +79,7 @@
             <div class="sign-input-wrap newActPeriod">
                 <div class="dropdown newActSelect">
                     <span class="edtSearchBtn newActBtn newActLbl">Asociado a:</span>
-                    <button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+                    <button class="edtSearchBtn newActBtn dropdown-toggle" data-toggle="dropdown" type="button">
                         {{newAct.whatName}}
                     </button>
                     <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
@@ -226,7 +226,7 @@
                     <div class="sign-input-wrap" ng-show="daySelected(periodIndex)">
                         <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">Repetir:</span>
-                            <button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+                            <button class="edtSearchBtn newActBtn dropdown-toggle" data-toggle="dropdown" type="button">
                                 {{actRepeats[newAct.periods[periodIndex].repeat]}}
                             </button>
                             <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">

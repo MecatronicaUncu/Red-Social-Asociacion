@@ -19,3 +19,4 @@ app/styles
 *.log
 */*.log
 /nbproject/private/
+dist/

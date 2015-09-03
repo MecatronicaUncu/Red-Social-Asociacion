@@ -36,7 +36,6 @@ var allowCrossDomain = function (req, res, next) {
     //res.header("Access-Control-Allow-Headers", "DNT, X-Mx-ReqToken, Keep-Alive, User-Agent, If-Modified-Since, Cache-Control, Origin, X-Requested-With, Content-Type,Accept,Authorization,X-HTTP-Method-Override");
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Max-Age', 3600);
-    console.log('NEXT:',next);
     next();
 };
 
@@ -140,7 +139,7 @@ app.get('/checkAdminCookie', users.extractCookieData, function (req, res) {
 app.get('/search', users.extractCookieData, users.search);
 app.get('/usr/:id/pic', users.getPicture);
 app.get('/profile/:id', users.extractCookieData, users.getProfile);
-app.get('/translation/:lang', mongo.getTranslation);
+app.get('/translation/:lang', users.getTranslation);
 app.get('/they', users.getThey);
 app.get('/activate', users.activate);
 app.post('/signup', users.signup);
