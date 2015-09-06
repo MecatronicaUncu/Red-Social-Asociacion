@@ -20,3 +20,9 @@ app/styles
 */*.log
 /nbproject/private/
 dist/
+
+# start-stop services scripts
+mongoRun
+mongoStop
+neoRun
+neoStop
