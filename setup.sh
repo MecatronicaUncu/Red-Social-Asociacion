@@ -110,9 +110,9 @@ echo "#!/bin/bash
 chmod +x neoStop
 
 echo "#!/bin/bash
-mongod --dbpath ./mongodata/db/" > mongoRun
+./bin/mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --dbpath ./mongodata/db/" > mongoRun
 chmod +x mongoRun
 
 echo "#!/bin/bash
-mongod --shutdown --dbpath mongodata/db" > mongoStop
+./bin/mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --shutdown --dbpath mongodata/db" > mongoStop
 chmod +x mongoStop
