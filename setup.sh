@@ -89,12 +89,10 @@ cd ..
 mkdir -p $BIN_DIR/mongodb
 cp -R -n $TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER/ $BIN_DIR/mongodb
 mkdir -p mongodata/db
-#----------------------------------------#
 
-#----------------------------------------#
 # Get npm and bower dependencies
 npm install .
-bower install .
+bower install
 
 #----------------------------------------#
 # remove temp download dir
