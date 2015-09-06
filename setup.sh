@@ -70,7 +70,7 @@ mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 
 # copy config files
-cp -R defaults/neo4j-community-2.1.5/* $NEO4J_DIR
+cp -R default/neo4j-community-2.1.5/* $NEO4J_DIR
 
 #----------------------------------------#
 # Install Sass and Compass
