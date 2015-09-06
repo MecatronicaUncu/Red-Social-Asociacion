@@ -26,3 +26,9 @@ mongoRun
 mongoStop
 neoRun
 neoStop
+
+# Vim temp files
+.*.swp
+
+# Temp download folder
+tmp_download_dir
