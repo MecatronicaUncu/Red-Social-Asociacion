@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DEPS="npm
+gem"
+
 NODEJS_VER=0.10
 NEO4J_VER=2.2.5
 MONGODB_VER=3.0.6
@@ -10,8 +13,26 @@ BIN_DIR=bin
 NEO4J_DIR=neo4j-community-$NEO4J_VER
 
 CONS_DIV="#####################################"
+R_COL="\e[31m"
 G_COL="\e[92m"
 DEF_COL="\e[39m"
+
+#----------------------------------------#
+
+echo -e $G_COL$CONS_DIV"\n**Setup script for Red-Social-Asociacion**\n
+Please note that the following dependencies are needed before
+runing this script:
+ * nodejs v0.10
+ * ruby\n
+Find instructions in https://github.com/MecatronicaUncu/Red-Social-Asociacion\n"$CONS_DIV$G_COL
+
+#----------------------------------------#
+# Check dependencies
+
+for deps in $DEPS
+do
+  command -v $deps >/dev/null 2>&1 || { echo >&2 $R_COL"$deps not installed!"$DEF_COL; exit 1; }
+done
 
 #----------------------------------------#
 # Cleanup bin directory
@@ -25,34 +46,34 @@ mkdir -p $TMP_DOWNLOAD_DIR
 
 #----------------------------------------#
 # Install Ruby Version Manager & Ruby
-echo -e $G_COL$CONS_DIV
-echo -e "Installing Ruby Version Manager and Ruby...\n"
-echo -e $CONS_DIV$DEF_COL
+#echo -e $G_COL$CONS_DIV
+#echo -e "Installing Ruby Version Manager and Ruby...\n"
+#echo -e $CONS_DIV$DEF_COL
 # 1. First check if installed
 # TODO
 # 2. First isntall public key
-gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+#gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 # 3. Install RVM stable with ruby
-curl -sSL https://get.rvm.io | bash -s stable --ruby
+#curl -sSL https://get.rvm.io | bash -s stable --ruby
 
 #----------------------------------------#
 # Install Node Version Manger
-echo -e $G_COL$CONS_DIV
-echo -e "Installing Node Version Manager..."
-echo -e $CONS_DIV$DEF_COL
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.26.1/install.sh | bash
+#echo -e $G_COL$CONS_DIV
+#echo -e "Installing Node Version Manager..."
+#echo -e $CONS_DIV$DEF_COL
+#curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.26.1/install.sh | bash
 
 #----------------------------------------#
 # Make nvm() available in this script
-. ~/.nvm/nvm.sh
+#. ~/.nvm/nvm.sh
 
 #----------------------------------------#
 # Install NodeJS v0.10
-echo -e $G_COL$CONS_DIV
-echo -e "Installing NodeJS $NODE_VER"
-echo -e $CONS_DIV$DEF_COL
-nvm install 0.10
-nvm use 0.10
+#echo -e $G_COL$CONS_DIV
+#echo -e "Installing NodeJS $NODE_VER"
+#echo -e $CONS_DIV$DEF_COL
+#nvm install 0.10
+#nvm use 0.10
 
 #----------------------------------------#
 # Install yo, bower and neo4j
@@ -61,7 +82,7 @@ echo -e "Installing nodejs packages globally (Yeoman, Neo4j and Bower)"
 echo -e $G_COL$CONS_DIV
 for nprog in "yo" "neo4j" "bower"
 do
-  npm install -g $nprog || { echo 'npm $nprog failed' ; exit 1; }
+  npm install -g $nprog || { echo $R_COL'npm $nprog failed' ; exit 1; }
 done
 
 #----------------------------------------#
