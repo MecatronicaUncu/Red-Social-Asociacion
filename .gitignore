@@ -20,3 +20,15 @@ app/styles
 */*.log
 /nbproject/private/
 dist/
+
+# start-stop services scripts
+mongoRun
+mongoStop
+neoRun
+neoStop
+
+# Vim temp files
+.*.swp
+
+# Temp download folder
+tmp_download_dir

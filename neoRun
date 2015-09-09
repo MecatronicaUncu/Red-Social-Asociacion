@@ -1,3 +1,0 @@
-#!/bin/bash
-
-./neo4j-community-2.2.5/bin/neo4j start -server -Xmx512M -XX:+UseConcMarkSweepGC
