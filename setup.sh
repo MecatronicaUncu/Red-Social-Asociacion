@@ -19,85 +19,53 @@ DEF_COL="\e[39m"
 
 #----------------------------------------#
 
-echo -e $G_COL$CONS_DIV"\n**Setup script for Red-Social-Asociacion**\n
+echo -e $G_COL$CONS_DIV"\n\n **Setup script for Red-Social-Asociacion**\n
 Please note that the following dependencies are needed before
 runing this script:
  * nodejs v0.10
  * ruby\n
-Find instructions in https://github.com/MecatronicaUncu/Red-Social-Asociacion\n"$CONS_DIV$DEF_COL
+Find instructions in https://github.com/MecatronicaUncu/Red-Social-Asociacion\n\n"$CONS_DIV$DEF_COL
 
 #----------------------------------------#
 # Check dependencies
-
+echo -e $G_COL"Checking dependencies...\n"$DEF_COL
 for deps in $DEPS
 do
   command -v $deps >/dev/null 2>&1 || { echo -e >&2 $R_COL"$deps not installed!"$DEF_COL; exit 1; }
 done
+echo -e $G_COL"Dependencies OK!\n"$DEF_COL
 
 #----------------------------------------#
 # Cleanup bin directory
+echo -e $G_COL"Cleaning bin directory...\n"$DEF_COL
 rm -rf $BIN_DIR
 mkdir $BIN_DIR
 
 #----------------------------------------#
 # Create download dir
+echo -e $G_COL"Creating tmp dir...\n"$DEF_COL
 TMP_DOWNLOAD_DIR=tmp_download_dir
 mkdir -p $TMP_DOWNLOAD_DIR
 
 #----------------------------------------#
-# Install Ruby Version Manager & Ruby
-#echo -e $G_COL$CONS_DIV
-#echo -e "Installing Ruby Version Manager and Ruby...\n"
-#echo -e $CONS_DIV$DEF_COL
-# 1. First check if installed
-# TODO
-# 2. First isntall public key
-#gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-# 3. Install RVM stable with ruby
-#curl -sSL https://get.rvm.io | bash -s stable --ruby
-
-#----------------------------------------#
-# Install Node Version Manger
-#echo -e $G_COL$CONS_DIV
-#echo -e "Installing Node Version Manager..."
-#echo -e $CONS_DIV$DEF_COL
-#curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.26.1/install.sh | bash
-
-#----------------------------------------#
-# Make nvm() available in this script
-#. ~/.nvm/nvm.sh
-
-#----------------------------------------#
-# Install NodeJS v0.10
-#echo -e $G_COL$CONS_DIV
-#echo -e "Installing NodeJS $NODE_VER"
-#echo -e $CONS_DIV$DEF_COL
-#nvm install 0.10
-#nvm use 0.10
-
-#----------------------------------------#
 # Install yo, bower and neo4j
-echo -e $G_COL$CONS_DIV
-echo -e "Installing nodejs packages globally (Yeoman, Neo4j and Bower)"
-echo -e $G_COL$CONS_DIV
+echo -e $G_COL"Installing nodejs packages globally (Yeoman, Neo4j and Bower)\n"$DEF_COL
 for nprog in "yo" "neo4j" "bower"
 do
-  npm install -g $nprog || { echo $R_COL'npm $nprog failed' ; exit 1; }
+  npm install -g $nprog >> setup.log 2>&1 || { echo -e >&2 $R_COL"npm $nprog failed!. See setup.log for details"$DEF_COL; exit 1; }
 done
 
 #----------------------------------------#
 # Download Neo4J
-echo -e $G_COL$CONS_DIV
-echo -e "Installing Neo4J Engine..."
-echo -e $CONS_DIV$DEF_COL
+echo -e $G_COL"Installing Neo4J Engine...\n"$DEF_COL
 cd $TMP_DOWNLOAD_DIR
 if [[ ! -e $NEO4J_FILE ]] || [[ ! -f $NEO4J_FILE ]]
 then
-    wget http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
+    wget -a setup.log -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
 fi
 
 # untar and move
-tar -zxvf neo4j-community-$NEO4J_VER-unix.tar.gz
+tar -zxvf neo4j-community-$NEO4J_VER-unix.tar.gz >> setup.log 2>&1
 cd ..
 
 mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
@@ -107,47 +75,35 @@ mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
 
 #----------------------------------------#
 # Install Sass and Compass
-echo -e $G_COL$CONS_DIV
-echo -e "Installing Sass and Compass..."
-echo -e $CONS_DIV$DEF_COL
+echo -e $G_COL"Installing Sass and Compass...\n"$DEF_COL
 for rprog in "sass" "compass"
 do
-  gem install $rprog || { echo 'gem $rprog failed' ; exit 1; }
+  gem install $rprog >> setup.log 2>&1 || { echo -e $R_COL'gem $rprog failed'$DEF_COL ; exit 1; }
 done
 
 #----------------------------------------#
 # Install and configure MongoDB
-echo -e $G_COL$CONS_DIV
-echo -e "Installing MongoDB..."
-echo -e $CONS_DIV$DEF_COL
+echo -e $G_COL"Installing MongoDB...\n"$DEF_COL
 cd $TMP_DOWNLOAD_DIR
 if [[ ! -e $MONGO_FILE ]] || [[ ! -f $MONGO_FILE ]]
 then
-    curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VER.tgz
+    curl -O -s setup.log https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VER.tgz >> setup.log
 fi
 #curl -O http://localhost:8000/Volatile/mongodb-linux-x86_64-$MONGODB_VER.tgz
-tar -zxvf $MONGO_FILE 
+tar -zxvf $MONGO_FILE >> setup.log 2>&1
 cd ..
 mkdir -p $BIN_DIR/mongodb
 cp -R -n $TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER/ $BIN_DIR/mongodb
 mkdir -p mongodata/db
 
 # Get npm and bower dependencies
-echo -e $G_COL$CONS_DIV
-echo -e "Installing Npm and Bower dependencies..."
-echo -e $CONS_DIV$DEF_COL
-npm install .
-bower install
-
-#----------------------------------------#
-# remove temp download dir
-#rm -rf $TMP_DOWNLOAD_DIR
+echo -e $G_COL"Installing Npm and Bower dependencies...\n"$DEF_COL
+npm install . >> setup.log 2>&1
+bower install >> setup.log 2>&1
 
 #----------------------------------------#
 # Create service start and shutdown scripts
-echo -e $G_COL$CONS_DIV
-echo -e "Installing service start and shutdown scripts..."
-echo -e $CONS_DIV$DEF_COL
+echo -e $G_COL"Installing service start and shutdown scripts...\n"$DEF_COL
 
 echo "#!/bin/bash
 ./bin/neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseConcMarkSweepGC" > neoRun
@@ -165,7 +121,6 @@ echo "#!/bin/bash
 ./bin/mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --shutdown --dbpath mongodata/db" > mongoStop
 chmod +x mongoStop
 
-#echo -e $G_COL$CONS_DIV
-#echo -e "Creating Dummy Node in Database..."
-#echo -e $CONS_DIV$DEF_COL
-#./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE (:DUMMY);'
+#-----------------------------------------#
+# Done!
+echo -e $G_COL"Install Ok!\n"$DEF_COL
