@@ -17,20 +17,21 @@ Por ahora se puede usar la que está en el repo, pero muy pronto se va a elimina
 Linux install
 ===================
 
-1. Install dependencies: nodejs, ruby.
-2. Download neo4j binary file for unix [neo4j](http://neo4j.org/)
+1. Install dependencies: nodejs 0.10 and ruby.
+  1. Install Node Version Manager ([nvm](https://github.com/creationix/nvm))
+  2. `nvm install 0.10`
+  3. Install Ruby Version Manager with Ruby stable ([rvm](https://rvm.io/rvm/install))
 3. Clone repository
-4. Execute ./setup.sh and follow the steps. It will take some time, you may have a coffee.
-
+4. Execute `./setup.sh`. It will take some time, you may have a coffee.
 5. En ```app/scripts/app.js``` indicar el host utilizado con la variable
    ```host_LAN``` y seteando la variable ```host = host_LAN``` en el
    servicio ```session```.
 
-Execute
+Execute (in different terminals)
 ===================
-1. Iniciar [neo4j](http://neo4j.org/): ```./neoRun```
-2. Iniciar [MongoDB](http://www.mongodb.org/): ```./mongoRun```
-3. Iniciar el server: ```grunt serve```
+1. Start [neo4j](http://neo4j.org/): `./neoRun`
+2. Start [MongoDB](http://www.mongodb.org/): `./mongoRun`
+3. Start server: `grunt serve`
 
 Reset or update database
 ===================
