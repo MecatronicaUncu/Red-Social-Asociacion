@@ -24,7 +24,7 @@ Please note that the following dependencies are needed before
 runing this script:
  * nodejs v0.10
  * ruby\n
-Find instructions in https://github.com/MecatronicaUncu/Red-Social-Asociacion\n"$CONS_DIV$G_COL
+Find instructions in https://github.com/MecatronicaUncu/Red-Social-Asociacion\n"$CONS_DIV$DEF_COL
 
 #----------------------------------------#
 # Check dependencies
