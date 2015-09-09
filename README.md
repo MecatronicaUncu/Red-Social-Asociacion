@@ -18,9 +18,9 @@ Linux install
 ===================
 
 1. Install dependencies: nodejs 0.10 and ruby.
-  a. Install Node Version Manager ([nvm](https://github.com/creationix/nvm))
-  b. `nvm install 0.10`
-  c. Install Ruby Version Manager with Ruby stable ([rvm](https://rvm.io/rvm/install))
+  1. Install Node Version Manager ([nvm](https://github.com/creationix/nvm))
+  2. `nvm install 0.10`
+  3. Install Ruby Version Manager with Ruby stable ([rvm](https://rvm.io/rvm/install))
 3. Clone repository
 4. Execute `./setup.sh`. It will take some time, you may have a coffee.
 5. En ```app/scripts/app.js``` indicar el host utilizado con la variable
