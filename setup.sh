@@ -10,7 +10,7 @@ NEO4J_FILE=neo4j-community-$NEO4J_VER-unix.tar.gz
 MONGO_FILE=mongodb-linux-x86_64-$MONGODB_VER.tgz
 
 BIN_DIR=bin
-NEO4J_DIR=neo4j-community-$NEO4J_VER
+NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 
 CONS_DIV="#####################################"
 R_COL="\e[31m"
@@ -31,7 +31,7 @@ Find instructions in https://github.com/MecatronicaUncu/Red-Social-Asociacion\n"
 
 for deps in $DEPS
 do
-  command -v $deps >/dev/null 2>&1 || { echo >&2 $R_COL"$deps not installed!"$DEF_COL; exit 1; }
+  command -v $deps >/dev/null 2>&1 || { echo -e >&2 $R_COL"$deps not installed!"$DEF_COL; exit 1; }
 done
 
 #----------------------------------------#
@@ -102,10 +102,8 @@ cd ..
 
 mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
 
-NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
-
 # copy config files
-cp -R default/neo4j-community-2.1.5/* $NEO4J_DIR
+#cp -R default/neo4j-community-2.1.5/* $NEO4J_DIR
 
 #----------------------------------------#
 # Install Sass and Compass
@@ -167,7 +165,7 @@ echo "#!/bin/bash
 ./bin/mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --shutdown --dbpath mongodata/db" > mongoStop
 chmod +x mongoStop
 
-echo -e $G_COL$CONS_DIV
-echo -e "Creating Dummy Node in Database..."
-echo -e $CONS_DIV$DEF_COL
-./$BIN_DIR/$NEO4J_DIR/bin/neo4j-shell -c 'CREATE (:DUMMY);'
+#echo -e $G_COL$CONS_DIV
+#echo -e "Creating Dummy Node in Database..."
+#echo -e $CONS_DIV$DEF_COL
+#./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE (:DUMMY);'
