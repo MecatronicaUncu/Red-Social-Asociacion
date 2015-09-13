@@ -23,9 +23,7 @@ Linux install
   3. Install Ruby Version Manager with Ruby stable ([rvm](https://rvm.io/rvm/install))
 3. Clone repository
 4. Execute `./setup.sh`. It will take some time, you may have a coffee.
-5. En ```app/scripts/app.js``` indicar el host utilizado con la variable
-   ```host_LAN``` y seteando la variable ```host = host_LAN``` en el
-   servicio ```session```.
+5. Execute `./config.sh`. It will guide you through the configuration of the server. Follow the steps.
 
 Execute (in different terminals)
 ===================
@@ -33,25 +31,10 @@ Execute (in different terminals)
 2. Start [MongoDB](http://www.mongodb.org/): `./mongoRun`
 3. Start server: `grunt serve`
 
-Reset or update database
-===================
-
-Al momento de crear o resetear la base de datos, es muy importante que
-se ejecute esta query de Cypher: ```CREATE CONSTRAINT ON (n:User) ASSERT
-n.email IS UNIQUE;```
-
 Windows install
 ===================
 
 Get linux.
-
-Troubleshooting
-===================
-
-* Si esto no funciona, tal vez sea un problema de la base de datos.
-  Eliminarla y usar una base de datos nueva. Crear un usuario 'dummy'
-  para no utilizar en ID==0.
-
 
 Archivos
 ===================

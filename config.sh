@@ -37,6 +37,10 @@ read
 echo -e $G_COL"Creating dummy node...\n"$DEF_COL
 ./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE (:DUMMY);' >/dev/null 2>&1 || { echo -e >&2 $R_COL"Could not create dummy node. Are you sure your Neo4J server is up and running?"$DEF_COL; exit 1; }
 
+#-----------------------------------------#
+# Create email constraint
+echo -e $G_COL"Creating email uniqueness constraint...\n"$DEF_COL
+./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;' >/dev/null 2>&1 ||  { echo -e >&2 $R_COL"Could not create constraint. Are you sure your Neo4J server is up and running?"$DEF_COL; exit 1; }
 
 #-----------------------------------------#
 # Set new Neo4J server password
