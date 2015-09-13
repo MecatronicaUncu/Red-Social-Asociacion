@@ -23,7 +23,7 @@ echo -e $G_COL$CONS_DIV"\n\n **Config script for Red-Social-Asociacion**\n\n"$CO
 echo -e $G_COL"Configuring Neo4J Server...\n"$DEF_COL
 sed -i "s/bms.security.auth_enabled=.*/bms.security.auth_enabled=true/" $NEO4J_SERVER_CONF_FILE
 sed -i "s/org.neo4j.server.webserver.port=.*/org.neo4j.server.webserver.port=4550/" $NEO4J_SERVER_CONF_FILE
-sed -i "s/org.neo4j.server.webserver.https.enabled=.*/org.neo4j.server.webserver.https.enabled=true/" $NEO4J_SERVER_CONF_FILE
+sed -i "s/org.neo4j.server.webserver.https.enabled=.*/org.neo4j.server.webserver.https.enabled=false/" $NEO4J_SERVER_CONF_FILE
 sed -i "s/org.neo4j.server.webserver.https.port=.*/org.neo4j.server.webserver.https.port=4551/" $NEO4J_SERVER_CONF_FILE
 
 #-----------------------------------------#
@@ -46,11 +46,11 @@ printf $Y_COL"Enter your password: "$DEF_COL
 read PASSWORD
 printf "\n\n"
 stty echo
-curl -H "Content-Type: application/json" -X POST -d '{"password":"$PASSWORD"}' -u neo4j:neo4j http://localhost:4550/user/neo4j/password >/dev/null 2>&1 || { echo -e >&2 $R_COL"Could not change server password. Are you sure your Neo4J server is up and running?\n"$DEF_COL; exit 1; }
+curl -H "Content-Type: application/json" -X POST -d "{\"password\":\"$PASSWORD\"}" -u neo4j:neo4j http://localhost:4550/user/neo4j/password >/dev/null 2>&1 || { echo -e >&2 $R_COL"Could not change server password. Are you sure your Neo4J server is up and running?\n"$DEF_COL; exit 1; }
 
 #-----------------------------------------#
 # Set Neo4J user and password in routes/user.js
-sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'https:\/\/neo4j:$PASSWORD@localhost:4551'/" ./routes/user.js
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./routes/user.js
 
 #-----------------------------------------#
 # Set host location in app.js
