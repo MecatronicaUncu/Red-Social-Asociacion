@@ -74,7 +74,7 @@ echo -e $DEF_COL
 
 #-----------------------------------------#
 # Create Self-Signed Certificate
-echo -e $G_COL"Genearting self signed SSL certificate..."$DEF_COL
+echo -e $G_COL"Genearting self signed SSL certificate...\n"$DEF_COL
 commonname=Red-Social-Asociacion
 domain=$commonname
 country=AR
@@ -88,16 +88,16 @@ email=mecatronica-organizacion@lists.mecatronicauncu.org
 password=asoc
 
 # Generate a key
-openssl genrsa -des3 -passout pass:$password -out $domain.key 2048 -noout
+openssl genrsa -des3 -passout pass:$password -out $domain.key 2048 -noout >/dev/null 2>&1
 
 # Remove passphrase from the key. Comment the line out to keep the passphrase
-openssl rsa -in $domain.key -passin pass:$password -out $domain.key
+openssl rsa -in $domain.key -passin pass:$password -out $domain.key >/dev/null 2>&1
 
 # Create the request
 openssl req -new -key $domain.key -out $domain.csr -passin pass:$password \
-        -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email"
+        -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email" >/dev/null 2>&1
 
-openssl x509 -req -days 365 -in $domain.csr -signkey $domain.key -out $domain.crt
+openssl x509 -req -days 365 -in $domain.csr -signkey $domain.key -out $domain.crt >/dev/null 2>&1
 
 #-----------------------------------------#
 # Done!
