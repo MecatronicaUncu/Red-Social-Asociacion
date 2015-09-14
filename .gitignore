@@ -32,3 +32,8 @@ neoStop
 
 # Temp download folder
 tmp_download_dir
+
+# SSL Certificate files
+*.key
+*.crt
+*.csr

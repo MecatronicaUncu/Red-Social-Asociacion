@@ -71,6 +71,34 @@ do
     esac
 done
 echo -e $DEF_COL
+
+#-----------------------------------------#
+# Create Self-Signed Certificate
+echo -e $G_COL"Genearting self signed SSL certificate..."$DEF_COL
+commonname=Red-Social-Asociacion
+domain=$commonname
+country=AR
+state=Mendoza
+locality=Mendoza
+organization=Asociación\ de\ Mecatrónica\ de\ Mendoza
+organizationalunit=IT
+email=mecatronica-organizacion@lists.mecatronicauncu.org
+
+# Optional
+password=asoc
+
+# Generate a key
+openssl genrsa -des3 -passout pass:$password -out $domain.key 2048 -noout
+
+# Remove passphrase from the key. Comment the line out to keep the passphrase
+openssl rsa -in $domain.key -passin pass:$password -out $domain.key
+
+# Create the request
+openssl req -new -key $domain.key -out $domain.csr -passin pass:$password \
+        -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email"
+
+openssl x509 -req -days 365 -in $domain.csr -signkey $domain.key -out $domain.crt
+
 #-----------------------------------------#
 # Done!
 echo -e $G_COL"Config Ok!\n"$DEF_COL
