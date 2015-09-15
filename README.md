@@ -21,6 +21,7 @@ Linux install
   1. Install Node Version Manager ([nvm](https://github.com/creationix/nvm))
   2. `nvm install 0.10`
   3. Install Ruby Version Manager with Ruby stable ([rvm](https://rvm.io/rvm/install))
+  4. Install gem `sudo apt-get install gem`
 3. Clone repository
 4. Execute `./setup.sh`. It will take some time, you may have a coffee.
 5. Execute `./config.sh`. It will guide you through the configuration of the server. Follow the steps.
