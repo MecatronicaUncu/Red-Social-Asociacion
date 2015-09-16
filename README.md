@@ -1,21 +1,12 @@
 Red-Social-Asociacion
 ==========
 
-Este proyecto se inicia en el marco del módulo de "Conception d'Aplications Interactives", de la [Escuela de Ingenieros de Brest - ENIB -](http://www.enib.fr/index.php/en/).
+## Objective
 
-Originalmente se diseña una webapp para el contacto profesional entre estudiantes del [ENIB](http://www.enib.fr/index.php/en/).
+To implement a small social network for a student society.
 
-En este repositorio encontrarás todo lo necesario para hacerla funcionar.
 
-IMPORTANTE
-==================
-
-Con el agregado del algoritmo SHA-256 para encriptar las contraseñas, la base de datos antigua no es más funcional. Para testear la app, hay que registrar usuarios nuevos.
-
-Por ahora se puede usar la que está en el repo, pero muy pronto se va a eliminar.
-
-Linux install
-===================
+## Linux install guide
 
 1. Install dependencies: nodejs 0.10, ruby and git.
   1. Install Node Version Manager ([nvm](https://github.com/creationix/nvm))
@@ -26,43 +17,45 @@ Linux install
   6. `nvm use 0.10`.  You may need to add `.rvm/rubies/default/bin/` to PATH.
 3. Clone repository
 4. Execute `./setup.sh`. It will take some time, you may have a coffee.
-5. Execute `./config.sh`. It will guide you through the configuration of the server. Follow the steps.
+5. Execute `./config.sh`. It will guide you through the configuration of
+   the server. Follow the steps.
 
-Execute (in different terminals)
-===================
+## Windows install guide
+
+Get Linux.
+
+## Run
+
 1. Start [neo4j](http://neo4j.org/): `./neoRun`
 2. Start [MongoDB](http://www.mongodb.org/): `./mongoRun`
 3. Start server: `grunt serve`
 
-Windows install
-===================
+## Files
+```
+|-- server.js           Server (expressjs) configuration 
 
-Get linux.
+|-- bin                 Binary files (neo4j and MongoDB). 
+                        Available after running ```./setup.sh```.
 
-Archivos
-===================
+|-- app                 Front-end stuff
 
-La carpeta ```app``` contiene todo lo referido al Front-End de la web.
+    |-- views           Front-end html
 
-El archivo ```server.js``` contiene la configuración del servidor [express](http://expressjs.com/) y las direcciones que llaman a las diferentes funciones del Back-End.
+    |-- scripts         Front-end js files
 
-El archivo ```routes/users.js``` implementa las funciones necesarias para asegurar el funcionamiento del sitio, como el manejo de cookies, la verificación de permisos, y la conección entre el servidor [express](http://expressjs.com/) y la base de datos [neo4j](http://neo4j.org/).
+    |-- sass            Sass files which generate css
 
-El archivo ```routes/user.js``` implementa las funciones que consultan la base de datos [neo4j](http://neo4j.org/).
+|-- routes
 
-La carpeta ```routes/upload``` contiene las imágnes de perfil de los usuarios.
+    |-- user.js         Database (neo4j) query functions 
 
-La carpeta ```app/views``` contiene los archivos html del Front-End
+    |-- users.js        Cookies, access restrictions, 
+                        connection between neo4j and expressjs.
 
-La carpeta ```app/scripts``` contiene los archivos javascripts que permiten el funcionamiento del Front-End
+    |-- upload          Uploaded files (such as profile images) *
+```
 
-La carpeta ```app/sass``` contiene los arhivos de estilo [Sass](http://sass-lang.com/) sin compilar
-
-The folder ```bin``` contains binary files (neo4j and MongoDB). Please
-note that this folder is available after running ```./setup.sh```
-
-TODO
-===================
+## TODO
 
 - [ ] Check update script. Execute db query automatically.
 - [ ] ~~Normalize the way the _ids_ are passed to the _GET_ and _POST_ methods. (Sometimes in _req.params_, sometimes in _req.body_)~~ **No se puede enviar en _req.body_ si es un método _GET_**
