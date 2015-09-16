@@ -17,10 +17,13 @@ Por ahora se puede usar la que está en el repo, pero muy pronto se va a elimina
 Linux install
 ===================
 
-1. Install dependencies: nodejs 0.10 and ruby.
+1. Install dependencies: nodejs 0.10, ruby and git.
   1. Install Node Version Manager ([nvm](https://github.com/creationix/nvm))
   2. `nvm install 0.10`
-  3. Install Ruby Version Manager with Ruby stable ([rvm](https://rvm.io/rvm/install))
+  3. Install Ruby Version Manager with Ruby stable ([rvm](https://rvm.io/rvm/install)).
+  4. Install git
+  5. Reset
+  6. `nvm use 0.10`.  You may need to add `.rvm/rubies/default/bin/` to PATH.
 3. Clone repository
 4. Execute `./setup.sh`. It will take some time, you may have a coffee.
 5. Execute `./config.sh`. It will guide you through the configuration of the server. Follow the steps.
