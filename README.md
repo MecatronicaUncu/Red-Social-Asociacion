@@ -3,7 +3,7 @@ Red-Social-Asociacion
 
 ## Objective
 
-To implement a small social network for a student society.
+To implement a small open source social network for any small community.
 
 
 ## Linux install guide
