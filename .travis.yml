@@ -4,5 +4,7 @@ node_js:
 before_install:
     - curl -sSL https://get.rvm.io | bash -s stable --ruby
     - ./setup.sh
+    - ./neoRun
+    - ./config.sh asoc LOC
 notifications:
       email: false
