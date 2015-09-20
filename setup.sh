@@ -112,7 +112,7 @@ mkdir -p mongodata/db
 # Get npm and bower dependencies
 loggerGreen "Installing Npm and Bower dependencies...\n"
 npm install . >> $LOG_FILE 2>&1
-bower install >> $LOG_FILE 2>&1
+bower install -F >> $LOG_FILE 2>&1
 
 # Install grunt-cli
 loggerGreen "Installing grunt-cli...\n"
