@@ -53,6 +53,7 @@ node usersRel.js
 
 # 6. Download pictures for users
 loggerGreen "Downloading random profile pictures. This may take a while...\n"
+mkdir -p ./routes/upload
 ./getPictures.sh
 
 # 7. Done
