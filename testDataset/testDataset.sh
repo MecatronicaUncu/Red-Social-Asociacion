@@ -23,7 +23,7 @@ function loggerRed {
 loggerGreen $CONS_DIV"\nThis script will populate your Neo4J database with 50 users, and some relationships. Press Enter to continue or Ctrl-C to abort."
 if [[ $# -ne 0 ]] && [[ "$1" = "no-wait" ]]
 then
-    :
+    ../neoRun
 else
     read
 fi
