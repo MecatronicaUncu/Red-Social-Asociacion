@@ -37,3 +37,8 @@ tmp_download_dir
 *.key
 *.crt
 *.csr
+
+# testDataset created files
+testDataset/people_email_pass.csv
+testDataset/people_email_pass_salt.csv
+testDataset/usersIDs.csv
