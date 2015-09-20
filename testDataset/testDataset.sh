@@ -29,21 +29,20 @@ command -v node >/dev/null 2>&1 || { loggerRed "node not installed!"; exit 1; }
 loggerGreen "Dependencies OK!\n"
 
 # 2. Create name-based emails and passwords
-loggerGreen "Creating name-based emails and passwords..."
+loggerGreen "Creating name-based emails and passwords...\n"
 awk 'BEGIN{FS=","; print "firstName,lastName,email,password"} NR>1{print $1","$2","tolower($1)tolower($2)"@mecatronicauncu.org,"tolower($1)}' people.csv > people_email_pass.csv
 
 # 3. Hash passwords and create salt
-loggerGreen "Hashing passwords and creating salt..."
+loggerGreen "Hashing passwords and creating salt...\n"
 node peopleHashSalt.js
 
 # 4. Register users in Neo4J
-loggerGreen "Registering users in database..."
-node regUsers.js
+loggerGreen "Registering users in database...\n"
+node regUsers.js > usersIDs.csv
 
 # 5. Create relationships
-loggerGreen "Creating relationships..."
-#node usersRel.js
+loggerGreen "Creating relationships...\n"
+node usersRel.js
 
 # 6. Done
-loggerGreen "Dataset created!"
-
+loggerGreen "Dataset created!\n"

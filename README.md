@@ -58,7 +58,11 @@ Get Linux.
 ## Test Dataset
 
 You will find in the folder ```testDataset``` a script that will register 50 users in your database and add some relationships.
-After running it, you can check the user list with their login info inside ```people_email_pass.csv```.
+After running it, you can check the user list with their login info inside ```people_email_pass.csv```. Just run ```testDataset.sh```. Be sure your Neo4J server is running.
+
+**Note**: The list of users IDs (saved in ```usersIDs.csv```) is not deterministic. Running ```testDataset.sh``` twice will result in relationships not intended to be created. This will not have adverse effects, but is to be taken into consideration.
+
+If you want to clean your database before running this script, execute the following query in the Neo4J browser: ```MATCH (u)-[r]-() DELETE r,u```.
 
 ## Contribute
 

@@ -24,16 +24,15 @@ csv
 	'RETURN ID(user) AS idNEO, user.c AS c'
 	].join('\n');
 
-	//console.log(query);
-
 	db.query(query, null, function (err, results) {
 	    if (err){
 	        throw err;
 	        console.log('Error creating test dataset');
 	    }
+	    process.stdout.write(results[0].idNEO+',');
 	    return;
 	});
  })
  .on("end", function(){
-     console.log("Done creating test dataset");
+ 	return;
  });
