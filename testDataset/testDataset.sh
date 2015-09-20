@@ -25,7 +25,9 @@ read
 
 # 1. Check that node in present
 loggerGreen "Checking dependencies...\n"
-command -v node >/dev/null 2>&1 || { loggerRed "node not installed!"; exit 1; }
+command -v node >/dev/null 2>&1 || { loggerRed "NodeJS not installed!"; exit 1; }
+command -v npm >/dev/null 2>&1 || { loggerRed "npm not installed!"; exit 1; }
+npm install fast-csv >/dev/null 2>&1 || { loggerRed "npm fast-csv failed!"; exit 1; }
 loggerGreen "Dependencies OK!\n"
 
 # 2. Create name-based emails and passwords

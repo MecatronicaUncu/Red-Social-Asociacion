@@ -48,6 +48,31 @@ csv
 			}
 		}
 	});
+
+	// Create some random inter-group friendships (A)
+	var chosen = [Math.floor(Math.random()*9), Math.floor(Math.random()*9), Math.floor(Math.random()*9)];
+	console.log(chosen);
+	for(var g = 0; g < groups.length; g++){
+		for (var i = 0; i < groups[g].length; i++){
+			chosen.forEach(function(ch){
+				friend(groups[g][0],groups[(g+1)%5][ch]);
+				friend(groups[(g+1)%5][ch],groups[g][0]);
+			});
+		}
+	};
+
+	// Create some random inter-group friendships (B)
+	chosen = [Math.floor(Math.random()*9), Math.floor(Math.random()*9), Math.floor(Math.random()*9)];
+	console.log(chosen);
+	for(var g = 0; g < groups.length; g++){
+		for (var i = 0; i < groups[g].length; i++){
+			chosen.forEach(function(ch){
+				friend(groups[g][3],groups[(g+3)%5][ch]);
+				friend(groups[(g+3)%5][ch],groups[g][3]);
+			});
+		}
+	};
+
 	return;
 
  });
