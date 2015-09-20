@@ -26,9 +26,9 @@ var hash = function (pwd, salt) {
 };
 
 /******************************************************************************/
-/*                          PASSWORDS                                         */
+/*                          PASSWORDS  AND PICTURE                            */
 /******************************************************************************/
-
+var i=0;
 csv
    .fromPath("people_email_pass.csv", {headers: true})
    .transform(function(nodeData){
@@ -36,7 +36,8 @@ csv
         var tempPass = hash(nodeData['password'], null);
         nodeData.password = tempPass['pass'];
         nodeData.salt = tempPass['salt'];
-
+        nodeData.url = 'upload/img'+(i++)+'.png';
+        nodeData.lang = 'ar';
         return nodeData;
    })
    .pipe(csv.createWriteStream({headers: true}))

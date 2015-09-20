@@ -3,7 +3,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(
     process.env['NEO4J_URL'] ||
     process.env['GRAPHENEDB_URL'] ||
-    'http://neo4j:asoc@localhost:7474'
+    'http://neo4j:asoc@localhost:4550'
 );
 
 var usersIDs = [];
@@ -51,7 +51,6 @@ csv
 
 	// Create some random inter-group friendships (A)
 	var chosen = [Math.floor(Math.random()*9), Math.floor(Math.random()*9), Math.floor(Math.random()*9)];
-	console.log(chosen);
 	for(var g = 0; g < groups.length; g++){
 		for (var i = 0; i < groups[g].length; i++){
 			chosen.forEach(function(ch){
@@ -63,7 +62,6 @@ csv
 
 	// Create some random inter-group friendships (B)
 	chosen = [Math.floor(Math.random()*9), Math.floor(Math.random()*9), Math.floor(Math.random()*9)];
-	console.log(chosen);
 	for(var g = 0; g < groups.length; g++){
 		for (var i = 0; i < groups[g].length; i++){
 			chosen.forEach(function(ch){

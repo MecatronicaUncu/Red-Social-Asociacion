@@ -34,9 +34,9 @@ loggerGreen "Dependencies OK!\n"
 loggerGreen "Creating name-based emails and passwords...\n"
 awk 'BEGIN{FS=","; print "firstName,lastName,email,password"} NR>1{print $1","$2","tolower($1)tolower($2)"@mecatronicauncu.org,"tolower($1)}' people.csv > people_email_pass.csv
 
-# 3. Hash passwords and create salt
-loggerGreen "Hashing passwords and creating salt...\n"
-node peopleHashSalt.js
+# 3. Create node data
+loggerGreen "Creating node data (hash, salt, picture url, language, etc)...\n"
+node peopleData.js
 
 # 4. Register users in Neo4J
 loggerGreen "Registering users in database...\n"
@@ -46,5 +46,9 @@ node regUsers.js > usersIDs.csv
 loggerGreen "Creating relationships...\n"
 node usersRel.js
 
-# 6. Done
+# 6. Download pictures for users
+loggerGreen "Downloading random profile pictures. This may take a while...\n"
+./getPictures.sh
+
+# 7. Done
 loggerGreen "Dataset created!\n"
