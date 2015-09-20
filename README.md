@@ -20,6 +20,17 @@ To implement a small open source social network for any small community.
 5. Execute `./config.sh`. It will guide you through the configuration of
    the server. Follow the steps.
 
+**Note**: ```config.sh``` accepts the following parameters:
+
+1. password
+2. HOST_TYPE
+ 1. LOC
+ 2. LAN
+ 3. NET
+3. SITE
+
+```SITE``` is only required if ```NET``` host is selected. You can use this to automate your scripts (like our ```.travis.yml```)
+
 ## Windows install guide
 
 Get Linux.
@@ -63,6 +74,8 @@ After running it, you can check the user list with their login info inside ```pe
 **Note**: The list of users IDs (saved in ```usersIDs.csv```) is not deterministic. Running ```testDataset.sh``` twice will result in relationships not intended to be created. This will not have adverse effects, but is to be taken into consideration.
 
 If you want to clean your database before running this script, execute the following query in the Neo4J browser: ```MATCH (u)-[r]-() DELETE r,u```.
+
+**Note**: ```testDataset.sh``` accepts the following parameter: ```no-wait```. This will assume your Neo4J server is running and continue the process without asking.
 
 ## Contribute
 

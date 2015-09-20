@@ -28,9 +28,9 @@ sed -i "s/org.neo4j.server.webserver.https.port=.*/org.neo4j.server.webserver.ht
 
 #-----------------------------------------#
 # Wait for user to start Neo4J server
-echo -e $G_COL"Please start Neo4J server and press enter..."$DEF_COL
 if [[ $# -eq 0 ]]
 then
+    echo -e $G_COL"Please start Neo4J server and press enter..."$DEF_COL
     read
 elif [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
 then
@@ -40,11 +40,12 @@ elif [[ $# -gt 3 ]]
 then
     echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
+else
+    #----------------------------------------#
+    # Start Neo4J
+    ./neoRun
 fi
 
-#----------------------------------------#
-# Start Neo4J
-./neoRun
 
 #-----------------------------------------#
 # Create Dummy node:
