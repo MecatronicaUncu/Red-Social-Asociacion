@@ -32,11 +32,11 @@ echo -e $G_COL"Please start Neo4J server and press enter..."$DEF_COL
 if [[ $# -eq 0 ]]
 then
     read
-elif [[ $# -eq 2 ]] && [[ "$3" = "NET" ]]
+elif [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
 then
     echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
-elif [[ $# -ne 3 ]]
+elif [[ $# -gt 3 ]]
 then
     echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
