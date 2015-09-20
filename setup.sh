@@ -61,9 +61,9 @@ TMP_DOWNLOAD_DIR=tmp_download_dir
 mkdir -p $TMP_DOWNLOAD_DIR
 
 #----------------------------------------#
-# Install yo, bower and neo4j
-loggerGreen "Installing nodejs packages globally (Yeoman, Neo4j and Bower)\n"
-for nprog in "yo" "neo4j" "bower"
+# Install bower and neo4j
+loggerGreen "Installing nodejs packages globally (Neo4j and Bower)\n"
+for nprog in "neo4j" "bower"
 do
   npm install -g $nprog >> $LOG_FILE 2>&1 || { loggerRed "npm $nprog failed!. See setup.log for details"; exit 1; }
 done
