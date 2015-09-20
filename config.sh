@@ -42,6 +42,10 @@ then
     exit 1
 fi
 
+#----------------------------------------#
+# Start Neo4J
+./neoRun
+
 #-----------------------------------------#
 # Create Dummy node:
 # Requires a running server of Neo4J!
@@ -55,7 +59,6 @@ echo -e $G_COL"Creating email uniqueness constraint...\n"$DEF_COL
 
 #-----------------------------------------#
 # Set new Neo4J server password
-./neoRun
 echo -e $G_COL"Setting the Neo4J server password..."$DEF_COL
 if [[ $# -eq 0 ]]
 then
@@ -138,6 +141,10 @@ openssl req -new -key $domain.key -out $domain.csr -passin pass:$password \
         -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email" >/dev/null 2>&1
 
 openssl x509 -req -days 365 -in $domain.csr -signkey $domain.key -out $domain.crt >/dev/null 2>&1
+
+#-----------------------------------------#
+# Stop Neo4J
+./neoStop
 
 #-----------------------------------------#
 # Done!
