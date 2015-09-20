@@ -6,5 +6,6 @@ before_install:
     - ./setup.sh
     - ./neoRun
     - ./config.sh asoc LOC
+    - cd testDataset && ./testDataset.sh no-wait
 notifications:
       email: false
