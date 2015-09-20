@@ -55,6 +55,7 @@ echo -e $G_COL"Creating email uniqueness constraint...\n"$DEF_COL
 
 #-----------------------------------------#
 # Set new Neo4J server password
+./neoRun
 echo -e $G_COL"Setting the Neo4J server password..."$DEF_COL
 if [[ $# -eq 0 ]]
 then
