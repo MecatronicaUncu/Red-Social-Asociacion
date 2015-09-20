@@ -52,6 +52,10 @@ printf "\n\n"
 stty echo
 curl -H "Content-Type: application/json" -X POST -d "{\"password\":\"$PASSWORD\"}" -u neo4j:neo4j http://localhost:4550/user/neo4j/password >/dev/null 2>&1 || { echo -e >&2 $R_COL"Could not change server password. Are you sure your Neo4J server is up and running?\n"$DEF_COL; exit 1; }
 
+# Set Neo4J user and password in testDataset/{usersRel.js, regUsers.js}
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/usersRel.js
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/regUsers.js
+
 #-----------------------------------------#
 # Set Neo4J user and password in routes/user.js
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./routes/user.js
