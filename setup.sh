@@ -84,7 +84,7 @@ then
 fi
 
 # untar and move
-tar -zxvf neo4j-community-$NEO4J_VER-unix.tar.gz >> $LOG_FILE 2>&1
+tar -zxvf neo4j-community-$NEO4J_VER-unix.tar.gz >> ../$LOG_FILE 2>&1
 cd ..
 
 mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
@@ -109,7 +109,7 @@ then
     curl -O -s https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VER.tgz >> $LOG_FILE
 fi
 #curl -O http://localhost:8000/Volatile/mongodb-linux-x86_64-$MONGODB_VER.tgz
-tar -zxvf $MONGO_FILE >> $LOG_FILE 2>&1
+tar -zxvf $MONGO_FILE >> ../$LOG_FILE 2>&1
 cd ..
 mkdir -p $BIN_DIR/mongodb
 cp -R -n $TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER/ $BIN_DIR/mongodb
