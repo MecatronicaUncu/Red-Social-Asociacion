@@ -61,12 +61,18 @@ TMP_DOWNLOAD_DIR=tmp_download_dir
 mkdir -p $TMP_DOWNLOAD_DIR
 
 #----------------------------------------#
-# Install bower and neo4j
-loggerGreen "Installing nodejs packages globally (Neo4j and Bower)\n"
-for nprog in "neo4j" "bower"
-do
-  npm install -g $nprog >> $LOG_FILE 2>&1 || { loggerRed "npm $nprog failed!. See setup.log for details"; exit 1; }
-done
+# Check if bower is installed. Install if needed.
+if command -v bower >/dev/null 2>&1; then
+   loggerGreen "bower installed, skipping...\n";
+else
+  loggerGreen "Installing bower with npm (globally)...\n";
+  npm install -g bower >> $LOG_FILE 2>&1 || { loggerRed "npm bower failed!. See setup.log for details"; exit 1; }
+fi
+
+#----------------------------------------#
+# Install node-neo4j library
+loggerGreen "Installing node-neo4j library...\n"
+npm install neo4j >> $LOG_FILE 2>&1 || { loggerRed "npm neo4j failed!. See setup.log for details"; exit 1; }
 
 #----------------------------------------#
 # Download Neo4J
