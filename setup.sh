@@ -61,24 +61,30 @@ TMP_DOWNLOAD_DIR=tmp_download_dir
 mkdir -p $TMP_DOWNLOAD_DIR
 
 #----------------------------------------#
-# Install yo, bower and neo4j
-loggerGreen "Installing nodejs packages globally (Yeoman, Neo4j and Bower)\n"
-for nprog in "yo" "neo4j" "bower"
-do
-  npm install -g $nprog >> $LOG_FILE 2>&1 || { loggerRed "npm $nprog failed!. See setup.log for details"; exit 1; }
-done
+# Check if bower is installed. Install if needed.
+if command -v bower >/dev/null 2>&1; then
+   loggerGreen "bower installed, skipping...\n";
+else
+  loggerGreen "Installing bower with npm (globally)...\n";
+  npm install -g bower >> $LOG_FILE 2>&1 || { loggerRed "npm bower failed!. See setup.log for details"; exit 1; }
+fi
+
+#----------------------------------------#
+# Install node-neo4j library
+loggerGreen "Installing node-neo4j library...\n"
+npm install neo4j >> $LOG_FILE 2>&1 || { loggerRed "npm neo4j failed!. See setup.log for details"; exit 1; }
 
 #----------------------------------------#
 # Download Neo4J
 loggerGreen "Installing Neo4J Engine...\n"
 cd $TMP_DOWNLOAD_DIR
-if [[ ! -e $NEO4J_FILE ]] || [[ ! -f $NEO4J_FILE ]]
+if [ ! -e $NEO4J_FILE ] || [ ! -f $NEO4J_FILE ]
 then
     wget -a $LOG_FILE -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
 fi
 
 # untar and move
-tar -zxvf neo4j-community-$NEO4J_VER-unix.tar.gz >> $LOG_FILE 2>&1
+tar -zxvf neo4j-community-$NEO4J_VER-unix.tar.gz >> ../$LOG_FILE 2>&1
 cd ..
 
 mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
@@ -98,12 +104,12 @@ done
 # Install and configure MongoDB
 loggerGreen "Installing MongoDB...\n"
 cd $TMP_DOWNLOAD_DIR
-if [[ ! -e $MONGO_FILE ]] || [[ ! -f $MONGO_FILE ]]
+if [ ! -e $MONGO_FILE ] || [ ! -f $MONGO_FILE ]
 then
     curl -O -s https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VER.tgz >> $LOG_FILE
 fi
 #curl -O http://localhost:8000/Volatile/mongodb-linux-x86_64-$MONGODB_VER.tgz
-tar -zxvf $MONGO_FILE >> $LOG_FILE 2>&1
+tar -zxvf $MONGO_FILE >> ../$LOG_FILE 2>&1
 cd ..
 mkdir -p $BIN_DIR/mongodb
 cp -R -n $TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER/ $BIN_DIR/mongodb
