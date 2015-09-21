@@ -78,7 +78,7 @@ npm install neo4j >> $LOG_FILE 2>&1 || { loggerRed "npm neo4j failed!. See setup
 # Download Neo4J
 loggerGreen "Installing Neo4J Engine...\n"
 cd $TMP_DOWNLOAD_DIR
-if [[ ! -e $NEO4J_FILE ]] || [[ ! -f $NEO4J_FILE ]]
+if [ ! -e $NEO4J_FILE ] || [ ! -f $NEO4J_FILE ]
 then
     wget -a $LOG_FILE -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
 fi
@@ -104,7 +104,7 @@ done
 # Install and configure MongoDB
 loggerGreen "Installing MongoDB...\n"
 cd $TMP_DOWNLOAD_DIR
-if [[ ! -e $MONGO_FILE ]] || [[ ! -f $MONGO_FILE ]]
+if [ ! -e $MONGO_FILE ] || [ ! -f $MONGO_FILE ]
 then
     curl -O -s https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VER.tgz >> $LOG_FILE
 fi
