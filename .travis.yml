@@ -4,5 +4,9 @@ node_js:
 before_install:
     - curl -sSL https://get.rvm.io | bash -s stable --ruby
     - ./setup.sh
+    - ./config.sh asoc LOC
+    - ./neoRun  
+    - cd testDataset && ./testDataset.sh no-wait
+    - cd .. && ./neoStop
 notifications:
       email: false

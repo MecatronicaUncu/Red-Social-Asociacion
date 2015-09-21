@@ -28,8 +28,24 @@ sed -i "s/org.neo4j.server.webserver.https.port=.*/org.neo4j.server.webserver.ht
 
 #-----------------------------------------#
 # Wait for user to start Neo4J server
-echo -e $G_COL"Please start Neo4J server and press enter..."$DEF_COL
-read
+if [[ $# -eq 0 ]]
+then
+    echo -e $G_COL"Please start Neo4J server and press enter..."$DEF_COL
+    read
+elif [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
+then
+    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
+    exit 1
+elif [[ $# -gt 3 ]]
+then
+    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
+    exit 1
+else
+    #----------------------------------------#
+    # Start Neo4J
+    ./neoRun
+fi
+
 
 #-----------------------------------------#
 # Create Dummy node:
@@ -45,11 +61,17 @@ echo -e $G_COL"Creating email uniqueness constraint...\n"$DEF_COL
 #-----------------------------------------#
 # Set new Neo4J server password
 echo -e $G_COL"Setting the Neo4J server password..."$DEF_COL
-stty -echo
-printf $Y_COL"Enter your password: "$DEF_COL
-read PASSWORD
-printf "\n\n"
-stty echo
+if [[ $# -eq 0 ]]
+then
+    stty -echo
+    printf $Y_COL"Enter your password: "$DEF_COL
+    read PASSWORD
+    printf "\n\n"
+    stty echo
+else
+    PASSWORD="$1"
+fi
+
 curl -H "Content-Type: application/json" -X POST -d "{\"password\":\"$PASSWORD\"}" -u neo4j:neo4j http://localhost:4550/user/neo4j/password >/dev/null 2>&1 || { echo -e >&2 $R_COL"Could not change server password. Are you sure your Neo4J server is up and running?\n"$DEF_COL; exit 1; }
 
 # Set Neo4J user and password in testDataset/{usersRel.js, regUsers.js}
@@ -62,19 +84,37 @@ sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD
 
 #-----------------------------------------#
 # Set host location in app.js
-hosts=("This computer only" "Local network" "The Internet")
-PS3="From where will Red-Social-Asociacion will be accessed? "
-echo -e $Y_COL
-select host in "${hosts[@]}"
-do
-    case "$REPLY" in
-        1 ) echo -e $G_COL"\nSetting host location to localhost..."$DEF_COL; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ./app/scripts/app.js; break;;
-        2 ) echo -e $G_COL"\nSetting host location to this host LAN ip..."$DEF_COL; sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ./app/scripts/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ./app/scripts/app.js;break;;
-        3 ) echo -e $G_COL"\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ./app/scripts/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ./app/scripts/app.js; break;;
-        * ) echo "invalid";continue;;
-    esac
-done
-echo -e $DEF_COL
+if [[ $# -eq 0 ]]
+then
+    hosts=("This computer only" "Local network" "The Internet")
+    PS3="From where will Red-Social-Asociacion will be accessed? "
+    echo -e $Y_COL
+    select host in "${hosts[@]}"
+    do
+        case "$REPLY" in
+            1 ) echo -e $G_COL"\nSetting host location to localhost..."$DEF_COL; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ./app/scripts/app.js; break;;
+            2 ) echo -e $G_COL"\nSetting host location to this host LAN ip..."$DEF_COL; sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ./app/scripts/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ./app/scripts/app.js;break;;
+            3 ) echo -e $G_COL"\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ./app/scripts/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ./app/scripts/app.js; break;;
+            * ) echo "invalid";continue;;
+        esac
+    done
+    echo -e $DEF_COL
+else
+    HOST_TYPE="$2"
+    if [[ "$HOST_TYPE" = "LOC" ]]
+    then
+        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ./app/scripts/app.js
+    elif [[ "$HOST_TYPE" = "LAN" ]]
+    then
+        sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ./app/scripts/app.js
+        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ./app/scripts/app.js
+    elif [[ "$HOST_TYPE" = "NET" ]]
+    then
+        SITE="$3"
+        sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ./app/scripts/app.js
+        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ./app/scripts/app.js
+    fi
+fi
 
 #-----------------------------------------#
 # Create Self-Signed Certificate
@@ -102,6 +142,10 @@ openssl req -new -key $domain.key -out $domain.csr -passin pass:$password \
         -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email" >/dev/null 2>&1
 
 openssl x509 -req -days 365 -in $domain.csr -signkey $domain.key -out $domain.crt >/dev/null 2>&1
+
+#-----------------------------------------#
+# Stop Neo4J
+./neoStop
 
 #-----------------------------------------#
 # Done!

@@ -21,7 +21,12 @@ function loggerRed {
 
 # 0. Welcome message
 loggerGreen $CONS_DIV"\nThis script will populate your Neo4J database with 50 users, and some relationships. Press Enter to continue or Ctrl-C to abort."
-read
+if [[ $# -ne 0 ]] && [[ "$1" = "no-wait" ]]
+then
+   :
+else
+    read
+fi
 
 # 1. Check that node in present
 loggerGreen "Checking dependencies...\n"
@@ -48,6 +53,7 @@ node usersRel.js
 
 # 6. Download pictures for users
 loggerGreen "Downloading random profile pictures. This may take a while...\n"
+mkdir -p ../routes/upload
 ./getPictures.sh
 
 # 7. Done
