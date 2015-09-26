@@ -1,25 +1,26 @@
-graph.db/
+# npm and bower dependencies
 app/bower_components
-mongodata
-mongodb
 node_modules
+
+# MongoDB database
+mongodata
+
+# IDEs created files
 nbproject/
 .project
+/nbproject/private/
+
+# Dist created files
 .sass-cache
 .tmp
-routes/upload
-server.crt
-server.key
-neo4j*/
-!neo4j*/conf/neo4j-server.properties
-!neo4j*/conf/neo4j.properties
-app/styles
 *.*~
 */*.*~
 *.log
 */*.log
-/nbproject/private/
 dist/
+
+# Uploaded files 
+routes/upload
 
 # start-stop services scripts
 mongoRun
@@ -33,6 +34,9 @@ neoStop
 # Temp download folder
 tmp_download_dir
 
+# Bin directory
+bin/
+
 # SSL Certificate files
 *.key
 *.crt
@@ -42,3 +46,8 @@ tmp_download_dir
 testDataset/people_email_pass.csv
 testDataset/people_email_pass_salt.csv
 testDataset/usersIDs.csv
+
+# Ignore compiled css, include static css 
+app/styles/*
+!app/styles/static/
+
