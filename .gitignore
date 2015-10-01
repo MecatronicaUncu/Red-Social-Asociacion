@@ -17,7 +17,6 @@ nbproject/
 */*.*~
 *.log
 */*.log
-dist/
 
 # Uploaded files 
 routes/upload
@@ -36,6 +35,9 @@ tmp_download_dir
 
 # Bin directory
 bin/
+
+# Build directory
+build/
 
 # SSL Certificate files
 *.key

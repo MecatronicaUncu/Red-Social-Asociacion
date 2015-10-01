@@ -11,7 +11,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-coffee');
-  grunt.loadNpmTasks('grunt-contrib-compass');
+  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-conventional-changelog');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-coffeelint');
@@ -255,23 +255,27 @@ module.exports = function ( grunt ) {
     },
 
     /**
-     * `grunt-contrib-compass` handles our SASS compilation and uglification automatically.
+     * `grunt-contrib-sass` handles our SASS compilation and uglification automatically.
      * Only our `main.scss` file is included in compilation; all other files
      * must be imported from this file.
      */
-    compass: {
+    sass: {
       build: {
-        files: {
-          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css': '<%= app_files.sass %>'
-        }
-      },
-      compile: {
         files: {
           '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css': '<%= app_files.sass %>'
         },
         options: {
-          cleancss: true,
-          compress: true
+          style: 'expanded',
+          compass: true
+        }
+      },
+      compile: {
+        files: {
+          '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css': '<%= app_files.sass %>'
+        },
+        options: {
+          style: 'compact',
+          compass: true
         }
       }
     },
@@ -531,9 +535,9 @@ module.exports = function ( grunt ) {
       /**
        * When the CSS files change, we need to compile and minify them.
        */
-      compass: {
+      sass: {
         files: [ 'src/**/*.scss' ],
-        tasks: [ 'compass:build' ]
+        tasks: [ 'sass:build' ]
       },
 
       /**
@@ -598,7 +602,7 @@ module.exports = function ( grunt ) {
    * The `build` task gets your app ready to run for development and testing.
    */
   grunt.registerTask( 'build', [
-    'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'compass:build',
+    'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'sass:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
     'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_vendorcss', 'index:build', 'karmaconfig',
     'karma:continuous' 
@@ -609,7 +613,7 @@ module.exports = function ( grunt ) {
    * minifying your code.
    */
   grunt.registerTask( 'compile', [
-    'compass:compile', 'copy:compile_assets', 'ngAnnotate', 'concat:compile_js', 'uglify', 'index:compile'
+    'sass:compile', 'copy:compile_assets', 'ngAnnotate', 'concat:compile_js', 'uglify', 'index:compile'
   ]);
 
   /**
