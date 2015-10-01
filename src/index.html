@@ -12,27 +12,10 @@
     <!-- Static stylesheet for the splash screen -->
     <style>[ng-cloak] {display: none;}</style>
     <link rel="stylesheet" href="app/styles/static/splash.css" />
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
-    <!-- endbower -->
-    <!-- endbuild -->
-    <!-- build:css({.tmp,app}) styles/main.css -->
-    <link rel="stylesheet" href="app/styles/main.css"/>
-    <link rel="stylesheet" href="app/styles/profile.css"/>
-    <link rel="stylesheet" href="app/styles/signops.css"/>
-    <link rel="stylesheet" href="app/styles/navbar.css"/>
-    <link rel="stylesheet" href="app/styles/contacts.css"/>
-    <link rel="stylesheet" href="app/styles/about.css"/>
-    <link rel="stylesheet" href="app/styles/checkbox.css"/>
-    <link rel="stylesheet" href="app/styles/edt-mecuncu.css"/>
-    <link rel="stylesheet" href="app/styles/activity-form.css"/>
-    <link rel="stylesheet" href="app/styles/admin.css"/>
-    <link rel="stylesheet" href="app/styles/static/jquery-ui-custom/jquery-ui.min.css"/>
-    <link rel="stylesheet" href="bower_components/jQuery.mmenu/src/css/jquery.mmenu.css"/>
-    <!-- endbuild -->
+    
+    <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+    <link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
+
   </head>
   <body>
     <!--[if lt IE 7]>
@@ -103,32 +86,7 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <!-- build:js scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="bower_components/bower-angular-placeholders/angular-placeholders.js"></script>
-    <script src="bower_components/jQuery.mmenu/src/js/jquery.mmenu.min.js"></script>
-    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
-    <script src="bower_components/parsleyjs/dist/parsley.js"></script>
-    <!-- endbower -->
-    <!-- endbuild -->
-    
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="app/scripts/app.js"></script>
-        <script src="app/scripts/controllers/SearchCtrl.js"></script>
-        <script src="app/scripts/controllers/ProfileCtrl.js"></script>
-        <script src="app/scripts/controllers/ParentCtrl.js"></script>
-        <script src="app/scripts/controllers/MainCtrl.js"></script>
-        <script src="app/scripts/controllers/NavBarCtrl.js"></script>
-        <script src="app/scripts/controllers/EdtCtrl.js"></script>
-        <script src="app/scripts/controllers/AdminCtrl.js"></script>
-        <!-- endbuild -->
+    <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script><% }); %>
 </body>
 </html> 
