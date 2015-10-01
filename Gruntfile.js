@@ -18,6 +18,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-express-server');
 
   /**
    * Load in our build configuration file.
@@ -425,6 +426,24 @@ module.exports = function ( grunt ) {
     },
 
     /**
+     * This task starts the Express server for us.
+     */
+    express: {
+        options: {
+            output: "Express server listening on port"
+        },
+        prod: {
+            script: 'server/server.js',
+            background: false,
+            args: [ 'prod' ]
+        },
+        dev: {
+            script: 'server/server.js',
+            args: [ 'dev' ]
+        }
+    },
+
+    /**
      * And for rapid development, we have a watch set up that checks to see if
      * any of the files listed below change, and then to execute the listed 
      * tasks when they do. This just saves us from having to type "grunt" into
@@ -543,6 +562,17 @@ module.exports = function ( grunt ) {
         options: {
           livereload: false
         }
+      },
+
+      /**
+       * When the Express server or one of its modules changes, restart the server
+       */
+      express: {
+        files: [ 'server/**/*.js' ],
+        task: [ 'express:unique' ],
+        options: {
+            spawn: false
+        }
       }
     }
   };
@@ -581,6 +611,18 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'compile', [
     'compass:compile', 'copy:compile_assets', 'ngAnnotate', 'concat:compile_js', 'uglify', 'index:compile'
   ]);
+
+  /**
+   * The `serve` task starts the web server and keeps track of the changes if used in development
+   */
+  grunt.registerTask( 'serve', function(target){
+      if (target === 'prod'){
+        return grunt.task.run([ 'compile', 'express:prod' ]);
+      } else {
+        // Defaults to development
+        return grunt.task.run([ 'build', 'express:dev', 'delta' ]);
+      }
+  });
 
   /**
    * A utility function to get all app JavaScript sources.
