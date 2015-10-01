@@ -433,18 +433,22 @@ module.exports = function ( grunt ) {
      * This task starts the Express server for us.
      */
     express: {
+      options: {
+        output: 'Express server listening on port'
+      },
+      prod: {
         options: {
-            output: "Express server listening on port"
-        },
-        prod: {
-            script: 'server/server.js',
-            background: false,
-            args: [ 'prod' ]
-        },
-        dev: {
-            script: 'server/server.js',
-            args: [ 'dev' ]
+          script: 'server/server.js',
+          background: false,
+          args: [ 'prod' ]
         }
+      },
+      dev: {
+        options: {
+          script: 'server/server.js',
+          args: [ 'dev' ]
+        }
+      }
     },
 
     /**
