@@ -1,6 +1,6 @@
 # npm and bower dependencies
-app/bower_components
 node_modules
+vendor
 
 # MongoDB database
 mongodata
@@ -19,13 +19,19 @@ nbproject/
 */*.log
 
 # Uploaded files 
-routes/upload
+server/routes/upload
 
 # start-stop services scripts
-mongoRun
-mongoStop
-neoRun
-neoStop
+server/mongoRun
+server/mongoStop
+server/neoRun
+server/neoStop
+
+# neo4j installation
+server/neo*
+
+# mongoDB installation
+server/mongodb
 
 # Vim temp files
 .*.swp
@@ -33,23 +39,19 @@ neoStop
 # Temp download folder
 tmp_download_dir
 
-# Bin directory
+# Compile directory
 bin/
 
-# Build directory
+# Development directory
 build/
 
 # SSL Certificate files
-*.key
-*.crt
-*.csr
+server/*.key
+server/*.crt
+server/*.csr
 
 # testDataset created files
-testDataset/people_email_pass.csv
-testDataset/people_email_pass_salt.csv
-testDataset/usersIDs.csv
-
-# Ignore compiled css, include static css 
-app/styles/*
-!app/styles/static/
+bootstrap/testDataset/people_email_pass.csv
+bootstrap/testDataset/people_email_pass_salt.csv
+bootstrap/testDataset/usersIDs.csv
 

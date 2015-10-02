@@ -9,8 +9,8 @@ var express = require('express')
     , http = require('http')
     , https = require('https')
     , passphrase = 'mecuncu'
-    , key_file = './Red-Social-Asociacion.key'
-    , cert_file = './Red-Social-Asociacion.crt'
+    , key_file = './server/Red-Social-Asociacion.key'
+    , cert_file = './server/Red-Social-Asociacion.crt'
     , config = {
         key: fs.readFileSync(key_file),
         cert: fs.readFileSync(cert_file),

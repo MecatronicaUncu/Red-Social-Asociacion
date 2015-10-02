@@ -2,7 +2,7 @@
 
 NEO4J_VER=2.2.5
 
-BIN_DIR=bin
+BIN_DIR=../server
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 NEO4J_SERVER_CONF_FILE=$NEO4J_DIR/conf/neo4j-server.properties
 
@@ -43,7 +43,8 @@ then
 else
     #----------------------------------------#
     # Start Neo4J
-    ./neoRun
+    cd $BIN_DIR && ./neoRun
+    cd ../bootstrap
 fi
 
 
@@ -80,7 +81,7 @@ sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD
 
 #-----------------------------------------#
 # Set Neo4J user and password in routes/user.js
-sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./routes/user.js
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" $BIN_DIR/routes/user.js
 
 #-----------------------------------------#
 # Set host location in app.js
@@ -92,9 +93,9 @@ then
     select host in "${hosts[@]}"
     do
         case "$REPLY" in
-            1 ) echo -e $G_COL"\nSetting host location to localhost..."$DEF_COL; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ./app/scripts/app.js; break;;
-            2 ) echo -e $G_COL"\nSetting host location to this host LAN ip..."$DEF_COL; sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ./app/scripts/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ./app/scripts/app.js;break;;
-            3 ) echo -e $G_COL"\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ./app/scripts/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ./app/scripts/app.js; break;;
+            1 ) echo -e $G_COL"\nSetting host location to localhost..."$DEF_COL; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ../src/app/app.js; break;;
+            2 ) echo -e $G_COL"\nSetting host location to this host LAN ip..."$DEF_COL; sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ../src/app/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ../src/app/app.js;break;;
+            3 ) echo -e $G_COL"\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ../src/app/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ../src/app/app.js; break;;
             * ) echo "invalid";continue;;
         esac
     done
@@ -103,16 +104,16 @@ else
     HOST_TYPE="$2"
     if [[ "$HOST_TYPE" = "LOC" ]]
     then
-        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ./app/scripts/app.js
+        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ../src/app/app.js
     elif [[ "$HOST_TYPE" = "LAN" ]]
     then
-        sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ./app/scripts/app.js
-        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ./app/scripts/app.js
+        sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ../src/app/app.js
+        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ../src/app/app.js
     elif [[ "$HOST_TYPE" = "NET" ]]
     then
         SITE="$3"
-        sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ./app/scripts/app.js
-        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ./app/scripts/app.js
+        sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ../src/app/app.js
+        sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ../src/app/app.js
     fi
 fi
 
@@ -132,20 +133,21 @@ email=mecatronica-organizacion@lists.mecatronicauncu.org
 password=asoc
 
 # Generate a key
-openssl genrsa -des3 -passout pass:$password -out $domain.key 2048 -noout >/dev/null 2>&1
+openssl genrsa -des3 -passout pass:$password -out $BIN_DIR/$domain.key 2048 -noout >/dev/null 2>&1
 
 # Remove passphrase from the key. Comment the line out to keep the passphrase
-openssl rsa -in $domain.key -passin pass:$password -out $domain.key >/dev/null 2>&1
+openssl rsa -in $BIN_DIR/$domain.key -passin pass:$password -out $BIN_DIR/$domain.key >/dev/null 2>&1
 
 # Create the request
-openssl req -new -key $domain.key -out $domain.csr -passin pass:$password \
+openssl req -new -key $BIN_DIR/$domain.key -out $BIN_DIR/$domain.csr -passin pass:$password \
         -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email" >/dev/null 2>&1
 
-openssl x509 -req -days 365 -in $domain.csr -signkey $domain.key -out $domain.crt >/dev/null 2>&1
+openssl x509 -req -days 365 -in $BIN_DIR/$domain.csr -signkey $BIN_DIR/$domain.key -out $BIN_DIR/$domain.crt >/dev/null 2>&1
 
 #-----------------------------------------#
 # Stop Neo4J
-./neoStop
+cd $BIN_DIR && ./neoStop
+cd ../bootstrap
 
 #-----------------------------------------#
 # Done!
