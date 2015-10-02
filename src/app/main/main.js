@@ -1,58 +1,65 @@
-'use strict';
+/*global 
+    angular
+*/
 
-var App = angular.module('linkedEnibApp');
+(function(){
 
-App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, session,users) {
+    'use strict';
 
-    $scope.hideSignIn = true;
-    $scope.hideSignUp = true;
+    var App = angular.module('linkedEnibApp');
 
-    $scope.session = session;
+    App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, session,users) {
 
-    $scope.they = [];
-    
-    $(document).ready(function(){
-                              
+        $scope.hideSignIn = true;
+        $scope.hideSignUp = true;
+
+        $scope.session = session;
+
+        $scope.they = [];
         
-       users.they(function(err,users){
-			if(err){
-				console.log(err);
-			} else {
-				$scope.they = users;
-				$scope.they.forEach(function(el){
-        			el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
-   				});	
-			}
-		});
-		
-    });
-    
-    $scope.login = function(person){
-    	users.login(person,function(err){
-    		if(err){
-    			console.log(err);
-    			$('#signinicon').removeClass('fa-spin fa-spinner').addClass('fa-play');
-                $scope.loginFailed = true;
-    		} else {
-    			$('#signinicon').removeClass('fa-spin fa-spinner').addClass('fa-thumbs-o-up');
-    		}
-    	});
-    	
-    	$('#signinicon').removeClass('fa-play').addClass('fa-spin fa-spinner');
-    };  
-      
-    $scope.signup = function(){
-        $scope.fields.lang = session.lang;
-        users.signup($scope.fields,function(err){
-            if(err){
-                console.log(err);
-            }
-            else {
-                window.alert("Active su cuenta desde su casilla de mail para iniciar sesion");
-                $scope.fields = {};
-                $scope.hideSignUp = true;
-                $scope.hideSignIn = false;
-            }
+        $(document).ready(function(){
+                                  
+            
+           users.they(function(err,users){
+                if(err){
+                    console.log(err);
+                } else {
+                    $scope.they = users;
+                    $scope.they.forEach(function(el){
+                        el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
+                    });	
+                }
+            });
+
         });
-      };   
-  });
+
+        $scope.login = function(person){
+            users.login(person,function(err){
+                if(err){
+                    console.log(err);
+                    $('#signinicon').removeClass('fa-spin fa-spinner').addClass('fa-play');
+                    $scope.loginFailed = true;
+                } else {
+                    $('#signinicon').removeClass('fa-spin fa-spinner').addClass('fa-thumbs-o-up');
+                }
+            });
+
+            $('#signinicon').removeClass('fa-play').addClass('fa-spin fa-spinner');
+        };
+
+        $scope.signup = function(){
+            $scope.fields.lang = session.lang;
+            users.signup($scope.fields,function(err){
+                if(err){
+                    console.log(err);
+                }
+                else {
+                    window.alert("Active su cuenta desde su casilla de mail para iniciar sesion");
+                    $scope.fields = {};
+                    $scope.hideSignUp = true;
+                    $scope.hideSignIn = false;
+                }
+            });
+          };   
+      });
+})();
