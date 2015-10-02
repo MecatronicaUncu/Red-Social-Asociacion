@@ -633,11 +633,29 @@ module.exports = function ( grunt ) {
   });
 
   /**
-   * A utility function to get all app JavaScript sources.
+   * A utility function to get all app JavaScript sources except for app.js.
    */
   function filterForJS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /\.js$/ );
+      return file.match( /^((?!.*\/app\.js)(?!.*vendor)).*$/ );
+    });
+  }
+
+  /**
+   * A utility function to get all vendor JavaScript sources.
+   */
+  function filterForVendorJS ( files ) {
+    return files.filter( function ( file ) {
+      return file.match( /^.*vendor.*$/ );
+    });
+  }
+
+  /*
+   * A utility function to get just app.js file (needs to be written on top of the others!)
+   */
+  function filterForAppJS (files) {
+    return files.filter( function ( file ) {
+      return file.match( /^.*\/app\.js.*$/ );
     });
   }
 
@@ -658,7 +676,13 @@ module.exports = function ( grunt ) {
    */
   grunt.registerMultiTask( 'index', 'Process index.html template', function () {
     var dirRE = new RegExp( '^('+grunt.config('build_dir')+'|'+grunt.config('compile_dir')+')\/', 'g' );
+    var vendorjsFiles = filterForVendorJS ( this.filesSrc ).map( function ( file ) {
+      return file.replace( dirRE, '' );
+    });
     var jsFiles = filterForJS( this.filesSrc ).map( function ( file ) {
+      return file.replace( dirRE, '' );
+    });
+    var appjsFile = filterForAppJS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
     var cssFiles = filterForCSS( this.filesSrc ).map( function ( file ) {
@@ -669,7 +693,9 @@ module.exports = function ( grunt ) {
       process: function ( contents, path ) {
         return grunt.template.process( contents, {
           data: {
+            appjs: appjsFile,
             scripts: jsFiles,
+            vendorjs: vendorjsFiles,
             styles: cssFiles,
             version: grunt.config( 'pkg.version' )
           }

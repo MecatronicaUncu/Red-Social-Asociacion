@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width">
     <!-- Static stylesheet for the splash screen -->
     <style>[ng-cloak] {display: none;}</style>
-    <link rel="stylesheet" href="app/styles/static/splash.css" />
+    <link rel="stylesheet" href="assets/styles/splash.css" />
     
     <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
     <link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
@@ -33,12 +33,12 @@
             <div class="header">
                     <div class="dropdown newActSelect">
                         <button id="langButton" class="edtSearchBtn newActBtn dropdown-toggle" type="button">
-                            <img src="images/lang/{{session.lang}}.png"
+                            <img src="assets/images/lang/{{session.lang}}.png"
                                     height="11" width="16" alt="language">
                         </button>
                         <ul id="langDropDown" class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
                             <li role="presentation" ng-repeat="lang in avLangs">
-                                <img src="/images/lang/{{lang}}.png" role="menuitem" tabindex="-1"
+                                <img src="assets/images/lang/{{lang}}.png" role="menuitem" tabindex="-1"
                                    ng-click="selectLang(lang)" height="11" width="16"
                                    class="langField">
                             </li>
@@ -71,10 +71,10 @@
         <div class="body-wrap">
             <!-- BARRA DE PUBLICIDAD -->
 			<!--div class="pub-bar">
-				<img class="pub-pic" src="app/images/pub/pubMECUNCU.jpg" alt="pubMECUNCU"/>
-				<img class="pub-pic" src="app/images/pub/pubUNCUYO.jpg" alt="pubUNCUYO"/>
-				<img class="pub-pic" src="app/images/pub/pubENIB.jpg" alt="pubENIB"/>
-				<img class="pub-pic" src="app/images/pub/pubFING.png" alt="pubFING"/>				
+				<img class="pub-pic" src="assets/images/pub/pubMECUNCU.jpg" alt="pubMECUNCU"/>
+				<img class="pub-pic" src="assets/images/pub/pubUNCUYO.jpg" alt="pubUNCUYO"/>
+				<img class="pub-pic" src="assets/images/pub/pubENIB.jpg" alt="pubENIB"/>
+                <img class="pub-pic" src="assets/images/pub/pubFING.png" alt="pubFING"/>
 			</div-->
 			
 			<div ng-view="" class="mobile-margin"></div>
@@ -86,7 +86,11 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+    <!-- compiled vendor JavaScript --><% vendorjs.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+    <!-- compiled app.js JavaScript --><% appjs.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+    <!-- compiled app JavaScript --><% scripts.forEach( function ( file ) { %>
     <script type="text/javascript" src="<%= file %>"></script><% }); %>
 </body>
 </html> 

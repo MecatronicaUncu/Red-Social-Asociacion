@@ -18,6 +18,7 @@ module.exports = {
    * `atpl` contains the same, but for our app's code. `html` is just our
    * main HTML file, `sass` is our main stylesheet, and `unit` contains our
    * app's unit tests.
+   *
    */
   app_files: {
     js: [ 'src/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js' ],
@@ -62,13 +63,23 @@ module.exports = {
    */
   vendor_files: {
     js: [
+      'vendor/jquery/dist/jquery.min.js',
       'vendor/angular/angular.js',
       'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
       'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
       'vendor/angular-ui-router/release/angular-ui-router.js',
-      'vendor/angular-ui-utils/modules/route/route.js'
+      'vendor/angular-ui-utils/modules/route/route.js',
+      'vendor/angular-resource/angular-resource.min.js',
+      'vendor/angular-route/angular-route.min.js',
+      'vendor/angular-sanitize/angular-sanitize.min.js',
+      'vendor/angular-cookies/angular-cookies.min.js',
+      'vendor/bower-angular-placeholders/angular-placeholders.min.js',
+      'vendor/jQuery.mmenu/src/js/jquery.mmenu.min.js'
     ],
     css: [
+      'vendor/bootstrap/dist/css/bootstrap.css',
+      'vendor/font-awesome/css/font-awesome.css',
+      'vendor/jQuery.mmenu/src/css/jquery.mmenu.css'
     ],
     assets: [
     ]
