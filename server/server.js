@@ -60,10 +60,7 @@ var cookie2angular = function (req, res, next) {
 /******************************************************************************/
 app.configure(function () {
     app.set('port', process.env.PORT || 3000);
-    app.set('views', __dirname + '/views');
     app.set('view engine', 'ejs');
-
-    app.use(express.static(__dirname + '/app'));
 
     app.use(express.favicon());
     app.use(express.logger('dev'));
@@ -83,7 +80,8 @@ app.configure(function () {
 
     app.use(app.router);
 
-    app.use(express.static(path.join(__dirname, 'scripts')));
+    app.use(express.static(path.join(__dirname, '../build/src/app')));
+    app.use(express.static(path.join(__dirname, '../build')));
     app.use(express.static(path.join(__dirname, 'routes/upload')));
 
 });
@@ -184,24 +182,11 @@ app.post('/newrel', users.extractCookieData, users.newRel);
 /****************************  GENERAL REQUESTS   *****************************/
 app.get('/', function (req, res) {
 
-    var file = 'index.html';
+    var file = '../build/index.html';
     var targetPath = path.resolve(path.join(__dirname, file));
     res.status(200).sendfile(targetPath);
 });
-app.get('/*', function (req, res) {
-    var targetPath = path.resolve(path.join(__dirname, req.url));
-    var tgt = true;
-    for (var prop in req.query) {
-        if (req.query.hasOwnProperty(prop)) {
-            tgt = false;
-            targetPath = targetPath.split('?');
-            res.status(200).sendfile(targetPath[0]);
-        }
-    }
-    if (tgt) {
-        res.status(200).sendfile(targetPath);
-    }
-});
+
 app.get('/images/pub/:name', users.getPub);
 /******************************************************************************/
 
