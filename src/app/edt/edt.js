@@ -6,18 +6,17 @@
 
     'use strict';
 
-    var App = angular.module('linkedEnibApp');
-
-    App.controller('EdtCtrl', function ($scope, $routeParams, edt, session, $timeout, $http) {
+    angular.module('linkedEnibApp')
+      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, $timeout, $http) {
 
         $scope.partSearchResults = [];
 
         $scope.whatIdToSearch = 0;
         $scope.whoIdToSearch = 0;
         
-        if($routeParams.id){
-            $scope.whatIdToSearch = $routeParams.id;
-            $scope.whoIdToSearch = $routeParams.id;
+        if($stateParams.id){
+            $scope.whatIdToSearch = $stateParams.id;
+            $scope.whoIdToSearch = $stateParams.id;
         }else{
             $scope.whatIdToSearch = 0;
             $scope.whoIdToSearch = 0;
@@ -920,9 +919,9 @@
             $scope.newAct.whoId = session.getId();
             $scope.newAct.whoName = session.profile.firstName[0] + '. ' + session.profile.lastName;
 
-            if($routeParams.id){
-                $scope.whatIdToSearch = $routeParams.id;
-                $scope.whoIdToSearch = $routeParams.id;
+            if($stateParams.id){
+                $scope.whatIdToSearch = $stateParams.id;
+                $scope.whoIdToSearch = $stateParams.id;
             }else{
                 $scope.whatIdToSearch = 0;
                 if(session.loggedIn){
@@ -980,8 +979,8 @@
 
         $scope.$on('login', function () {
             $scope.newAct.whoId = session.getId();
-            if($routeParams.id){
-                $scope.whoIdToSearch = $routeParams.id;
+            if($stateParams.id){
+                $scope.whoIdToSearch = $stateParams.id;
             }else{
                 $scope.whoIdToSearch = session.getId();
             }
@@ -1007,8 +1006,8 @@
 
         if (session.loggedIn) {
             $scope.newAct.whoId = session.getId();
-            if($routeParams.id){
-                $scope.whoIdToSearch = $routeParams.id;
+            if($stateParams.id){
+                $scope.whoIdToSearch = $stateParams.id;
             }else{
                 $scope.whoIdToSearch = session.getId();
             }

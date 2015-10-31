@@ -6,10 +6,9 @@
 
     'use strict';
 
-    var App = angular.module('linkedEnibApp');
-
-    App.controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, session,users) {
-
+    angular.module('linkedEnibApp')
+      .controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, session,users) {
+        
         $scope.hideSignIn = true;
         $scope.hideSignUp = true;
 

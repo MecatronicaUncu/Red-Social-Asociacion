@@ -4,9 +4,8 @@
 (function(){
 	'use strict';
 
-	var App = angular.module('linkedEnibApp');
-
-	App.controller('AdminCtrl', function ($scope, session, $http) {
+	angular.module('linkedEnibApp')
+      .controller('AdminCtrl', function ($scope, session, $http) {
 		
 		if(session.translation){
 			$scope.translation = session.translation;

@@ -4,55 +4,62 @@
 
     angular
       .module('linkedEnibApp', [
+        'templates-app',
+        'templates-common',
         'ngResource',
-        'ngRoute',
         'ngSanitize',
         'ngCookies',
         'ui.bootstrap',
-        'placeholders.img'
+        'placeholders.img',
+        'ui.router'
       ])
-      .config(function ($routeProvider, $httpProvider) {
-        $routeProvider
-          .when('/profile/:id', {
-            templateUrl: 'views/profile.html',
-            controller: 'ProfileCtrl'
-          })
-          .when('/profile/', {
-              templateUrl: 'views/profile.html',
-              controller: 'ProfileCtrl'
-          })
-          .when('/', {
-            templateUrl: 'views/main.html',
-            controller: 'MainCtrl'
-          })
-          .when('/search', {
-            templateUrl: 'views/search.html',
-            controller: 'SearchCtrl'
-          })
-          .when('/about',{
-            templateUrl: 'views/about.html'
-          })
-          .when('/admin',{
-            templateUrl: 'views/admin.html',
-            controller: 'AdminCtrl'
-          })
-          .when('/edt/:id',{
-            templateUrl: 'views/edt.html',
-            controller: 'EdtCtrl'
-          })
-          .when('/edt',{
-            templateUrl: 'views/edt.html',
-            controller: 'EdtCtrl'
-          })
-          .otherwise({
-            redirectTo: '/'
-          });
+      .config(function ($httpProvider, $stateProvider, $urlRouterProvider) {
+        // For any unmatched url, redirect to /
+        $urlRouterProvider.otherwise('/');
+        // Now set up the states
+        $stateProvider
+            .state('main', {
+                url: '/',
+                templateUrl: 'main/main.tpl.html',
+                controller: 'MainCtrl'
+            })
+            .state('profile', {
+                url: '/profile',
+                templateUrl: 'profile/profile.tpl.html',
+                controller: 'ProfileCtrl'
+            })
+            .state('profile.id', {
+                url: '/:id',
+                templateUrl: 'profile/profile.tpl.html',
+                controller: 'ProfileCtrl'
+            })
+            .state('search', {
+                url: '/search',
+                templateUrl: 'search/search.tpl.html',
+                controller: 'SearchCtrl'
+            })
+            .state('admin',{
+                url: '/admin',
+                templateUrl: 'admin/admin.tpl.html',
+                controller: 'AdminCtrl'
+            })
+            .state('edt',{
+                url: '/edt',
+                templateUrl: 'edt/edt.tpl.html',
+                controller: 'EdtCtrl'
+            })
+            .state('edt.id',{
+                url: '/:id',
+                templateUrl: 'edt/edt.tpl.html',
+                controller: 'EdtCtrl'
+            });
+
         $httpProvider.defaults.withCredentials = true;
       })
       .directive('caiHomeSignin', function(){
           return {
             restrict: 'E', // Element Name <cai-home-signin></cai-home-signin>
-            templateUrl: '/components/cai-home-signin.html',
+            templateUrl: 'cai-home-signin/cai-home-signin.tpl.html',
             scope: {
                 'loginn': '&caiSubmit',
                 person : '=person',
@@ -63,7 +70,7 @@
       .directive('caiHomeSignup', function(){
           return {
             restrict: 'E', // Element Name
-            templateUrl: '/components/cai-home-signup.html',
+            templateUrl: 'cai-home-signup/cai-home-signup.tpl.html',
             scope: {
                 'signup': '&caiSubmit',
                 fields: '=caiFields'
@@ -73,7 +80,7 @@
       .directive('caiHomeUser', function(){
           return {
             restrict: 'E', // Element Name
-            templateUrl: '/components/cai-home-user.html',
+            templateUrl: 'cai-home-user/cai-home-user.tpl.html',
             scope: {
                 they: '=caiThey',
                 host: '=caiHost'
@@ -83,7 +90,7 @@
       .directive('contactField', function(){
           return {
             restrict: 'E', // Element Name
-            templateUrl: '/components/contact-field.html',
+            templateUrl: 'contact-field/contact-field.tpl.html',
             controller: function($scope,users,session){
                 $scope.users = users;
                 $scope.session = session;
@@ -96,7 +103,7 @@
       .directive('partField', function(){
           return {
             restrict: 'E', // Element Name
-            templateUrl: '/components/part-field.html',
+            templateUrl: 'part-field/part-field.tpl.html',
             controller: function($scope,$location,users,session){
                 $scope.users = users;
                 $scope.session = session;
@@ -110,7 +117,7 @@
       .directive('caiUserProfile', function(){
           return {
             restrict: 'E', // Element Name
-            templateUrl: '/components/cai-user-profile.html',
+            templateUrl: 'cai-user-profile/cai-user-profile.tpl.html',
             scope: {
                 fields: '=caiFields',
                 session: '=caiSession',
@@ -121,7 +128,7 @@
       .directive('caiUserContacts', function(){
           return {
             restrict: 'E', // Element Name
-            templateUrl: '/components/cai-user-contacts.html'
+            templateUrl: 'cai-user-contacts/cai-user-contacts.tpl.html'
           };
       })
       .directive('edtEnter', function () {
@@ -141,10 +148,10 @@
         this.loggedIn = false;
         //Es necesario? No se hace sólo con las cookies?
         this.ID = 0;
-        this.host_LAN = 'https://192.168.0.6';
+        this.host_LAN = 'https://192.168.0.3';
         this.host_LOC = 'https://127.0.0.1';
         this.host_NET = 'https://edt.mecatronicauncu.org';
-        this.host = this.host_LOC;
+        this.host = this.host_LAN;
         this.admin = false;
         this.lang = 'ar';
         this.profile = null;

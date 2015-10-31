@@ -6,7 +6,6 @@
     "angular-bootstrap": "~0.12.1",
     "angular-cookies": "~1.2.17",
     "angular-resource": "1.2.15",
-    "angular-route": "1.2.15",
     "angular-sanitize": "1.2.16",
     "bootstrap": "~3.0.3",
     "bower-angular-placeholders": "~0.0.2",
@@ -16,7 +15,8 @@
     "jquery": "~2.1.4",
     "jquery-ui": "~1.11.2",
     "json3": "~3.2.6",
-    "parsleyjs": "~2.0.5"
+    "parsleyjs": "~2.0.5",
+    "angular-ui-router": "~0.2.15"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",

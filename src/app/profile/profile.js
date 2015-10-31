@@ -11,10 +11,10 @@
     'use strict';
 
     angular.module('linkedEnibApp')
-    .controller('ProfileCtrl', function ($scope,$http,$routeParams,session,formDataObject,$location) {
+    .controller('ProfileCtrl', function ($scope,$http,$stateParams,session,formDataObject,$location) {
 
-        if($routeParams.id){
-            $scope.image = session.host+':3000/usr/' + $routeParams.id + '/pic';
+        if($stateParams.id){
+            $scope.image = session.host+':3000/usr/' + $stateParams.id + '/pic';
         }else{
             $scope.image = session.host+':3000/usr/' + session.getId() + '/pic';
         }
@@ -86,10 +86,10 @@
         };
         
         $scope.loadProfile = function(){
-            var id = ($routeParams.id)?true:false;
-            $scope.showNavBar = (session.isLogged() && !id) || (id && (session.getId() == $routeParams.id));
-            if(id && $routeParams.id != session.getId()){
-                var path = session.host+':3000/profile/' + $routeParams.id;
+            var id = ($stateParams.id)?true:false;
+            $scope.showNavBar = (session.isLogged() && !id) || (id && (session.getId() == $stateParams.id));
+            if(id && $stateParams.id != session.getId()){
+                var path = session.host+':3000/profile/' + $stateParams.id;
                 $http({method:'GET', url:path})
                 .success(function (profile){
                     $scope.fields.forEach(function(el){
