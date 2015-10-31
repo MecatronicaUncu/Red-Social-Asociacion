@@ -1,6 +1,8 @@
 #!/bin/bash
 
-LOG_FILE=setup.log
+LOG_FILE=testDataset.log
+
+SRV_DIR=../../server
 
 CONS_DIV="##################################################"
 R_COL="\e[31m"
@@ -53,8 +55,10 @@ node usersRel.js
 
 # 6. Download pictures for users
 loggerGreen "Downloading random profile pictures. This may take a while...\n"
-mkdir -p ../routes/upload
-./getPictures.sh
+mkdir -p $SRV_DIR/routes/upload
+for (( i = 0; i < 50; i++ )); do
+	wget -q -O $SRV_DIR/routes/upload/img$i.png http://lorempixel.com/150/150
+done
 
 # 7. Done
 loggerGreen "Dataset created!\n"

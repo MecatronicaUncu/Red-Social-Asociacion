@@ -1,8 +1,8 @@
 #!/bin/bash
 
-NEO4J_VER=2.2.5
+NEO4J_VER=2.3.0
 
-BIN_DIR=../server
+BIN_DIR=../server/bin
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 NEO4J_SERVER_CONF_FILE=$NEO4J_DIR/conf/neo4j-server.properties
 
@@ -81,7 +81,7 @@ sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD
 
 #-----------------------------------------#
 # Set Neo4J user and password in routes/user.js
-sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" $BIN_DIR/routes/user.js
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" $BIN_DIR/../routes/user.js
 
 #-----------------------------------------#
 # Set host location in app.js
@@ -133,21 +133,20 @@ email=mecatronica-organizacion@lists.mecatronicauncu.org
 password=asoc
 
 # Generate a key
-openssl genrsa -des3 -passout pass:$password -out $BIN_DIR/$domain.key 2048 -noout >/dev/null 2>&1
+openssl genrsa -des3 -passout pass:$password -out $BIN_DIR/../$domain.key 2048 -noout >/dev/null 2>&1
 
 # Remove passphrase from the key. Comment the line out to keep the passphrase
-openssl rsa -in $BIN_DIR/$domain.key -passin pass:$password -out $BIN_DIR/$domain.key >/dev/null 2>&1
+openssl rsa -in $BIN_DIR/$domain.key -passin pass:$password -out $BIN_DIR/../$domain.key >/dev/null 2>&1
 
 # Create the request
-openssl req -new -key $BIN_DIR/$domain.key -out $BIN_DIR/$domain.csr -passin pass:$password \
+openssl req -new -key $BIN_DIR/../$domain.key -out $BIN_DIR/../$domain.csr -passin pass:$password \
         -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email" >/dev/null 2>&1
 
-openssl x509 -req -days 365 -in $BIN_DIR/$domain.csr -signkey $BIN_DIR/$domain.key -out $BIN_DIR/$domain.crt >/dev/null 2>&1
+openssl x509 -req -days 365 -in $BIN_DIR/../$domain.csr -signkey $BIN_DIR/../$domain.key -out $BIN_DIR/../$domain.crt >/dev/null 2>&1
 
 #-----------------------------------------#
 # Stop Neo4J
 cd $BIN_DIR && ./neoStop
-cd ../bootstrap
 
 #-----------------------------------------#
 # Done!

@@ -5,13 +5,13 @@ gem
 git"
 
 NODEJS_VER=0.10
-NEO4J_VER=2.2.5
+NEO4J_VER=2.3.0
 MONGODB_VER=3.0.6
 NEO4J_FILE=neo4j-community-$NEO4J_VER-unix.tar.gz
 MONGO_FILE=mongodb-linux-x86_64-$MONGODB_VER.tgz
 LOG_FILE=setup.log
 
-BIN_DIR=../server
+BIN_DIR=../server/bin
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 
 CONS_DIV="#####################################"
@@ -30,6 +30,9 @@ function loggerRed {
 }
 
 #----------------------------------------#
+
+# Clean log file
+echo "" > $LOG_FILE
 
 echo -e $G_COL$CONS_DIV"\n\n **Setup script for Red-Social-Asociacion**\n
 Please note that the following dependencies are needed before
@@ -51,7 +54,8 @@ loggerGreen "Dependencies OK!\n"
 #----------------------------------------#
 # Cleanup bin directory
 loggerGreen "Cleaning bin directory...\n"
-rm -rf $BIN_DIR/$NEO4J_DIR >/dev/null 2>&1
+rm -rf $BIN_DIR >/dev/null 2>&1
+mkdir $BIN_DIR
 
 #----------------------------------------#
 # Create download dir
@@ -79,11 +83,11 @@ loggerGreen "Installing Neo4J Engine...\n"
 cd $TMP_DOWNLOAD_DIR
 if [ ! -e $NEO4J_FILE ] || [ ! -f $NEO4J_FILE ]
 then
-    wget -a $LOG_FILE -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
+    wget -a ../$LOG_FILE -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
 fi
 
 # untar and move
-tar -zxvf neo4j-community-$NEO4J_VER-unix.tar.gz >> ../$LOG_FILE 2>&1
+tar -xvf neo4j-community-$NEO4J_VER-unix.tar.gz >> ../$LOG_FILE 2>&1
 cd ..
 
 mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
@@ -128,19 +132,19 @@ npm install -g grunt-cli >> $LOG_FILE 2>&1
 loggerGreen "Installing service start and shutdown scripts...\n"
 
 echo "#!/bin/bash
-./bin/neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseConcMarkSweepGC" > $BIN_DIR/neoRun
+./neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseConcMarkSweepGC" > $BIN_DIR/neoRun
 chmod +x $BIN_DIR/neoRun
 
 echo "#!/bin/bash
-./bin/neo4j-community-$NEO4J_VER/bin/neo4j stop" > $BIN_DIR/neoStop
+./neo4j-community-$NEO4J_VER/bin/neo4j stop" > $BIN_DIR/neoStop
 chmod +x $BIN_DIR/neoStop
 
 echo "#!/bin/bash
-./bin/mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --dbpath ./mongodata/db/" > $BIN_DIR/mongoRun
+./mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --dbpath ./mongodata/db/" > $BIN_DIR/mongoRun
 chmod +x $BIN_DIR/mongoRun
 
 echo "#!/bin/bash
-./bin/mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --shutdown --dbpath mongodata/db" > $BIN_DIR/mongoStop
+./mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --shutdown --dbpath mongodata/db" > $BIN_DIR/mongoStop
 chmod +x $BIN_DIR/mongoStop
 
 #-----------------------------------------#
