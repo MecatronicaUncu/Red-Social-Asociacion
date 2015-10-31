@@ -710,13 +710,17 @@ module.exports = function ( grunt ) {
    * compiled as grunt templates for use by Karma. Yay!
    */
   grunt.registerMultiTask( 'karmaconfig', 'Process karma config templates', function () {
+    var vendorjsFiles = filterForVendorJS ( this.filesSrc );
     var jsFiles = filterForJS( this.filesSrc );
-    
+    var appjsFile = filterForAppJS( this.filesSrc );
+
     grunt.file.copy( 'karma/karma-unit.tpl.js', grunt.config( 'build_dir' ) + '/karma-unit.js', { 
       process: function ( contents, path ) {
         return grunt.template.process( contents, {
           data: {
-            scripts: jsFiles
+            vendorjs: vendorjsFiles,
+            scripts: jsFiles,
+            appjs: appjsFile
           }
         });
       }

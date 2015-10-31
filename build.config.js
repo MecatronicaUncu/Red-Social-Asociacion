@@ -78,7 +78,6 @@ module.exports = {
     ],
     css: [
       'vendor/bootstrap/dist/css/bootstrap.css',
-      'vendor/font-awesome/css/font-awesome.css',
       'vendor/jQuery.mmenu/src/css/jquery.mmenu.css'
     ],
     assets: [

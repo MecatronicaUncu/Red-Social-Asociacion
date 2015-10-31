@@ -9,11 +9,15 @@ module.exports = function ( karma ) {
      * This is the list of file patterns to load into the browser during testing.
      */
     files: [
+      //compiled vendor JavaScript
+      <% vendorjs.forEach( function ( file ) { %>'<%= file %>',
+      <% }); %>
+      //compiled app.js JavaScript
+      <% appjs.forEach( function ( file ) { %>'<%= file %>',
+      <% }); %>
+      //compiled app JavaScript
       <% scripts.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>
-      'src/app/app.js',
-      'src/*.js',
-      'src/*/*.js',
       'src/**/*.coffee'
     ],
     exclude: [

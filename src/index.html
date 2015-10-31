@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width">
     <!-- Static stylesheet for the splash screen -->
     <style>[ng-cloak] {display: none;}</style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/styles/splash.css" />
     
     <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
@@ -53,7 +54,7 @@
                             <a></a>
                         </li>
                         <li class="nav-link hide-mobile" ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible" ng-class='{"nav-active": navBarItem.active}'>
-                            <a ng-href="{{navBarItem.href}}">{{navBarItem.name}}</a>
+                            <a ui-sref="{{navBarItem.href}}">{{navBarItem.name}}</a>
                         </li>
                     </ul> 
             </div>
@@ -61,7 +62,7 @@
             <nav id="navbar">
                 <ul>
                     <li ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible" ng-class='{"nav-active": navBarItem.active}'>
-                        <a ng-href="{{navBarItem.href}}">{{navBarItem.name}}</a>
+                        <a ui-sref="{{navBarItem.href}}">{{navBarItem.name}}</a>
                     </li>
                 </ul> 
             </nav>
@@ -77,7 +78,7 @@
                 <img class="pub-pic" src="assets/images/pub/pubFING.png" alt="pubFING"/>
 			</div-->
 			
-			<div ng-view="" class="mobile-margin"></div>
+			<div ui-view class="mobile-margin"></div>
         </div>
     </div>
     
