@@ -221,7 +221,7 @@ User.getThey = function (callback) {
         'WITH user, rand() AS r',
         'ORDER BY r',
         'RETURN user, ID(user) AS idNEO, count(user) AS max',
-        'LIMIT '+limit.toString()
+        'LIMIT 50'
     ].join('\n');
 
     db.query(query, null, function (err, results) {
