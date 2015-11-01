@@ -116,9 +116,10 @@ tar -zxvf $MONGO_FILE >> ../$LOG_FILE 2>&1
 cd ..
 mkdir -p $BIN_DIR/mongodb
 cp -R -n $TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER/ $BIN_DIR/mongodb
-mkdir -p mongodata/db
+mkdir -p $BIN_DIR/mongodata/db
 
 # Get npm and bower dependencies
+cd ..
 loggerGreen "Installing Npm and Bower dependencies...\n"
 npm install . >> $LOG_FILE 2>&1
 bower install -F >> $LOG_FILE 2>&1
@@ -126,6 +127,7 @@ bower install -F >> $LOG_FILE 2>&1
 # Install grunt-cli
 loggerGreen "Installing grunt-cli...\n"
 npm install -g grunt-cli >> $LOG_FILE 2>&1
+cd bootstrap
 
 #----------------------------------------#
 # Create service start and shutdown scripts

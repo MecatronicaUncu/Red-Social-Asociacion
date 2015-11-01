@@ -136,7 +136,7 @@ password=asoc
 openssl genrsa -des3 -passout pass:$password -out $BIN_DIR/../$domain.key 2048 -noout >/dev/null 2>&1
 
 # Remove passphrase from the key. Comment the line out to keep the passphrase
-openssl rsa -in $BIN_DIR/$domain.key -passin pass:$password -out $BIN_DIR/../$domain.key >/dev/null 2>&1
+openssl rsa -in $BIN_DIR/../$domain.key -passin pass:$password -out $BIN_DIR/../$domain.key >/dev/null 2>&1
 
 # Create the request
 openssl req -new -key $BIN_DIR/../$domain.key -out $BIN_DIR/../$domain.csr -passin pass:$password \
