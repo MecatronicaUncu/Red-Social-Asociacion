@@ -6,7 +6,7 @@ before_install:
     - cd bootstrap && ./setup
     - ./config asoc LOC
     - cd ../server/bin && ./neoRun 
-    - cd ../../bootstrap/testDataset && ./testDataset.sh no-wait
+    - cd ../../bootstrap/testDataset && ./testDataset no-wait
     - cd ../../server/bin && ./neoStop
 notifications:
       email: false
