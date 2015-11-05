@@ -149,7 +149,7 @@
         //Es necesario? No se hace sólo con las cookies?
         this.ID = 0;
         this.host_LAN = 'https://192.168.0.3';
-        this.host_LOC = 'https://127.0.0.1';
+        this.host_LOC = 'https://localhost';
         this.host_NET = 'https://edt.mecatronicauncu.org';
         this.host = this.host_LAN;
         this.admin = false;
