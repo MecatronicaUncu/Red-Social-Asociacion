@@ -243,11 +243,11 @@ exports.getTranslation = function(req,res,next){
     
     var lang = req.params.lang;
     if(!lang){
-        res.send(500, 'Error');
+        res.status(500).send('Error');
     }else if(translations.hasOwnProperty(lang)){
-        res.send(200, {translation: translations[lang]});
+        res.status(200).send({translation: translations[lang]});
     }else{
-        res.send(404, 'translation for:'+lang+'not found');
+        res.status(404).send('translation for:'+lang+'not found');
     }
 
 };
@@ -261,11 +261,11 @@ exports.getEdtConfig = function(req, res, next){
     fs.readFile(configFile, 'utf-8', function (err, config) {
         if (err){
             console.log(err);
-            res.send(500);
+            res.sendStatus(500);
         }
         else{
             console.log(config);
-            res.send(200, config);
+            res.status(200).send(config);
         }
     });  
 };
@@ -276,7 +276,7 @@ exports.getTimesIcal = function(req, res, next){
         req.query.week && req.query.year && req.query.whatName)
         ;
     else{
-        res.send(401, 'Missing information');
+        res.status(401).send('Missing information');
         return;
     }
     
@@ -293,7 +293,7 @@ exports.getTimesIcal = function(req, res, next){
     User.getTimes(timeData, function (err, times) {
         if (err) {
             console.log(err);
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         } else {
             console.log(times);
@@ -333,7 +333,7 @@ exports.getTimesIcal = function(req, res, next){
             fs.writeFile("/tmp/ical.ics", cal.toString(), function(err) {
                 if(err) {
                     return console.log(err);
-                    res.send(500);
+                    res.sendStatus(500);
                 }else{
                     var stat = fs.statSync('/tmp/ical.ics');
                     res.writeHead(200, {
@@ -363,11 +363,11 @@ exports.getTimes = function(req, res, next){
     User.getTimes(timeData, function (err, times) {
         if (err) {
             console.log(err);
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         } else {
             console.log(times);
-            res.send(200, times);
+            res.status(200).send(times);
             return;
         }
     });
@@ -376,18 +376,18 @@ exports.getTimes = function(req, res, next){
 exports.getAsocs = function (req, res, next) {
 
     if (!req.id) {
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
 
     User.getAsocs(req.id, function (err, asocs) {
         if (err) {
             console.log(err);
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         } else {
             console.log(asocs);
-            res.send(200, asocs);
+            res.status(200).send(asocs);
             return;
         }
     });
@@ -413,18 +413,18 @@ exports.getProfile = function (req, res, next) {
         idNEO = req.id;
         public = false;
     } else {
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
 
     User.getProfile(idNEO, public, function (err, profile) {
         if (err) {
             console.log(err);
-            res.send(500, 'Error getting profile');
+            res.status(500).send('Error getting profile');
             return;
         } else {
             console.log(profile);
-            res.send(200, profile);
+            res.status(200).send(profile);
             return;
         }
     });
@@ -441,10 +441,10 @@ exports.getProfile = function (req, res, next) {
 exports.getThey = function (req, res, next) {
     User.getThey(function (err, users) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
-        res.send(200, {they: users});
+        res.status(200).send({they: users});
         return;
     });
 };
@@ -462,16 +462,16 @@ exports.getContacts = function (req, res, next) {
     if(req.id){
         ;
     }else{
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
     
     User.getContacts(req.id, function (err, contacts) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }else {
-            res.send(200, contacts);
+            res.status(200).send(contacts);
             return;
         }
     });
@@ -491,15 +491,15 @@ exports.getNodeContents = function (req, res, next) {
 
     User.getNodeContents(nodeID, function (err, contents) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
         if (contents) {
             //Mongo.getNodeContentsData(req, res, contents);
-            res.send(200, contents);
+            res.status(200).send(contents);
             return;
         }
-        res.send(500, 'Error');
+        res.status(500).send('Error');
         return;
     });
 
@@ -517,20 +517,20 @@ exports.getAdminNodes = function (req, res, next) {
     if (req.id) {
         ;
     } else {
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
 
     User.getAdminNodes(req.id, function (err, nodes) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
         if (nodes) {
-            res.send(200, nodes);
+            res.status(200).send(nodes);
             return;
         }
-        res.send(500, 'Error');
+        res.status(500).send('Error');
         return;
     });
 };
@@ -545,15 +545,15 @@ exports.getAdminNodes = function (req, res, next) {
 exports.getPicture = function (req, res, next) {
     User.getParam(req.params.id, 'url', function (err, value) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
         if (value) {
             var targetPath = path.resolve(path.join(__dirname, value));
-            res.status(200).sendfile(targetPath);
+            res.status(200).sendFile(targetPath);
             return;
         }
-        res.send(500, 'Error');
+        res.status(500).send('Error');
         return;
     });
 };
@@ -568,7 +568,7 @@ exports.getPicture = function (req, res, next) {
 exports.getPub = function (req, res, next) {
     var file = 'images/pub/' + req.params.name;
     var targetPath = path.resolve(path.join(__dirname, file));
-    res.status(200).sendfile(targetPath);
+    res.status(200).sendFile(targetPath);
     return;
 };
 
@@ -582,10 +582,10 @@ exports.getPub = function (req, res, next) {
 exports.isFriend = function (req, res, next) {
     User.isFriend(req.id, req.params.id, function (err, users) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
-        res.send(200, {users: users[0]});
+        res.status(200).send({users: users[0]});
         return;
     });
 };
@@ -595,17 +595,17 @@ exports.getSubscriptions = function (req, res, next){
     if (req.id) {
         ;
     } else {
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
     
     User.getSubscriptions(req.id, function(err, subsc){
         if(err){
             console.log(err);
-            res.send(500, 'ERROR');
+            res.status(500).send('ERROR');
             return;
         }else{
-            res.send(200, subsc);
+            res.status(200).send(subsc);
             return;
         }
     });
@@ -643,10 +643,10 @@ exports.search = function (req, res, next) {
 
     User.search(req.query.what, req.query.term, req.id, function (err, results) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
-        res.send(200, results);
+        res.status(200).send(results);
         return;
     });
 };
@@ -662,37 +662,37 @@ exports.activate = function (req, res, next) {
 
     var nodeData = req.query;
     if (!nodeData.hasOwnProperty('hash') || nodeData['hash'] == '') {
-        res.send(400, 'Missing password');
+        res.status(400).send('Missing password');
         return;
     }
     if (!nodeData.hasOwnProperty('email') || nodeData['email'] == '') {
-        res.send(400, 'Missing email');
+        res.status(400).send('Missing email');
         return;
     }
 
     User.getParamByEmail(nodeData['email'], 'password',function (err, value,id) {
         if (err) {
             console.log(err);
-            res.send(401, 'Wrong email or password 1');
+            res.status(401).send('Wrong email or password 1');
             return;
         }
 
         if(value){}
-        else {res.send(401,'aaa');
+        else {res.status(401).send('aaa');
             return;}
 
         if (nodeData['hash'] !== value) {
-            res.send(401, 'Wrong email or password 2');
+            res.status(401).send('Wrong email or password 2');
             return;
         };
         
         User.activate(id, function (sdf){
             if (sdf) {
-                res.send(401, 'Something went wrong');
+                res.status(401).send('Something went wrong');
                 return;
             }
             //res.redirect(200,'http://localhost:9000/#/profile')
-            res.send(200,"Gracias. Recarge la pagina https://127.0.0.1:3000/#/ para iniciar sesion");
+            res.status(200).send("Gracias. Recarge la pagina https://127.0.0.1:3000/#/ para iniciar sesion");
             return;
         });
     });
@@ -706,16 +706,16 @@ exports.unsubscribe = function(req, res, next){
     if (req.id && req.body.instId){
         ;
     }else{
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
     
     User.unsubscribe(req.id, req.body.instId, function(err){
         if(err){
             console.log(err);
-            res.send(500, 'ERROR');
+            res.status(500).send('ERROR');
         }else{
-            res.send(200, 'OK');
+            res.status(200).send('OK');
         }
     });
 };
@@ -725,16 +725,16 @@ exports.subscribe = function(req, res, next){
     if (req.id && req.body.instId){
         ;
     }else{
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
     
     User.subscribe(req.id, req.body.instId, function(err){
         if(err){
             console.log(err);
-            res.send(500, 'ERROR');
+            res.status(500).send('ERROR');
         }else{
-            res.send(200, 'OK');
+            res.status(200).send('OK');
         }
     });
 };
@@ -744,10 +744,10 @@ exports.newActivity = function (req, res, next) {
 
     User.newActivity(acts, function (err, result) {
         if (err) {
-            res.send(500, 'Error Creating Activities');
+            res.status(500).send('Error Creating Activities');
             return;
         } else {
-            res.send(200, 'OK');
+            res.status(200).send('OK');
             return;
         }
     });
@@ -756,7 +756,7 @@ exports.newActivity = function (req, res, next) {
 exports.updateProfile = function (req, res, next) {
 
     if (!sameUser(req.body.id, req, res)) {
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
 
@@ -765,10 +765,10 @@ exports.updateProfile = function (req, res, next) {
 
     User.updateProfile(idNEO, changes, function (err, profile) {
         if (err) {
-            res.send(500, 'Error USERS changeProfile');
+            res.status(500).send('Error USERS changeProfile');
             return;
         } else {
-            res.send(200, profile);
+            res.status(200).send(profile);
             return;
         }
     });
@@ -780,26 +780,26 @@ exports.updateProfile = function (req, res, next) {
 exports.newRel = function (req, res, next) {
     var relData = req.body;
     if (!relData.hasOwnProperty('instId')) {
-        res.send(400, 'Missing Organism');
+        res.status(400).send('Missing Organism');
         return;
     }
 
     if (!relData.hasOwnProperty('usrID')) {
-        res.send(400, 'Missing User');
+        res.status(400).send('Missing User');
         return;
     }
 
     if (!relData.hasOwnProperty('relType')) {
-        res.send(400, 'Missing Relationship Details');
+        res.status(400).send('Missing Relationship Details');
         return;
     }
     console.log(relData);
     User.newRel(relData, function (err) {
         if (err) {
-            res.send(400, 'Error Creating Rel');
+            res.status(400).send('Error Creating Rel');
             return;
         } else {
-            res.send(200,'OK');
+            res.status(200).send('OK');
         }
     });
 };
@@ -810,29 +810,29 @@ exports.newRel = function (req, res, next) {
 exports.newPart = function (req, res, next) {
     var data = req.body;
     if (!data.hasOwnProperty('instID')) {
-        res.send(400, 'Missing Organism');
+        res.status(400).send('Missing Organism');
         return;
     }
 
     if (!data.hasOwnProperty('partData')) {
-        res.send(400, 'Missing Node Data');
+        res.status(400).send('Missing Node Data');
         return;
     }
 
     if (!data.hasOwnProperty('label')) {
-        res.send(400, 'Missing Node Label');
+        res.status(400).send('Missing Node Label');
         return;
     }
 
     User.newPart(data, function (err, partID) {
         if (err) {
-            res.send(400, 'Error Creating Node');
+            res.status(400).send('Error Creating Node');
             return;
         } else if (partID) {
-            res.send(200, {idNEO: partID});
+            res.status(200).send({idNEO: partID});
             return;
         } else {
-            res.send(500, 'Database error');
+            res.status(500).send('Database error');
             return;
         }
     });
@@ -844,12 +844,12 @@ exports.newPart = function (req, res, next) {
 exports.signup = function (req, res, next) {
     var nodeData = req.body;
     if (!nodeData.hasOwnProperty('password') || nodeData['password'] == '') {
-        res.send(400, 'Missing password');
+        res.status(400).send('Missing password');
         return;
     }
 
     if (!nodeData.hasOwnProperty('email') || nodeData['email'] == '') {
-        res.send(400, 'Missing email');
+        res.status(400).send('Missing email');
         return;
     }
     
@@ -864,18 +864,18 @@ exports.signup = function (req, res, next) {
 
     User.signup(nodeData, function (err, idNEO) {
         if (err) {
-            res.send(400, 'email taken');
+            res.status(400).send('email taken');
             return;
         } else if (idNEO) {
             if(!sendActivationEmail(email,tempPass['pass'])){
-                res.send(400, 'Activation mail error');
+                res.status(400).send('Activation mail error');
                 return;
             }
             console.log(idNEO);
-            res.send(200, {idNEO: idNEO});
+            res.status(200).send({idNEO: idNEO});
             return;
         } else {
-            res.send(500, 'Database error');
+            res.status(500).send('Database error');
             return;
         }
     });
@@ -888,31 +888,33 @@ exports.login = function (req, res, next) {
 
     var nodeData = req.body;
     if (!nodeData.hasOwnProperty('password') || nodeData['password'] == '') {
-        res.send(400, 'Missing password');
+        res.status(400).send('Missing password');
         return;
     }
     if (!nodeData.hasOwnProperty('email') || nodeData['email'] == '') {
-        res.send(400, 'Missing email');
+        res.status(400).send('Missing email');
         return;
     }
 
     User.login(nodeData['email'], function (err, results) {
+		
         if (err) {
-            res.send(401, 'Wrong email or password');
+            res.status(401).send('Wrong email or password');
             return;
         }
         
         console.log(results['active']);
         
         if (results['active']!==1){
-            res.send(401,'Email not activated')
+            res.status(401).send('Email not activated')
             return;
         }
 
         var secPass = hash(nodeData['password'], results['salt']);
 
         if (secPass['pass'] !== results['pass']) {
-            res.send(401, 'Wrong email or password');
+            res.status(401).send('Wrong email or password');
+            return;
         }
         ;
         if (results['idNEO']) {
@@ -920,15 +922,15 @@ exports.login = function (req, res, next) {
                 var cook = new cookies(req, res, keys);
                 cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
                 console.log(results['idNEO']);
-                res.send(200, {idNEO: results['idNEO'], lang: results.lang});
+                res.status(200).send({idNEO: results['idNEO'], lang: results.lang});
                 return;
             }
             else {
-                res.send(401, 'Another user already logged in');
+                res.status(401).send('Another user already logged in');
                 return;
             }
         }
-        res.send(401, 'Wrong email or password');
+        res.status(401).send('Wrong email or password');
         return;
     });
 };
@@ -941,16 +943,16 @@ exports.friend = function (req, res, next) {
     if (req.id && req.body.idFriend && (req.body.idFriend != req.id)) {
         ;
     }else{
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
 
     User.friend(req.id, req.body['idFriend'], function (err) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
-        res.send(200, 'friend');
+        res.status(200).send('friend');
         return;
     });
 };
@@ -961,22 +963,24 @@ exports.friend = function (req, res, next) {
 exports.uploadPic = function (req, res, next) {
     var id = req.params.id;
     if (!sameUser(id, req, res)) {
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
-    var tempPath = req.files.image.path;
+    console.log (req);
+    console.log(req.file);
+    var tempPath = req.file.path;
     var string = 'upload/img' + id + '.jpg';
     var targetPath = path.resolve(path.join(__dirname, string));
-    var extension = path.extname(req.files.image.name).toLowerCase();
+    var extension = path.extname(req.file.originalname).toLowerCase();
     if (extension === '.jpeg' || extension === '.png' || extension === '.jpg' || extension === '.bmp') {
         fs.rename(tempPath, targetPath, function (err) {
             if (err) {
-                res.send(500, 'Error');
+                res.status(500).send('Error');
                 return;
             }
             User.changeProperty('url', string, id, function (err) {
                 if (err) {
-                    res.send(500, 'Error');
+                    res.status(500).send('Error');
                     return;
                 }
             });
@@ -986,7 +990,7 @@ exports.uploadPic = function (req, res, next) {
     } else {
         fs.unlink(tempPath, function (err) {
             if (err) {
-                res.send(500, 'Error');
+                res.status(500).send('Error');
                 return;
             }
             res.redirect(400, 'http://localhost:9000/#/profile');
@@ -1007,14 +1011,14 @@ exports.changeProperty = function (req, res, next) {
     if(req.id && tmp.field && tmp.value)
         ;
     else
-        res.send(401);
+        res.sendStatus(401);
     
     User.changeProperty(tmp.field, tmp.value, req.id, function(err){
         if(err){
             console.log(err);
-            res.send(500);
+            res.sendStatus(500);
         }else{
-            res.send(200);
+            res.sendStatus(200);
         }
     });
 };
@@ -1023,12 +1027,12 @@ exports.verifyPassword = function (req, res, next) {
     
     User.verifyPassword(req.body['id'], function (err, results) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }else{
             var tmp = hash(req.body['password'], results['salt']);
             if (tmp['pass'] !== results['pass']) {
-                res.send(401, 'Wrong username or password');
+                res.status(401).send('Wrong username or password');
                 return;
             }else{
                 next();
@@ -1044,10 +1048,10 @@ exports.changePassword = function (req, res, next) {
 
     User.changePassword(pswdNew['pass'], pswdNew['salt'], req.body['id'], function (err) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
-        res.send(200, 'OK');
+        res.status(200).send('OK');
         return;
     });
 };
@@ -1064,16 +1068,16 @@ exports.deleteFriend = function (req, res, next) {
     if (req.id && req.body.idFriend && (req.body.idFriend != req.id)) {
         ;
     }else{
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
     
     User.deleteFriend(req.id, req.body.idFriend, function (err) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }else{
-            res.send(200, 'OK');
+            res.status(200).send('OK');
             return;
         }
     });
@@ -1084,12 +1088,12 @@ exports.deleteFriend = function (req, res, next) {
  */
 exports.deleteUser = function (req, res, next) {
     if (!sameUser(req.params.id, req, res)) {
-        res.send(401, 'Unauthorized');
+        res.status(401).send('Unauthorized');
         return;
     }
     User.deleteUser(req.params.id, function (err) {
         if (err) {
-            res.send(500, 'Error');
+            res.status(500).send('Error');
             return;
         }
         return;

@@ -20,7 +20,15 @@ var express = require('express')
     , cookies = require('cookies')
     , cluster = require('cluster')
     , domain = require('domain')
-    , numCPU = require('os').cpus().length;
+    , numCPU = require('os').cpus().length
+    , favicon = require('serve-favicon')
+    , logger = require('morgan')
+    , bodyParser = require('body-parser')
+    , multer = require('multer')
+    //, upload = multer({dest: path.join(__dirname, 'routes/upload')})
+    , cookieParser = require('cookie-parser')
+    , serveStatic = require('serve-static')
+    , errorHandler = require('errorhandler');
 
 var app = express();
 
@@ -58,42 +66,39 @@ var cookie2angular = function (req, res, next) {
 /******************************************************************************/
 /*                       EXPRESS SERVER CONFIG                                */
 /******************************************************************************/
-app.configure(function () {
-    app.set('port', process.env.PORT || 3000);
-    app.set('view engine', 'ejs');
 
-    app.use(express.favicon());
-    app.use(express.logger('dev'));
+app.set('port', process.env.PORT || 3000);
+app.set('view engine', 'ejs');
 
-    app.use(express.bodyParser({keepExtensions: true, uploadDir: path.join(__dirname, 'routes/upload')}));
+// Node.js middleware for serving a favicon. 
+//app.use(favicon(__dirname + '/public/favicon.ico'));
 
-    // app.use(express.methodOverride());
+// HTTP request logger middleware for node.js
+app.use(logger('dev'));
 
-    app.use(express.cookieParser("se3vf65dse"));
-    //app.use(express.cookieSession());
-    //app.use(express.csrf({value: csrfValue}));
-    //app.use(cookie2angular);
+// Node.js body parsing middleware.
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-    app.use(express.multipart());
+// Parse Cookie header and populate req.cookies with an object keyed by the cookie names. 
+app.use(cookieParser("se3vf65dse"));
 
-    app.use(allowCrossDomain);
+//app.use(csrf({value: csrfValue}));
+//app.use(cookie2angular);
 
-    app.use(app.router);
+// Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. 
+app.use(multer({dest: path.join(__dirname, 'routes/upload')}).single('image'))
 
-    app.use(express.static(path.join(__dirname, '../build/src/app')));
-    app.use(express.static(path.join(__dirname, '../build')));
-    app.use(express.static(path.join(__dirname, 'routes/upload')));
+app.use(allowCrossDomain);
 
-});
+app.use(express.static(path.join(__dirname, '../build/src/app')));
+app.use(express.static(path.join(__dirname, '../build')));
+app.use(express.static(path.join(__dirname, 'routes/upload')));
 
-app.configure('development', function () {
-    app.use(express.errorHandler());
-});
 
-// Error handling middleware
-//app.configure(function(){
-//    app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
-//});
+if('development' == app.get('env')){
+    app.use(errorHandler());
+}
 
 /******************************************************************************/
 /*                           HTTP REQUESTS                                    */
@@ -113,9 +118,9 @@ app.post('/edtnewact', users.newActivity);
 app.get('/checkCookie', users.extractCookieData, function (req, res) {
 
     if (req.id) {
-        res.send(200, {idNEO: req.id, lang: req.lang});
+        res.status(200).send({idNEO: req.id, lang: req.lang});
     } else {
-        res.send(500);
+        res.sendStatus(500);
     }
 });
 app.get('/checkAdminCookie', users.extractCookieData, function (req, res) {
@@ -123,12 +128,12 @@ app.get('/checkAdminCookie', users.extractCookieData, function (req, res) {
     if (req.id) {
         users.isAdmin(req.id, function (is) {
             if (is)
-                res.send(200, {idNEO: req.id, lang: req.lang});
+                res.status(200).send({idNEO: req.id, lang: req.lang});
             else
-                res.send(500);
+                res.sendStatus(500);
         });
     } else {
-        res.send(500);
+        res.sendStatus(500);
     }
 });
 /******************************************************************************/
@@ -159,13 +164,13 @@ app.post('/delUser/:id', users.extractCookieData, users.deleteUser, function (re
     if (req.id) {
         res.clearCookie('LinkedEnibId');
     }
-    res.send(200);
+    res.sendStatus(200);
 });
 app.post('/logout', users.extractCookieData, function (req, res, next) {
     if (req.id) {
         res.clearCookie('LinkedEnibId');
     }
-    res.send(200);
+    res.sendStatus(200);
 });
 app.post('/change', users.extractCookieData, users.changeProperty, users.verifyPassword, users.changePassword);
 app.post('/uptprofile', users.extractCookieData, users.updateProfile);
@@ -184,7 +189,7 @@ app.get('/', function (req, res) {
 
     var file = '../build/index.html';
     var targetPath = path.resolve(path.join(__dirname, file));
-    res.status(200).sendfile(targetPath);
+    res.status(200).sendFile(targetPath);
 });
 
 app.get('/images/pub/:name', users.getPub);

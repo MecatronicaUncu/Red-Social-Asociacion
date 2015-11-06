@@ -210,7 +210,18 @@
         
         $scope.uploadPic = function() {
             console.log($('#imginput')[0]);
-            return $http({
+            var fd = new FormData();
+            fd.append('image',$('#imginput')[0].files[0]);
+            return $http.post(session.host+':3000/profilepic/' + session.getId(),fd,{
+				transformRequest:angular.identity,
+                headers: {
+                    'Content-Type': undefined
+                },
+                enctype:'multipart/form-data'
+            }).success(function(data){
+                $scope.image = session.host+':3000/usr/' + session.getId() + '/pic#' + new Date().getTime();
+            });
+            /*return $http({
                 method: 'POST',
                 url: session.host+':3000/profilepic/' + session.getId(),
                 headers: {
@@ -222,7 +233,7 @@
                 transformRequest: formDataObject
             }).success(function(data){
                 $scope.image = session.host+':3000/usr/' + session.getId() + '/pic#' + new Date().getTime();
-            });
+            });*/
         };
         
         $scope.changePass = function(pass){
