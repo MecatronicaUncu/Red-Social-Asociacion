@@ -12,6 +12,7 @@ MONGO_FILE=mongodb-linux-x86_64-$MONGODB_VER.tgz
 LOG_FILE=setup.log
 
 BIN_DIR=../server/bin
+LOCATION_FILE=rightLocation
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 
 CONS_DIV="#####################################"
@@ -28,6 +29,20 @@ function loggerRed {
 	echo -e >&2 $R_COL$1$DEF_COL
 	echo -e $1 >> $LOG_FILE
 }
+
+#----------------------------------------#
+
+# Getting in the right location
+
+MY_PATH="`dirname \"$0\"`" 
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$MY_PATH" ] ; then
+  # error; for some reason, the path is not accessible
+  # to the script (e.g. permissions re-evaled after suid)
+  loggerRed "Please verify permissions on bootstrap folder!\n"
+  exit 1  # fail
+fi
+cd "$MY_PATH"
 
 #----------------------------------------#
 
@@ -133,20 +148,20 @@ cd bootstrap
 # Create service start and shutdown scripts
 loggerGreen "Installing service start and shutdown scripts...\n"
 
-echo "#!/bin/bash
-./neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseConcMarkSweepGC" > $BIN_DIR/neoRun
+cat $LOCATION_FILE > $BIN_DIR/neoRun
+echo "./neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseConcMarkSweepGC" >> $BIN_DIR/neoRun
 chmod +x $BIN_DIR/neoRun
 
-echo "#!/bin/bash
-./neo4j-community-$NEO4J_VER/bin/neo4j stop" > $BIN_DIR/neoStop
+cat $LOCATION_FILE > $BIN_DIR/neoStop
+echo "./neo4j-community-$NEO4J_VER/bin/neo4j stop" >> $BIN_DIR/neoStop
 chmod +x $BIN_DIR/neoStop
 
-echo "#!/bin/bash
-./mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --dbpath ./mongodata/db/" > $BIN_DIR/mongoRun
+cat $LOCATION_FILE > $BIN_DIR/mongoRun
+echo "./mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --dbpath ./mongodata/db/" >> $BIN_DIR/mongoRun
 chmod +x $BIN_DIR/mongoRun
 
-echo "#!/bin/bash
-./mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --shutdown --dbpath mongodata/db" > $BIN_DIR/mongoStop
+cat $LOCATION_FILE > $BIN_DIR/mongoStop
+echo "./mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --shutdown --dbpath mongodata/db" >> $BIN_DIR/mongoStop
 chmod +x $BIN_DIR/mongoStop
 
 #-----------------------------------------#

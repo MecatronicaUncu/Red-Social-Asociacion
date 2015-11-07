@@ -46,9 +46,9 @@ bin/
 build/
 
 # SSL Certificate files
-server/*.key
-server/*.crt
-server/*.csr
+*.key
+*.crt
+*.csr
 
 # testDataset created files
 bootstrap/testDataset/people_email_pass.csv

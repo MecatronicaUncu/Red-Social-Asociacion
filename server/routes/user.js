@@ -734,7 +734,7 @@ User.login = function (email, callback) {
     var params = {
         email: email
     };
-
+	
     db.query(query, params, function (err, results) {
         if (err) {
             console.log('user log in error');
