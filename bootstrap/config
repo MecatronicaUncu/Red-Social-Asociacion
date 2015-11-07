@@ -35,6 +35,12 @@ cd "$MY_PATH"
 
 #-----------------------------------------#
 # Configure Neo4J Server
+
+STATUS=`./$NEO4J_DIR/bin/neo4j status`
+if [[ $STATUS != *"not"* ]]
+then
+	./$BIN_DIR/neoStop
+fi
 echo -e $G_COL"Configuring Neo4J Server...\n"$DEF_COL
 sed -i "s/bms.security.auth_enabled=.*/bms.security.auth_enabled=true/" $NEO4J_SERVER_CONF_FILE
 sed -i "s/org.neo4j.server.webserver.port=.*/org.neo4j.server.webserver.port=4550/" $NEO4J_SERVER_CONF_FILE
@@ -43,11 +49,14 @@ sed -i "s/org.neo4j.server.webserver.https.port=.*/org.neo4j.server.webserver.ht
 
 #-----------------------------------------#
 # Wait for user to start Neo4J server
-if [[ $# -eq 0 ]]
+
+STATUS=`./$NEO4J_DIR/bin/neo4j status`
+if [[ $STATUS == *"not"* ]]
 then
-    echo -e $G_COL"Please start Neo4J server and press enter..."$DEF_COL
-    read
-elif [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
+	./$BIN_DIR/neoRun
+fi
+
+if [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
 then
     echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
@@ -58,8 +67,7 @@ then
 else
     #----------------------------------------#
     # Start Neo4J
-    cd $BIN_DIR && ./neoRun
-    cd ../../bootstrap
+    ./$BIN_DIR/neoRun
 fi
 
 
