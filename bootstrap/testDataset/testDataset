@@ -2,7 +2,9 @@
 
 NEO4J_VER=2.3.0
 
-LOG_FILE=testDataset.log
+MY_PATH="`dirname \"$0\"`" 
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+LOG_FILE=$MY_PATH/testDataset.log
 
 SRV_DIR=../../server
 BIN_DIR=$SRV_DIR/bin
@@ -27,8 +29,6 @@ function loggerRed {
 
 # Getting in the right location
 
-MY_PATH="`dirname \"$0\"`" 
-MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 if [ -z "$MY_PATH" ] ; then
   # error; for some reason, the path is not accessible
   # to the script (e.g. permissions re-evaled after suid)
