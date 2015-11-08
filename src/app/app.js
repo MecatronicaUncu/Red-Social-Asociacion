@@ -24,12 +24,7 @@
                 controller: 'MainCtrl'
             })
             .state('profile', {
-                url: '/profile',
-                templateUrl: 'profile/profile.tpl.html',
-                controller: 'ProfileCtrl'
-            })
-            .state('profile.id', {
-                url: '/:id',
+                url: '/profile/:id',
                 templateUrl: 'profile/profile.tpl.html',
                 controller: 'ProfileCtrl'
             })
@@ -190,7 +185,7 @@
         
         this.getMyProfile = function(){
             var session = this;
-            $http({method:'GET', url:session.host+':3000/profile'})
+            $http({method:'GET', url:session.host+':3000/profile/'+this.ID})
             .success(function (profile){
                 session.profile = profile;
                 session.lang = profile.lang;
