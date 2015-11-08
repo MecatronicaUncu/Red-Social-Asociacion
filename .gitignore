@@ -1,31 +1,37 @@
-graph.db/
-app/bower_components
-mongodata
-mongodb
+# npm and bower dependencies
 node_modules
+vendor
+
+# MongoDB database
+mongodata
+
+# IDEs created files
 nbproject/
 .project
+/nbproject/private/
+
+# Dist created files
 .sass-cache
 .tmp
-routes/upload
-server.crt
-server.key
-neo4j*/
-!neo4j*/conf/neo4j-server.properties
-!neo4j*/conf/neo4j.properties
-app/styles
 *.*~
 */*.*~
 *.log
 */*.log
-/nbproject/private/
-dist/
+
+# Uploaded files 
+server/routes/upload
 
 # start-stop services scripts
-mongoRun
-mongoStop
-neoRun
-neoStop
+server/mongoRun
+server/mongoStop
+server/neoRun
+server/neoStop
+
+# neo4j installation
+server/neo*
+
+# mongoDB installation
+server/mongodb
 
 # Vim temp files
 .*.swp
@@ -33,12 +39,19 @@ neoStop
 # Temp download folder
 tmp_download_dir
 
+# Compile directory
+bin/
+
+# Development directory
+build/
+
 # SSL Certificate files
 *.key
 *.crt
 *.csr
 
 # testDataset created files
-testDataset/people_email_pass.csv
-testDataset/people_email_pass_salt.csv
-testDataset/usersIDs.csv
+bootstrap/testDataset/people_email_pass.csv
+bootstrap/testDataset/people_email_pass_salt.csv
+bootstrap/testDataset/usersIDs.csv
+

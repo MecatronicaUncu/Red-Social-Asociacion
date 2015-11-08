@@ -1,21 +1,22 @@
 {
-  "name": "angular",
+  "name": "Red-Social-Asociacion",
   "version": "0.0.0",
   "dependencies": {
     "angular": "1.2.28",
-    "bootstrap": "~3.0.3",
-    "json3": "~3.2.6",
-    "es5-shim": "~2.1.0",
-    "angular-resource": "1.2.15",
-    "angular-route": "1.2.15",
-    "angular-sanitize": "1.2.16",
+    "angular-bootstrap": "~0.12.1",
     "angular-cookies": "~1.2.17",
+    "angular-resource": "1.2.15",
+    "angular-sanitize": "1.2.16",
+    "bootstrap": "~3.0.3",
     "bower-angular-placeholders": "~0.0.2",
-    "parsleyjs": "~2.0.5",
+    "es5-shim": "~2.1.0",
     "font-awesome": "~4.3.0",
-    "jquery-ui": "~1.11.2",
     "jQuery.mmenu": "~4.6.4",
-    "angular-bootstrap": "~0.12.1"
+    "jquery": "~2.1.4",
+    "jquery-ui": "~1.11.2",
+    "json3": "~3.2.6",
+    "parsleyjs": "~2.0.5",
+    "angular-ui-router": "~0.2.15"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",

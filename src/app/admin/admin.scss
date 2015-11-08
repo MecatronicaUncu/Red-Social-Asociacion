@@ -1,0 +1,283 @@
+@import "../../sass/site-base";
+
+#newNodeBar,
+#adminNavBar {
+  width: 100%;
+  background-color: $edtSearchBarBgColor;
+  height: $edtSearchBarHeight+px;
+  display: flex;
+  align-content: center;
+  @include respond-to(mobile){display: block; height: auto};
+}
+
+#adminNavBar {
+  height: 20px;
+  border-top: 1px solid white;
+}
+
+.nodeSearchBtn,
+.nodeNavBtn {
+  height: 100%;
+  border: none;
+  @include border-radius(0);
+  background-color: $edtSearchBarBgColor;
+  @include edt-search-bar-font;
+  max-width: 250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.nodeNavBtn {
+  height: 100%;
+  text-align: center;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 0.8em;
+  padding: 0;
+  padding-left: 5px;
+}
+
+#nodeSearchIcon,
+#nodeSubTypeIcon {
+  margin: 0px 10px 0px 0px;
+}
+
+.nodeSearchGroup {
+  display: flex;
+  justify-content: space-between;
+  @include respond-to(mobile){padding: 5px 0px};
+}
+
+/****************************************************/
+
+.node-search-dropdown {
+    background-color: tint($edtLightColor,50);
+    border: 1px solid $edtDarkColor;
+    @include border-radius(0);
+    width: auto;
+    max-height: 200px;
+    height: auto;
+    overflow-x: hidden;
+    z-index: 20;
+}
+
+#newNodeBar * core-dropdown-menu * core-item::shadow #icon {
+  color: black;
+  @include opacity(0.65);
+}
+
+#admin .nav-header {
+  font-weight: bold;
+  font-style: italic;
+}
+
+/****************************************************/
+
+#listOfNodes {
+  width: 100%;
+}
+
+.relField {
+  display: flex;
+  height: 80px;
+  justify-content: space-between;
+  padding: 0;
+  background-color: white;
+  border: 1px solid #ACACAC;
+  border-left: 5px solid $headerBgColor;
+  margin-top: 5px;
+}
+
+.nodeField {
+  display: flex;
+  height: 80px;
+  justify-content: flex-end;
+  padding: 0;
+  background-color: white;
+  border: 1px solid #ACACAC;
+  border-left: 5px solid $headerBgColor;
+  margin-top: 5px;
+}
+
+.nodeRelPic {
+  height: 100%;
+  border: 1px solid #ACACAC;
+}
+
+.nodeRelData {
+  width: 100%;
+  text-align: right;
+  margin: 0;
+}
+
+.nodeRelData #title{
+  margin-top: 5px;
+  font-size: 2em;
+}
+
+.nodeRelDataHeading {
+  width: 100%;
+  margin: 5px;
+  font-size: 1.2em;
+  font-weight: normal;
+}
+
+.nodeRelData .partInfo{
+  font-size: 1em;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.nodeRelData #reltype{
+  font-size: 1em;
+  margin-right: 5px;
+}
+
+.nodeRelData #institution {
+  font-size: 1em;
+  font-style: italic;
+  font-weight: normal;
+}
+
+/****************************************************/
+
+// .activity-form {
+//   
+  // width: 50%;
+  // min-width: 450px;
+  // @include respond-to(mobile){padding: 0 10px; min-width: 0px; width: 100%};
+// }
+
+// .caret {
+  // margin-left: 10px;
+// }
+
+.newNodeRelWrap * .sign-up-btn {
+  margin: 5px 10px;
+  @include respond-to(mobile){width: 100%; margin: 5px 0;};
+}
+
+// .newActBtn {
+//   
+  // height: 40px;
+  // border: 1px solid #ACACAC;
+  // @include border-radius(0);
+  // background-color: #FFF;
+  // @include edt-search-bar-font;
+  // font-size: 0.9em;
+  // color: #595959;
+  // margin: 5px 10px;
+  // max-width: 99px;
+  // overflow: hidden;
+  // white-space: nowrap;
+  // text-overflow: ellipsis;
+  // text-align: left;
+  // @include respond-to(mobile){margin: 5px 0; max-width: none; width: 100%};
+// }
+
+// .newActLbl{
+//   
+  // border: none;
+// }
+
+// .newActIcon {
+//   
+  // color: #595959;
+// }
+// 
+// .edt-newact-dropdown {
+//   
+  // background-color: #FFF;
+    // border: 1px solid #595959;
+    // @include border-radius(0);
+    // width: auto;
+    // max-height: 200px;
+    // height: auto;
+    // overflow-x: hidden;
+    // z-index: 20;
+// }
+// 
+// #newActWhere {
+//   
+  // width: auto;
+  // @include respond-to(mobile){width: 100%}
+// }
+// 
+// #newActForm {
+// 
+  // margin: 30px 0px;
+// }
+// 
+// #newActForm * .sign-input {
+  // max-width: 90px;
+// }
+
+.newNodeRelWrap {
+  
+  border: 1px solid #ACACAC;
+}
+
+.wrongNodeRel {
+  
+  @include border-radius(0);
+}
+
+.newRelLabel,
+.newNodeLabel{
+  
+  height: 40px;
+  border: 1px solid #ACACAC;
+  @include border-radius(0);
+  background-color: #FFF;
+  @include edt-search-bar-font;
+  font-size: 0.9em;
+  color: #595959;
+  margin: 5px 10px;
+  border: none;
+//  max-width: 99px;
+//  overflow: hidden;
+//  white-space: nowrap;
+//  text-overflow: ellipsis;
+  text-align: left;
+  @include respond-to(mobile){margin: 5px 0; max-width: none; width: 100%};
+}
+
+.newRelBtn {
+  max-width: 100px;
+}
+
+.nodeFieldBtns {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.nodeFieldBtn {
+    
+    height: 40px;
+    border: none;
+    @include border-radius(0);
+    background-color: #FFF;
+    @include edt-search-bar-font;
+    font-size: 0.9em;
+    color: #595959;
+    margin:2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: left;
+    @include respond-to(mobile){margin: 5px 0; max-width: none; width: 100%};
+}
+
+.partFieldIcon{
+    color: $edtSearchBarBgColor;
+}
+
+.fa-user-plus {
+    color: #00CB39;
+}
+
+.fa-user-times {
+    color: #CB002D;
+}

@@ -1,0 +1,97 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" ng-app="linkedEnibApp"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="icon" href="app/favicon.ico" />
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Static stylesheet for the splash screen -->
+    <style>[ng-cloak] {display: none;}</style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/styles/splash.css" />
+    
+    <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+    <link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
+
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- The splash screen must be first -->
+    <div id="splash" ng-cloak>
+        <span><i class="fa fa-circle-o-notch fa-spin"></i></span>
+    </div>
+    <!-- The rest of our app -->
+    <div id="content" class="site-wrap" ng-controller="ParentCtrl" ng-cloak>
+        <!-- BARRA DE NAVEGACIÓN -->
+        <div ng-controller="NavBarCtrl">
+            <div class="header">
+                    <div class="dropdown newActSelect">
+                        <button id="langButton" class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+                            <img src="assets/images/lang/{{session.lang}}.png"
+                                    height="11" width="16" alt="language">
+                        </button>
+                        <ul id="langDropDown" class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
+                            <li role="presentation" ng-repeat="lang in avLangs">
+                                <img src="assets/images/lang/{{lang}}.png" role="menuitem" tabindex="-1"
+                                   ng-click="selectLang(lang)" height="11" width="16"
+                                   class="langField">
+                            </li>
+                        </ul>
+                    </div>
+                
+                    <ul class="header-wrap">
+                        <li class="nav-link nav-menu">
+                            <a id="mobilemenu" ng-click="toggleMMenu()"><i class="fa fa-fw fa-bars"></i></a>
+                        </li>
+                        <li class="nav-link nav-title">
+                            <a></a>
+                        </li>
+                        <li class="nav-link hide-mobile" ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible" ng-class='{"nav-active": navBarItem.active}'>
+                            <a ng-href="{{navBarItem.href}}">{{navBarItem.name}}</a>
+                        </li>
+                    </ul> 
+            </div>
+
+            <nav id="navbar">
+                <ul>
+                    <li ng-repeat="navBarItem in navBarItems" ng-show="navBarItem.visible" ng-class='{"nav-active": navBarItem.active}'>
+                        <a ng-href="{{navBarItem.href}}">{{navBarItem.name}}</a>
+                    </li>
+                </ul> 
+            </nav>
+
+        </div>
+
+        <div class="body-wrap">
+            <!-- BARRA DE PUBLICIDAD -->
+			<!--div class="pub-bar">
+				<img class="pub-pic" src="assets/images/pub/pubMECUNCU.jpg" alt="pubMECUNCU"/>
+				<img class="pub-pic" src="assets/images/pub/pubUNCUYO.jpg" alt="pubUNCUYO"/>
+				<img class="pub-pic" src="assets/images/pub/pubENIB.jpg" alt="pubENIB"/>
+                <img class="pub-pic" src="assets/images/pub/pubFING.png" alt="pubFING"/>
+			</div-->
+			
+			<div ui-view class="mobile-margin"></div>
+        </div>
+    </div>
+    
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+
+    <!-- compiled vendor JavaScript --><% vendorjs.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+    <!-- compiled app.js JavaScript --><% appjs.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+    <!-- compiled app JavaScript --><% scripts.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+</body>
+</html> 

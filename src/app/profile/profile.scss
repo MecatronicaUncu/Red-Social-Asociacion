@@ -1,0 +1,129 @@
+@import "../../sass/site-base";
+
+.profile-btn:hover,
+.profile-bar-link:hover,
+profile-bar-link:active,
+profile-bar-link:visited {
+  background-color: #595959;
+  text-decoration: none;
+  color: #99d6ea;
+}
+
+.profile-nav-bar {
+	background-color: #19a3d1;
+	width: 100%;
+}
+
+.profile-bar-link {
+        cursor: pointer;
+	color: white;
+	font-size: 1em;
+	font-weight: bold;
+	padding: 10px 20px;
+	margin: 0;
+	text-align: right;
+	@include respond-to(mobile){text-align: center};
+	width: 100%;
+	display: block;
+}
+
+.profile-container {
+	display: flex;
+	@include respond-to(mobile){display: block};
+	justify-content: center;
+}
+
+.profile-bar {
+
+}
+
+.profile-data-table {
+	
+	width: 100%;
+}
+
+.profile-input:disabled {
+	background-color: #595959;
+	color: #9B9B9B;
+}
+
+.profile-input {
+	background-color: transparent;
+	color: black;
+	font-style: italic;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	text-align: right;
+}
+
+.profile-input span {
+	margin: 10px;
+}
+
+.profile-element {
+	display: flex;
+	width: 100%;
+	padding: 0;
+	margin: 5px 0;
+	box-shadow: 0px 0px 2px 0px;
+}
+
+.profile-element * i {
+	font-size: 1.3em;
+	margin: 10px;
+	color: black;
+}
+
+.profile-data {
+	display: flex;
+	flex-wrap: wrap;
+	width: 350px;
+	@include respond-to(mobile){width: 100%};
+	justify-content: center;
+	padding: 0px 5px;
+	@include respond-to(mobile){padding: 0};
+}
+
+.profile-label {
+	margin: 10px;
+	padding:0;
+	color: black;
+	font-size: 1.1em;
+}
+
+.profilePicWrap {
+	@include respond-to(mobile){
+		width: 100%;
+		display: flex;
+		justify-content: center};
+}
+
+.profilePic{
+    height: 200px;
+    width: 200px;
+    @include border-radius(100px);
+    padding: 1px;
+    box-shadow: 0px 0px 2px 1px #000;
+    margin: 10px;
+}
+
+#changePwdBtn {
+	width: 100%;
+	margin: 0px 10px;
+}
+
+#changePwdForm {
+	margin: 30px 0px;
+}
+
+.profile-data .panel-group .panel {
+	border: none;
+	@include border-radius(0px);
+	@include box-shadow(0px 0px 2px 0px);
+	background-color: white;
+}
+
+.profile-data .panel-group .panel .panel-heading{
+	background-color: white;
+}

@@ -1,0 +1,151 @@
+@import "../../sass/site-base";
+
+.site-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.body-wrap {
+  //width: 60%;
+  //min-width: 550px;
+  margin-top: 100px;
+  @include respond-to(mobile){width: 100%; max-width: 250px; margin: 0px 10px};
+  @include respond-to(big-mobile){width: 450px};
+  @include respond-to(tablets){width: 700px};
+  @include respond-to(wide){width: 900px};
+}
+
+.pub-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 20px auto;
+  margin-top: 80px;
+  @include respond-to(mobile){display: none};
+}
+
+.pub-pic {
+  width: auto;
+  height: 60px;
+}
+
+.mobile-margin {
+  
+  @include respond-to(mobile){margin: 100px auto};
+}
+
+////////////////////////////////////////////////////
+
+.contact-field {
+    padding: 2px;
+    height: 76px;
+    vertical-align: middle;
+    border-bottom: 1px solid #e4e4f2;
+}
+
+.contact-field:before {    /* create a full-height inline block pseudo=element */
+    content: ' ';
+    font-size: 0;
+    display: inline-block;
+    vertical-align: middle;  /* vertical alignment of the inline element */
+    height: 100%;
+}
+
+.contact-pic {        
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    height: 100%;
+}
+.contact-data{
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+.contact-field-buttons{
+    vertical-align: middle;
+    display: inline-block;
+    height: 100%;
+    float: right;
+    padding: 2px;
+    list-style-type: none;
+}
+
+.contact-field-button {
+    width: 100%;
+}
+
+.alert {
+    
+    font-size: 15px;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.help-block {
+    font-size: 12px;
+}
+
+.home-singup-btn {
+    width: 300px;
+}
+
+#updateCorrect {
+    color: #25d347;
+}
+
+.forgot-signin {
+    font-size: 10px;
+    horizontal-align: middle;
+    color: blue;
+}
+
+#langButton {
+    background-color: transparent;
+    border: 1px solid #FFF;
+    @include box-shadow(0px 0px 3px 1px #FFFFFF);
+}
+
+.langField {
+    margin: auto 5px;
+    cursor: pointer;
+}
+
+#langDropDown {
+    min-width: 0;
+    top: 50%;
+    left: 20%;
+}
