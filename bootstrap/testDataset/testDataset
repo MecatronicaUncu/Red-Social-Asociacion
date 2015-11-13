@@ -53,7 +53,8 @@ STATUS=`./$NEO_DIR/bin/neo4j status`
 echo $STATUS
 if [[ $STATUS == *"not"* ]]
 then
-	./$BIN_DIR/neoRun
+    loggerGreen "Starting Neo4J Server...\n"
+	./$BIN_DIR/neoRun >/dev/null 2>&1 || { loggerRed "Error starting Neo4J Server!\n"; exit 1; }
 fi
 
 # 1. Check that node in present
@@ -85,6 +86,10 @@ mkdir -p $SRV_DIR/routes/upload
 for (( i = 0; i < 50; i++ )); do
 	wget -q -O $SRV_DIR/routes/upload/img$i.png http://lorempixel.com/150/150
 done
+
+# 7. Stop Neo4J Server
+loggerGreen "Stopping Neo4J Server...\n"
+./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J Server!\n"; exit 1; }
 
 # 7. Done
 loggerGreen "Dataset created!\n"
