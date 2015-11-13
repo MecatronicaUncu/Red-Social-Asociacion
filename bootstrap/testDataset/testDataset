@@ -50,7 +50,6 @@ fi
 
 # 0.1. Verify status of neo4j
 STATUS=`./$NEO_DIR/bin/neo4j status`
-echo $STATUS
 if [[ $STATUS == *"not"* ]]
 then
     loggerGreen "Starting Neo4J Server...\n"
