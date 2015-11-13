@@ -2,9 +2,13 @@
 
 NEO4J_VER=2.3.0
 
+MY_PATH="`dirname \"$0\"`" 
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+
 BIN_DIR=../server/bin
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 NEO4J_SERVER_CONF_FILE=$NEO4J_DIR/conf/neo4j-server.properties
+LOG_FILE=$MY_PATH/config.log
 
 CONS_DIV="#####################################"
 R_COL="\e[31m"
@@ -12,9 +16,24 @@ Y_COL="\e[33m"
 G_COL="\e[92m"
 DEF_COL="\e[39m"
 
+function loggerGreen {
+	echo -e $G_COL$1$DEF_COL
+	echo -e $1 >> $LOG_FILE
+}
+
+function loggerRed {
+	echo -e >&2 $R_COL$1$DEF_COL
+	echo -e $1 >> $LOG_FILE
+}
+
+function loggerYellow {
+	echo -e >&2 $Y_COL$1$DEF_COL
+	echo -e $1 >> $LOG_FILE
+}
+
 #-----------------------------------------#
 
-echo -e $G_COL$CONS_DIV"\n\n **Config script for Red-Social-Asociacion**\n\n"$CONS_DIV$DEF_COL
+loggerGreen "\n\n **Config script for Red-Social-Asociacion**\n\n"
 
 #-----------------------------------------#
 
@@ -22,16 +41,17 @@ echo -e $G_COL$CONS_DIV"\n\n **Config script for Red-Social-Asociacion**\n\n"$CO
 
 # Getting in the right location
 
-MY_PATH="`dirname \"$0\"`" 
-MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 if [ -z "$MY_PATH" ] ; then
   # error; for some reason, the path is not accessible
   # to the script (e.g. permissions re-evaled after suid)
-  echo -e $R_COL"Please verify permissions on bootstrap folder!\n"$DEF_COL
+  loggerRed "Please verify permissions on bootstrap folder!\n"
   exit 1  # fail
 fi
 cd "$MY_PATH"
 
+#-----------------------------------------#
+# Clean log file
+echo "" > $LOG_FILE
 
 #-----------------------------------------#
 # Configure Neo4J Server
@@ -39,21 +59,24 @@ cd "$MY_PATH"
 STATUS=`./$NEO4J_DIR/bin/neo4j status`
 if [[ $STATUS != *"not"* ]]
 then
-	./$BIN_DIR/neoStop
+    loggerGreen "Stopping Neo4J Server...\n"
+	./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J Server!\n"; exit 1; }
 fi
-echo -e $G_COL"Configuring Neo4J Server...\n"$DEF_COL
+
+loggerGreen "Configuring Neo4J Server...\n"
 sed -i "s/bms.security.auth_enabled=.*/bms.security.auth_enabled=true/" $NEO4J_SERVER_CONF_FILE
 sed -i "s/org.neo4j.server.webserver.port=.*/org.neo4j.server.webserver.port=4550/" $NEO4J_SERVER_CONF_FILE
 sed -i "s/org.neo4j.server.webserver.https.enabled=.*/org.neo4j.server.webserver.https.enabled=false/" $NEO4J_SERVER_CONF_FILE
 sed -i "s/org.neo4j.server.webserver.https.port=.*/org.neo4j.server.webserver.https.port=4551/" $NEO4J_SERVER_CONF_FILE
 
 #-----------------------------------------#
-# Wait for user to start Neo4J server
+# Start Neo4J server
 
 STATUS=`./$NEO4J_DIR/bin/neo4j status`
 if [[ $STATUS == *"not"* ]]
 then
-	./$BIN_DIR/neoRun
+    loggerGreen "Starting Neo4J Server...\n"
+	./$BIN_DIR/neoRun >/dev/null 2>&1 || { loggerRed "Error starting Neo4J Server!\n"; exit 1; }
 fi
 
 if [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
@@ -64,27 +87,22 @@ elif [[ $# -gt 3 ]]
 then
     echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
-else
-    #----------------------------------------#
-    # Start Neo4J
-    ./$BIN_DIR/neoRun
 fi
-
 
 #-----------------------------------------#
 # Create Dummy node:
 # Requires a running server of Neo4J!
-echo -e $G_COL"Creating dummy node...\n"$DEF_COL
-./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE (:DUMMY);' >/dev/null 2>&1 || { echo -e >&2 $R_COL"Could not create dummy node. Are you sure your Neo4J server is up and running?"$DEF_COL; exit 1; }
+loggerGreen "Creating dummy node...\n"
+./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE (:DUMMY);' >/dev/null 2>&1 || { loggerRed "Could not create dummy node. Are you sure your Neo4J server is up and running?"; exit 1; }
 
 #-----------------------------------------#
 # Create email constraint
-echo -e $G_COL"Creating email uniqueness constraint...\n"$DEF_COL
-./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;' >/dev/null 2>&1 ||  { echo -e >&2 $R_COL"Could not create constraint. Are you sure your Neo4J server is up and running?"$DEF_COL; exit 1; }
+loggerGreen "Creating email uniqueness constraint...\n"
+./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;' >/dev/null 2>&1 ||  { loggerRed "Could not create constraint. Are you sure your Neo4J server is up and running?"; exit 1; }
 
 #-----------------------------------------#
 # Set new Neo4J server password
-echo -e $G_COL"Setting the Neo4J server password..."$DEF_COL
+loggerGreen "Setting the Neo4J server password..."
 if [[ $# -eq 0 ]]
 then
     stty -echo
@@ -96,7 +114,7 @@ else
     PASSWORD="$1"
 fi
 
-curl -H "Content-Type: application/json" -X POST -d "{\"password\":\"$PASSWORD\"}" -u neo4j:neo4j http://localhost:4550/user/neo4j/password >/dev/null 2>&1 || { echo -e >&2 $R_COL"Could not change server password. Are you sure your Neo4J server is up and running?\n"$DEF_COL; exit 1; }
+curl -H "Content-Type: application/json" -X POST -d "{\"password\":\"$PASSWORD\"}" -u neo4j:neo4j http://localhost:4550/user/neo4j/password >/dev/null 2>&1 || { loggerRed "Could not change server password. Are you sure your Neo4J server is up and running?\n"; exit 1; }
 
 # Set Neo4J user and password in testDataset/{usersRel.js, regUsers.js}
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/usersRel.js
@@ -116,13 +134,12 @@ then
     select host in "${hosts[@]}"
     do
         case "$REPLY" in
-            1 ) echo -e $G_COL"\nSetting host location to localhost..."$DEF_COL; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ../src/app/app.js; break;;
-            2 ) echo -e $G_COL"\nSetting host location to this host LAN ip..."$DEF_COL; sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ../src/app/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ../src/app/app.js;break;;
-            3 ) echo -e $G_COL"\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ../src/app/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ../src/app/app.js; break;;
-            * ) echo "invalid";continue;;
+            1 ) loggerGreen "\nSetting host location to localhost...\n"; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LOC;/" ../src/app/app.js; break;;
+            2 ) loggerGreen "\nSetting host location to this host LAN ip...\n"; sed -i "s/^\(.*\)this.host_LAN = .*;$/\1this.host_LAN = 'https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//')';/" ../src/app/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_LAN;/" ../src/app/app.js;break;;
+            3 ) loggerYellow "\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)this.host_NET = .*;$/\1this.host_NET = 'https:\/\/$SITE';/" ../src/app/app.js; sed -i "s/^\(.*\)this.host = .*;$/\1this.host = this.host_NET;/" ../src/app/app.js; break;;
+            * ) loggerRed "Invalid input, try again...";continue;;
         esac
     done
-    echo -e $DEF_COL
 else
     HOST_TYPE="$2"
     if [[ "$HOST_TYPE" = "LOC" ]]
@@ -142,7 +159,7 @@ fi
 
 #-----------------------------------------#
 # Create Self-Signed Certificate
-echo -e $G_COL"Genearting self signed SSL certificate...\n"$DEF_COL
+loggerGreen "Generating self signed SSL certificate...\n"
 commonname=Red-Social-Asociacion
 domain=$commonname
 country=AR
@@ -156,26 +173,32 @@ email=mecatronica-organizacion@lists.mecatronicauncu.org
 password=asoc
 
 # Generate a key
-openssl genrsa -des3 -passout pass:$password -out $BIN_DIR/../$domain.key 2048 -noout >/dev/null 2>&1
+openssl genrsa -des3 -passout pass:$password -out $BIN_DIR/../$domain.key 2048 -noout >/dev/null 2>&1 \
+        || { loggerRed "Error generating SSL key\n"; exit 1; }
 
 # Remove passphrase from the key. Comment the line out to keep the passphrase
-openssl rsa -in $BIN_DIR/../$domain.key -passin pass:$password -out $BIN_DIR/../$domain.key >/dev/null 2>&1
+openssl rsa -in $BIN_DIR/../$domain.key -passin pass:$password -out $BIN_DIR/../$domain.key >/dev/null 2>&1 \
+        || { loggerRed "Error removing the passphrase from the key\n"; exit 1; }
 
 # Create the request
 openssl req -new -key $BIN_DIR/../$domain.key -out $BIN_DIR/../$domain.csr -passin pass:$password \
-        -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email" >/dev/null 2>&1
+        -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email" >/dev/null 2>&1 \
+        || { loggerRed "Error requesting SSL request\n"; exit 1; }
 
-openssl x509 -req -days 365 -in $BIN_DIR/../$domain.csr -signkey $BIN_DIR/../$domain.key -out $BIN_DIR/../$domain.crt >/dev/null 2>&1
+openssl x509 -req -days 365 -in $BIN_DIR/../$domain.csr -signkey $BIN_DIR/../$domain.key -out $BIN_DIR/../$domain.crt >/dev/null 2>&1 \
+        || { loggerRed "Error generating SSL certificate\n"; exit 1; }
+
 
 #-----------------------------------------#
 # Stop Neo4J
-cd $BIN_DIR && ./neoStop
+./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J server\n"; exit 1; }
 
 #-----------------------------------------#
 # Done!
-echo -e $G_COL"Config Ok!\n"$DEF_COL
+loggerGreen "Config Ok!\n"
 
 #-----------------------------------------#
 # Tell user to configure max open files limit
-echo -e $Y_COL"Yo!\n"$G_COL"Remember to set the number of allowed open files to 40000 or more. Read the Linux performance guide of Neo4J for details.\n"$DEF_COL
+loggerYellow "Yo! :"
+loggerYellow "Remember to set the number of allowed open files to 40000 or more. Read the Linux performance guide of Neo4J for details.\n"
 

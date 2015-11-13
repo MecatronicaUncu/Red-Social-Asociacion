@@ -4,15 +4,20 @@ DEPS="npm
 gem
 git"
 
+MY_PATH="`dirname \"$0\"`" 
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+
 NODEJS_VER=0.10
 NEO4J_VER=2.3.0
 MONGODB_VER=3.0.6
-NEO4J_FILE=neo4j-community-$NEO4J_VER-unix.tar.gz
-MONGO_FILE=mongodb-linux-x86_64-$MONGODB_VER.tgz
-LOG_FILE=setup.log
+
+TMP_DOWNLOAD_DIR=$MY_PATH/tmp_download_dir
+NEO4J_FILE=$TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER-unix.tar.gz
+MONGO_FILE=$TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER.tgz
+LOG_FILE=$MY_PATH/setup.log
 
 BIN_DIR=../server/bin
-LOCATION_FILE=rightLocation
+LOCATION_FILE=$MY_PATH/rightLocation
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 
 CONS_DIV="#####################################"
@@ -34,8 +39,6 @@ function loggerRed {
 
 # Getting in the right location
 
-MY_PATH="`dirname \"$0\"`" 
-MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 if [ -z "$MY_PATH" ] ; then
   # error; for some reason, the path is not accessible
   # to the script (e.g. permissions re-evaled after suid)
@@ -75,7 +78,6 @@ mkdir $BIN_DIR
 #----------------------------------------#
 # Create download dir
 loggerGreen "Creating tmp dir...\n"
-TMP_DOWNLOAD_DIR=tmp_download_dir
 mkdir -p $TMP_DOWNLOAD_DIR
 
 #----------------------------------------#
@@ -98,12 +100,12 @@ loggerGreen "Installing Neo4J Engine...\n"
 cd $TMP_DOWNLOAD_DIR
 if [ ! -e $NEO4J_FILE ] || [ ! -f $NEO4J_FILE ]
 then
-    wget -a ../$LOG_FILE -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
+    wget -a $LOG_FILE -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
 fi
 
 # untar and move
-tar -xvf neo4j-community-$NEO4J_VER-unix.tar.gz >> ../$LOG_FILE 2>&1
-cd ..
+tar -xvf neo4j-community-$NEO4J_VER-unix.tar.gz >> $LOG_FILE 2>&1
+cd $MY_PATH
 
 mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
 
@@ -127,8 +129,8 @@ then
     curl -O -s https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VER.tgz >> $LOG_FILE
 fi
 #curl -O http://localhost:8000/Volatile/mongodb-linux-x86_64-$MONGODB_VER.tgz
-tar -zxvf $MONGO_FILE >> ../$LOG_FILE 2>&1
-cd ..
+tar -zxvf $MONGO_FILE >> $LOG_FILE 2>&1
+cd $MY_PATH
 mkdir -p $BIN_DIR/mongodb
 cp -R -n $TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER/ $BIN_DIR/mongodb
 mkdir -p $BIN_DIR/mongodata/db
@@ -142,7 +144,7 @@ bower install -F >> $LOG_FILE 2>&1
 # Install grunt-cli
 loggerGreen "Installing grunt-cli...\n"
 npm install -g grunt-cli >> $LOG_FILE 2>&1
-cd bootstrap
+cd $MY_PATH
 
 #----------------------------------------#
 # Create service start and shutdown scripts
