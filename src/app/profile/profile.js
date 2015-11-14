@@ -96,9 +96,11 @@
                     console.log('Error loading profile');
                 });
             }else{
-                $scope.fields.forEach(function(el){
-                    el.model=session.profile[el.name];
-                });
+                if(session.profile){
+                    $scope.fields.forEach(function(el){
+                        el.model=session.profile[el.name];
+                    });
+                }
             }
         };
         $scope.updateContacts = function(){
