@@ -13,12 +13,8 @@
     angular.module('linkedEnibApp')
     .controller('ProfileCtrl', function ($scope,$http,$stateParams,session,formDataObject,$location) {
 
-        if($stateParams.id){
-            $scope.image = session.host+':3000/usr/' + $stateParams.id + '/pic';
-        }else{
-            $scope.image = session.host+':3000/usr/' + session.getId() + '/pic';
-        }
-        
+        $scope.image = session.host+':3000/usr/' + $stateParams.id + '/pic';
+                
         $scope.fields = [
             {label:'Nombre', name:'firstName', model:'', icon:'fa-user'},
             {label:'Apellido', name:'lastName', model:'', icon:'fa-user'},
@@ -86,9 +82,8 @@
         };
         
         $scope.loadProfile = function(){
-            var id = ($stateParams.id)?true:false;
-            $scope.showNavBar = (session.isLogged() && !id) || (id && (session.getId() == $stateParams.id));
-            if(id && $stateParams.id != session.getId()){
+            $scope.itsme = session.isLogged() && ($stateParams.id == session.getId());
+            if(! $scope.itsme){
                 var path = session.host+':3000/profile/' + $stateParams.id;
                 $http({method:'GET', url:path})
                 .success(function (profile){
@@ -101,53 +96,49 @@
                     console.log('Error loading profile');
                 });
             }else{
-                //Se hace solo al cargar el controlador
+                $scope.fields.forEach(function(el){
+                    el.model=session.profile[el.name];
+                });
             }
         };
         $scope.updateContacts = function(){
             var results = session.contacts;
-            console.log(results);
-            if ($scope.showNavBar){
-                $scope.friends = [];
-                results.friends.forEach( function(el){
-                    var temp = el.data;
-                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
-                    temp['idNEO'] = el['idNEO'];
-                    $scope.friends.push(temp);
-                });
+            $scope.friends = [];
+            results.friends.forEach( function(el){
+                var temp = el.data;
+                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['idNEO'] = el['idNEO'];
+                $scope.friends.push(temp);
+            });
 
-                $scope.suggestedFriends = [];
-                results.suggested.forEach( function(el){
-                    var temp = el.data;
-                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
-                    temp['idNEO'] = el['idNEO'];
-                    $scope.suggestedFriends.push(temp);
-                });
+            $scope.suggestedFriends = [];
+            results.suggested.forEach( function(el){
+                var temp = el.data;
+                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['idNEO'] = el['idNEO'];
+                $scope.suggestedFriends.push(temp);
+            });
 
-                $scope.requestedFriends = [];
-                results.requested.forEach( function(el){
-                    var temp = el.data;
-                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
-                    temp['idNEO'] = el['idNEO'];
-                    $scope.requestedFriends.push(temp);
-                });
+            $scope.requestedFriends = [];
+            results.requested.forEach( function(el){
+                var temp = el.data;
+                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['idNEO'] = el['idNEO'];
+                $scope.requestedFriends.push(temp);
+            });
 
-                $scope.demandedFriends = [];
-                results.demanded.forEach( function(el){
-                    var temp = el.data;
-                    temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
-                    temp['idNEO'] = el['idNEO'];
-                    $scope.demandedFriends.push(temp);
-                });
+            $scope.demandedFriends = [];
+            results.demanded.forEach( function(el){
+                var temp = el.data;
+                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['idNEO'] = el['idNEO'];
+                $scope.demandedFriends.push(temp);
+            });
 
-                $scope.filtered = $scope.friends;
-                console.log($scope.profileTab);
-                console.log($scope.requestedFriends);
-            }
+            $scope.filtered = $scope.friends;
         };
            
         $scope.click = function(clicked){
-            console.log($scope.profileTab);
             if(clicked.name==='Cerrar Sesión'){
                 $http({method:'POST',url:session.host+':3000/logout',data:{id:session.getId()}})
                 .success(function(){
@@ -205,11 +196,12 @@
         });
         
         $scope.changeProfilePic = function(){
-            $('#imginput').trigger('click');
+            if($scope.itsme){
+                $('#imginput').trigger('click');
+            }
         };
         
         $scope.uploadPic = function() {
-            console.log($('#imginput')[0]);
             var fd = new FormData();
             fd.append('image',$('#imginput')[0].files[0]);
             return $http.post(session.host+':3000/profilepic/' + session.getId(),fd,{
@@ -221,19 +213,6 @@
             }).success(function(data){
                 $scope.image = session.host+':3000/usr/' + session.getId() + '/pic#' + new Date().getTime();
             });
-            /*return $http({
-                method: 'POST',
-                url: session.host+':3000/profilepic/' + session.getId(),
-                headers: {
-                    'Content-Type': undefined
-                },
-                data: {
-                    image: $('#imginput')[0].files[0]
-                },
-                transformRequest: formDataObject
-            }).success(function(data){
-                $scope.image = session.host+':3000/usr/' + session.getId() + '/pic#' + new Date().getTime();
-            });*/
         };
         
         $scope.changePass = function(pass){
@@ -254,19 +233,16 @@
                 el.model=session.profile[el.name];
             });
         });
-
-        //TODO: CAMBIAR POR LOS CAMPOS DIRECTAMENTE QUE VIENEN DEL SERVER
-        if(session.profile){
-            $scope.fields.forEach(function(el){
-                el.model=session.profile[el.name];
-            });
-        }
-        
-        $scope.loadProfile();
-        
+                
         if(session.contacts){
             $scope.updateContacts();
         }
+
+        $scope.$on('login',function(){
+            $scope.loadProfile();
+        });
+
+        $scope.loadProfile();
 
       });
 })();
