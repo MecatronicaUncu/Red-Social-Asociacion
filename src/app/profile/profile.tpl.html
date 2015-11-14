@@ -3,7 +3,7 @@
     	<div class="profilePicWrap">
         	<img ng-src="{{image}}" class="profilePic" ng-click="changeProfilePic()"/>
         </div>
-		<div ng-show="showNavBar" class="profile-nav-bar">
+		<div ng-show="itsme" class="profile-nav-bar">
 			<a class="profile-bar-link" ng-repeat="profileNavItem in profileNavItems" ng-class='{"nav-active": profileNavItem.name===profileTab}' ng-click="click(profileNavItem)">{{profileNavItem.name}}</a>
         </div>
     </div> 
@@ -19,7 +19,7 @@
 			</tr>
 		</table>
 
-		<div class="sign-btns-container" ng-show="showNavBar">
+		<div class="sign-btns-container" ng-show="itsme">
 			<button id="editprofilebtn" class="profile-btn sign-up-btn" ng-click="editProfile()">Edit Profile <span class="fa fa-pencil"></span></button>
 			<button id="updateSubmit" class="profile-btn sign-up-btn" ng-click="updateProfile()" disabled>Update <span id="signinicon" class="fa fa-refresh"></span></button>
 		</div>

@@ -22,8 +22,8 @@
                 $scope.navBarItems=[
                     {name:translation.home, href:'#/main', active:$location.path()==='/', visible:true},
                     {name:translation.search, href:'#/search', active:$location.path()==='/search', visible:true},
-                    {name:translation.profile, href:'#/profile/'+session.getId(), active:$location.path()==='/profile', visible:session.loggedIn},
-                    {name:translation.edt, href:'#/edt/'+session.getId(), active:$location.path()==='/edt', visible:true},
+                    {name:translation.profile, href:'#/profile/'+session.getId(), active:$location.path()==='/profile/'+session.getId(), visible:session.loggedIn},
+                    {name:translation.edt, href:'#/edt/'+session.getId(), active:$location.path().match(/^\/edt.*/g), visible:true},
                     {name:translation.admin, href:'#/admin', active:$location.path()==='/admin', visible:session.admin}
                     //{name:translation.aboutus, href:'#/about', active:$location.path()==='/about', visible:true}
                 ];
