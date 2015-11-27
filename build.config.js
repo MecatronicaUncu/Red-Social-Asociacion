@@ -39,7 +39,9 @@ module.exports = {
    */
   test_files: {
     js: [
-      'vendor/angular-mocks/angular-mocks.js'
+      //note: angular is loaded in vendor_files
+      'vendor/angular-mocks/angular-mocks.js',
+      'node_modules/ng-describe/dist/ng-describe.js'
     ]
   },
 
