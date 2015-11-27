@@ -18,6 +18,9 @@ module.exports = function ( karma ) {
       //compiled app JavaScript
       <% scripts.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>
+      //test files
+      <% specjs.forEach( function ( file ) { %>'<%= file %>',
+      <% }); %>
       'src/**/*.coffee'
     ],
     exclude: [
