@@ -19,7 +19,6 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-express-server');
-	grunt.loadNpmTasks('grunt-force-task');
 
   /**
    * Load in our build configuration file.
@@ -612,7 +611,7 @@ module.exports = function ( grunt ) {
     'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'sass:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
     'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_vendorcss', 'index:build', 'karmaconfig',
-    'force:karma:continuous' 
+    'karma:continuous' 
   ]);
 
   /**
