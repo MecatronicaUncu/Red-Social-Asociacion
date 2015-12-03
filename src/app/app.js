@@ -51,6 +51,7 @@
 
         $httpProvider.defaults.withCredentials = true;
       })
+			.constant('REMOTE','https://localhost:3000')
       .directive('caiHomeSignin', function(){
           return {
             restrict: 'E', // Element Name <cai-home-signin></cai-home-signin>
@@ -139,162 +140,10 @@
                 });
             };
         })
-      .service('session',function($rootScope,$http,$timeout) {
-        this.loggedIn = false;
-        //Es necesario? No se hace sólo con las cookies?
-        this.ID = 0;
-        this.host_LAN = 'https://192.168.0.3';
-        this.host_LOC = 'https://localhost';
-        this.host_NET = 'https://edt.mecatronicauncu.org';
-        this.host = this.host_LAN;
-        this.admin = false;
-        this.lang = 'ar';
-        this.profile = null;
-        this.translation = null;
-        this.subscriptions = null;
-        this.contacts = null;
-        
-        this.getContacts = function(){
-            var session = this;
-            $http({method:'GET', url:session.host+':3000/contacts'})
-            .success(function (contacts){
-                session.contacts = contacts;
-                $rootScope.$broadcast('gotContacts');
-                return;
-            })
-            .error(function(){
-                console.log('Error getting contacts');
-                return;
-            });
-        };
-        
-        this.getSubscriptions = function(){
-            var session = this;
-            $http({method:'GET', url:session.host+':3000/subscriptions'})
-            .success(function (subsc){
-                session.subscriptions = subsc;
-                console.log('SUBSC',subsc);
-                $rootScope.$broadcast('gotSubscriptions');
-                return;
-            })
-            .error(function(){
-                console.log('Error getting subscriptions');
-                return;
-            });
-        };
-        
-        this.getMyProfile = function(){
-            var session = this;
-            $http({method:'GET', url:session.host+':3000/profile/'+this.ID})
-            .success(function (profile){
-                session.profile = profile;
-                session.lang = profile.lang;
-                session.getTranslation();
-                $rootScope.$broadcast('gotProfile');
-                return;
-            })
-            .error(function(){
-                console.log('Error getting my profile');
-                return;
-            });
-        };
-        
-        this.setUserID = function(id){
-            this.ID = id;
-        };
-        this.log = function(inOut){
-            if(inOut==='in'){
-                this.loggedIn = true;
-                $rootScope.$broadcast('login');
-                //$rootScope.$broadcast('update');
-            }
-            else if(inOut==='out'){
-                this.loggedIn = false;
-                this.setAdmin(false);
-                this.profile = null;
-                this.subscriptions = null;
-                this.contacts = null;
-                this.setUserID(0);
-                $rootScope.$broadcast('logout');
-                //$rootScope.$broadcast('update');
-            }
-        };
-        this.checkCookies = function() {
-            var session = this;
-            $http({method:'GET', url:session.host+':3000/checkCookie'})
-            .success(function (data){
-                console.log(data);
-                session.setUserID(data.idNEO);
-                session.getMyProfile();
-                session.getContacts();
-                session.getSubscriptions();
-                session.log('in');
-                //TODO: Necesario?
-                $rootScope.$broadcast('login');
-
-                $http({method:'GET', url:session.host+':3000/checkAdminCookie'})
-                .success(function(){
-                    session.setAdmin(true);
-                    $rootScope.$broadcast('gotAdmin');
-                })
-                .error(function(){
-                    session.setAdmin(false);
-                });
-            })
-            .error(function(){
-                session.setUserID(0);
-                session.getTranslation(session.lang);
-                session.log('out');
-                $rootScope.$broadcast('logout');
-            });
-        };
-        this.getTranslation = function(){
-            var session = this;
-            $http({method:'GET', url:session.host+':3000/translation/'+session.lang})
-            .success(function(data){
-                session.setTranslation(data.translation);
-            })
-            .error(function(){
-                console.log('Error getting translations');
-            });
-        };
-        this.setTranslation = function(translation){
-            this.translation = translation;
-            $rootScope.$broadcast('gotTranslation');
-        };
-        this.saveLang = function(){
-            var session = this;
-            $http({method:'POST', url:session.host+':3000/change', data:{field:'lang', value:session.lang}})
-            .success(function(){
-            })
-            .error(function(){
-                console.log('Error saving language...');
-            });
-        };
-        this.isLogged =  function() {
-            return this.loggedIn;
-        };
-        this.isAdmin = function(){
-            return this.admin;  
-        };
-        this.setAdmin = function(admin){
-            this.admin = admin;
-        };
-        this.getId = function() {
-            return this.ID;
-        };
-        this.setLang = function(lang){
-            this.lang = lang;
-            this.getTranslation();
-            if(this.loggedIn){
-                this.saveLang();
-            }
-        };
-      })
-      .service('users', function($http, $rootScope, session) {
+      .service('users', function($http, $rootScope, session, REMOTE) {
         var funcs = {
             they: function(next){
-                $http({method:'GET', url:session.host+':3000/they'})
+                $http({method:'GET', url:REMOTE+'/they'})
                 .success(function (data){
                     var err = null;
                     return next(err,data.they);
@@ -304,18 +153,17 @@
                     return next(err,{});
                 });
             },
+						//DEPRECATED. now in session service
             login: function(person,next){
-                $http({method:'POST',url:session.host+':3000/login',data:person})
+                $http({method:'POST',url:REMOTE+'/login',data:person})
                 .success(function(data){
                     if (data.idNEO==null){
                         return next('Error');
                     }else{
-                        session.setUserID(data.idNEO);
-                        session.log('in');
-                        $rootScope.$broadcast('login');
-                        //TODO: Por qué checkCookies si ya logeamos??
+                        session.log('in',data.idNEO);
+                        //TODO: Por qué checkCookie si ya logeamos??
                         //Por las de Admin. Sólo checkAdmin?
-                        session.checkCookies();
+                        session.checkAdminCookie();
                         return next(null);
                     }
                 })
@@ -324,7 +172,7 @@
                 });
             },
             signup: function(person,next){
-                $http({method:'POST',url:session.host+':3000/signup',data:person})
+                $http({method:'POST',url:REMOTE+'/signup',data:person})
                 .success(function(data){
                     if (data.idNEO == null){
                         return next('ID was null');
@@ -339,7 +187,7 @@
             },
             makeFriend: function(friendId,next){
                 var ids = {idUsr:session.getId(),idFriend:friendId};
-                $http({method:'POST' , url:session.host+':3000/friend', data:ids})
+                $http({method:'POST' , url:REMOTE+'/friend', data:ids})
                 .success(function (data){
                     session.getContacts();
                 })
@@ -449,11 +297,11 @@
 
         return funcs;
       })
-      .service('edt',function($http, session){
+      .service('edt',function($http, session,REMOTE){
 
         var funcs = {
             getTimes: function(whatId,whoId,week,year, next){
-                $http({method:'GET', url:session.host+':3000/times',
+                $http({method:'GET', url:REMOTE+'/times',
                     params:{whatId:whatId, whoId:whoId, week:week, year:year}})
                 .success(function(times){
                         return next(null,times);
@@ -463,7 +311,7 @@
                 });
             },
             getConfig: function(next){
-                $http({method:'GET', url:session.host+':3000/edtconfig'})
+                $http({method:'GET', url:REMOTE+'/edtconfig'})
                 .success(function(config){
                     console.log(config);
                     return next(null,config);
@@ -473,7 +321,7 @@
                 });
             },
             getPlaces: function(next){
-                $http({method:'GET', url:session.host+':3000/edtplaces'})
+                $http({method:'GET', url:REMOTE+'/edtplaces'})
                 .success(function(data){
                     return next(null,data.data);
                 })
@@ -482,7 +330,7 @@
                 });
             },
             newActivity: function(activities,next){
-                $http({method:'POST', url:session.host+':3000/edtnewact', data:{activities:activities}})
+                $http({method:'POST', url:REMOTE+'/edtnewact', data:{activities:activities}})
                 .success(function(){
                     return next(null);
                 })
@@ -505,6 +353,7 @@
         };
       })
       .run(function(session){
-        session.checkCookies();
+				session.updateTranslation();
+        session.checkCookie();
       });
 })();
