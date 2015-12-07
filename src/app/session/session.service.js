@@ -175,8 +175,10 @@
 					},
 					updateTranslation: function(){
             $http({method:'GET', url:REMOTE+'/translation/'+api.getLang()})
-            .success(function(translation){
-                setTranslation(translation);
+            .success(function(data){
+              if(data.translation){
+                setTranslation(data.translation);
+              }
             })
             .error(function(){
             });

@@ -69,7 +69,7 @@
 
 					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('login',null);
 					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('logout',null);
-					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('logout',jasmine.any());
+					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('logout',jasmine.anything());
 				});
 
 				it('Should fire the correct event upon incorrect login',function(){
@@ -175,11 +175,18 @@
 					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, {});
 					deps.session.updateTranslation();
 					deps.http.flush();
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotTranslation');
+					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotTranslation');
 
 					deps.$rootScope.$broadcast.calls.reset();
 
 					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+/).respond(500, {});
+					deps.session.updateTranslation();
+					deps.http.flush();
+					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotTranslation');
+
+					deps.$rootScope.$broadcast.calls.reset();
+
+					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+/).respond(500, { translation: { test: 'yay'}});
 					deps.session.updateTranslation();
 					deps.http.flush();
 					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotTranslation');
@@ -191,7 +198,7 @@
 				beforeEach(function(){
 					deps.$httpBackend.whenGET(/.*/).respond(500, 'Error');
 					deps.$httpBackend.whenPOST(/.*/).respond(500, 'Error');
-					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { translation: 'default'});
+					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { translation: {test: 'default'}});
 					deps.http.flush();
 					spyOn(deps.$rootScope,'$broadcast');
 				});
@@ -201,7 +208,7 @@
 					deps.$httpBackend.expectGET(/.*\/profile\/[0-9]+/).respond(200, { test: 'hola', lang: 'ar'});
 					deps.$httpBackend.expectGET('/contacts').respond(200, { test: 'bonjour'});
 					deps.$httpBackend.expectGET('/subscriptions').respond(200, { test: 'hello'});
-					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { test: 'yay'});
+					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { translation: { test: 'yay'}});
 					deps.session.login({});
 
 					deps.http.flush();
@@ -225,7 +232,7 @@
 					deps.$httpBackend.expectGET(/.*\/profile\/[0-9]+/).respond(200, { test: 'hola', lang: 'ar'});
 					deps.$httpBackend.expectGET('/contacts').respond(200, { test: 'bonjour'});
 					deps.$httpBackend.expectGET('/subscriptions').respond(200, { test: 'hello'});
-					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { test: 'yay'});
+					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { translation: { test: 'yay'}});
 					deps.session.login({});
 
 					deps.http.flush();
@@ -255,7 +262,7 @@
 					expect(deps.session.getLang()).toEqual('ar');
 
 					deps.$rootScope.$broadcast.calls.reset();
-					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { test: 'Nokia'});
+					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { translation: { test: 'Nokia'}});
 					deps.$httpBackend.expectPOST('/change',{ field: 'lang', value: 'en'}).respond(200);
 					deps.session.saveLang('en');
 
@@ -301,7 +308,7 @@
 					deps.$httpBackend.expectGET(/.*\/profile\/[0-9]+/).respond(200, { test: 'hola', lang: 'ar'});
 					deps.$httpBackend.expectGET('/contacts').respond(200, { test: 'bonjour'});
 					deps.$httpBackend.expectGET('/subscriptions').respond(200, { test: 'hello'});
-					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { test: 'yay'});
+					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { translation: {test: 'yay'}});
 					deps.session.checkCookie({});
 
 					deps.http.flush();
