@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<label class="nodeRelDataHeading" ng-show="people.length != 0">{{session.translation.admin['rels']}}</label>
+<label class="nodeRelDataHeading" ng-show="people.length != 0">{{session.getTranslation().admin['rels']}}</label>
 <contact-field ops="" person="person" ng-repeat="person in people"></contact-field>
-<label class="nodeRelDataHeading" ng-show="parts.length != 0">{{session.translation.admin['parts']}}</label>
+<label class="nodeRelDataHeading" ng-show="parts.length != 0">{{session.getTranslation().admin['parts']}}</label>
 <part-field ops="" part="part" ng-repeat="part in parts"></contact-field>

@@ -11,7 +11,7 @@
     'use strict';
 
     angular.module('linkedEnibApp')
-    .controller('SearchCtrl', function ($scope,$http,session,users,formDataObject) {
+    .controller('SearchCtrl', function ($scope,$http,session,users,formDataObject,REMOTE) {
 
         $scope.results = [];
 
@@ -23,31 +23,31 @@
                 $scope.results = [];
                 return;
             }
-            var path = session.host+':3000/search?what=Users&term='+text;
+            var path = REMOTE+'/search?what=Users&term='+text;
             $http({method:'GET', url:path})
                 .success(function (results){
                     console.log(results);
                     $scope.people=results;
                     $scope.people.forEach(function(el){
-                        el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
+                        el['link']=REMOTE+'/usr/'+el['idNEO'].toString()+'/pic';
                     }); 
             });
-            path = session.host+':3000/search?what=Parts&term='+text;
+            path = REMOTE+'/search?what=Parts&term='+text;
             $http({method:'GET', url:path})
                 .success(function (results){
                     console.log(results);
                     $scope.parts=results;
                     $scope.parts.forEach(function(el){
-                        el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
+                        el['link']=REMOTE+'/usr/'+el['idNEO'].toString()+'/pic';
                     }); 
             });
         };
 
         $scope.makeFriend = function(id){
-            var ids = {idUsr:session.getId(),idFriend:id};
-            $http({method:'POST' , url:session.host+':3000/friend', data:ids})
+            var ids = {idUsr:session.getID(),idFriend:id};
+            $http({method:'POST' , url:REMOTE+'/friend', data:ids})
                 .success(function (data){
-                    console.log("verify");   
+                    console.log("verify");
             });
         };
       });
