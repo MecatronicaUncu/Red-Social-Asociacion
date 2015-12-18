@@ -101,6 +101,9 @@
         };
         $scope.updateContacts = function(){
             var results = session.getContacts();
+            if(results === null){
+              return;
+            }
             $scope.friends = [];
             results.friends.forEach( function(el){
                 var temp = el.data;
@@ -213,27 +216,34 @@
                 });
         };
 
-        $scope.$on('gotContacts',function(){
+        $scope.$on('gotContacts',function(contacts){
+          if(contacts !== null){
             $scope.updateContacts();
+          }
         });
 
-        $scope.$on('gotProfile',function(){
-						var profile = session.getProfile();
-            $scope.fields.forEach(function(el){
+        $scope.$on('gotProfile',function(profile){
+						if(profile !== null){
+              $scope.fields.forEach(function(el){
                 el.model=profile[el.name];
-            });
+              });
+            }
         });
 
         if(session.getContacts()){
             $scope.updateContacts();
         }
 
-        $scope.$on('login',function(){
+        $scope.$on('login',function(err){
+          if(err !== null){
             $scope.loadProfile();
+          }
         });
         
-				$scope.$on('logout',function(){
-					$location.path('/');
+        $scope.$on('logout',function(err){
+          if(err !== null){
+            $location.path('/');
+          }
         });
 
         $scope.loadProfile();

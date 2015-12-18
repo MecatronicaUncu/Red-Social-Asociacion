@@ -133,42 +133,42 @@
 					deps.$httpBackend.expectGET(/.*\/profile\/[0-9]+/).respond(200, {});
 					deps.session.updateProfile();
 					deps.http.flush();
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotProfile');
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotProfile',jasmine.any(Object));
 
 					deps.$rootScope.$broadcast.calls.reset();
 
 					deps.$httpBackend.expectGET(/.*\/profile\/[0-9]+/).respond(500, {});
 					deps.session.updateProfile();
 					deps.http.flush();
-					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotProfile');
+					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotProfile',jasmine.anything());
 				});
 
 				it('Should fire the correct event upon contacts update',function(){
 					deps.$httpBackend.expectGET(/.*\/contacts/).respond(200, {});
 					deps.session.updateContacts();
 					deps.http.flush();
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotContacts');
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotContacts',jasmine.any(Object));
 
 					deps.$rootScope.$broadcast.calls.reset();
 
 					deps.$httpBackend.expectGET(/.*\/contacts/).respond(500, {});
 					deps.session.updateContacts();
 					deps.http.flush();
-					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotContacts');
+					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotContacts',jasmine.anything());
 				});
 
 				it('Should fire the correct event upon subscriptions update',function(){
 					deps.$httpBackend.expectGET(/.*\/subscriptions/).respond(200, {});
 					deps.session.updateSubscriptions();
 					deps.http.flush();
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotSubscriptions');
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotSubscriptions',jasmine.any(Object));
 
 					deps.$rootScope.$broadcast.calls.reset();
 
 					deps.$httpBackend.expectGET(/.*\/subscriptions/).respond(500, {});
 					deps.session.updateSubscriptions();
 					deps.http.flush();
-					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotSubscriptions');
+					expect(deps.$rootScope.$broadcast).not.toHaveBeenCalledWith('gotSubscriptions',jasmine.anything());
 				});
 
 				it('Should fire the correct event upon translation update',function(){
@@ -214,9 +214,9 @@
 					deps.http.flush();
 
 					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('login',null);
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotProfile');
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotContacts');
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotSubscriptions');
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotProfile',{ test: 'hola', lang: 'ar'});
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotContacts',{ test: 'bonjour'});
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotSubscriptions',{ test: 'hello'});
 
 					expect(deps.session.isLoggedIn()).toBe(true);
 					expect(deps.session.isAdmin()).toBe(false);
@@ -270,7 +270,7 @@
 
 					expect(deps.session.getLang()).toEqual('en');
 					expect(deps.session.getTranslation()).toEqual({ test: 'Nokia'});
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotTranslation');
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotTranslation',jasmine.any(Object));
 				});
 
 			});
@@ -314,9 +314,9 @@
 					deps.http.flush();
 
 					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('login',null);
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotProfile');
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotContacts');
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotSubscriptions');
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotProfile',{ test: 'hola', lang: 'ar'});
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotContacts',{ test: 'bonjour'});
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotSubscriptions',{ test: 'hello'});
 
 					expect(deps.session.isLoggedIn()).toBe(true);
 					expect(deps.session.isAdmin()).toBe(false);

@@ -38,19 +38,19 @@
 				};
 				var setProfile = function(_profile){
 					profile = angular.copy(_profile);
-					$rootScope.$broadcast('gotProfile');
+					$rootScope.$broadcast('gotProfile',angular.copy(_profile));
 				};
 				var setTranslation = function(_translation){
 					translation = angular.copy(_translation);
-					$rootScope.$broadcast('gotTranslation');
+					$rootScope.$broadcast('gotTranslation',angular.copy(_translation));
 				};
 				var setSubscriptions = function(_subscriptions){
 					subscriptions = angular.copy(_subscriptions);
-					$rootScope.$broadcast('gotSubscriptions');
+					$rootScope.$broadcast('gotSubscriptions',angular.copy(_subscriptions));
 				};
 				var setContacts = function(_contacts){
 					contacts = angular.copy(_contacts);
-					$rootScope.$broadcast('gotContacts');
+					$rootScope.$broadcast('gotContacts',angular.copy(_contacts));
 				};
 
 				/*
