@@ -5,6 +5,16 @@
 	'use strict';
 
 	angular.module('linkedEnibApp')
+      .config(['navBarProvider',function(navBarProvider){
+        navBarProvider.addTab('admin',function(session,$location){
+          var translation = session.getTranslation();
+          if(translation !== null){
+            return {name:translation.navBar.admin, href:'#/admin', active:$location.path()==='/admin', visible:session.isAdmin()};
+          }else{
+            return {};
+          }
+        });
+      }])
       .controller('AdminCtrl', function ($scope, session, $http) {
 		
 		if(session.translation){

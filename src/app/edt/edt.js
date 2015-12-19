@@ -7,6 +7,16 @@
     'use strict';
 
     angular.module('linkedEnibApp')
+      .config(['navBarProvider',function(navBarProvider){
+        navBarProvider.addTab('edt',function(session,$location){
+          var translation = session.getTranslation();
+          if(translation !== null){
+            return {name:translation.navBar.edt, href:'#/edt/'+session.getID(), active:$location.path().match(/^\/edt.*/g), visible:true};
+          }else{
+            return {};
+          }
+        });
+      }])
       .controller('EdtCtrl', function ($scope, $stateParams, edt, session, $timeout, $http) {
 
         $scope.partSearchResults = [];

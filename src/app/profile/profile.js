@@ -11,6 +11,16 @@
     'use strict';
 
     angular.module('linkedEnibApp')
+      .config(['navBarProvider',function(navBarProvider){
+        navBarProvider.addTab('profile',function(session,$location){
+          var translation = session.getTranslation();
+          if(translation !== null){
+            return {name:translation.navBar.profile, href:'#/profile/'+session.getID(), active:$location.path()==='/profile/'+session.getID(), visible:session.isLoggedIn()};
+          }else{
+            return {};
+          }
+        });
+      }])
     .controller('ProfileCtrl', function ($scope,$http,$stateParams,session,formDataObject,$location,REMOTE) {
 
         $scope.image = REMOTE+'/usr/' + $stateParams.id + '/pic';
