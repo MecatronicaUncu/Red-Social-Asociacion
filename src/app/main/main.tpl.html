@@ -1,5 +1,5 @@
 <div > 
-    <div ng-show="session.loggedIn === false">
+    <div ng-show="!session.isLoggedIn()">
         <div class="sign-btns-container">
             <button class="sign-up-btn" ng-click="hideSignUp = !hideSignUp;hideSignIn = true">Registrarse<span class="fa fa-eject"></span></button>
             <button class="sign-in-btn" ng-click="hideSignIn = !hideSignIn;hideSignUp = true">Ingresar<span class="fa fa-play"></span></button>

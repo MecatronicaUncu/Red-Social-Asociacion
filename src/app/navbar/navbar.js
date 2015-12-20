@@ -16,15 +16,15 @@
         $scope.session = session;
           
         $scope.updateNavBar = function(){
-            if(session.translation){
-                var translation = session.translation.navBar;
+            if(session.getTranslation()){
+                var translation = session.getTranslation().navBar;
             
                 $scope.navBarItems=[
                     {name:translation.home, href:'#/main', active:$location.path()==='/', visible:true},
                     {name:translation.search, href:'#/search', active:$location.path()==='/search', visible:true},
-                    {name:translation.profile, href:'#/profile/'+session.getId(), active:$location.path()==='/profile/'+session.getId(), visible:session.loggedIn},
-                    {name:translation.edt, href:'#/edt/'+session.getId(), active:$location.path().match(/^\/edt.*/g), visible:true},
-                    {name:translation.admin, href:'#/admin', active:$location.path()==='/admin', visible:session.admin}
+                    {name:translation.profile, href:'#/profile/'+session.getID(), active:$location.path()==='/profile/'+session.getID(), visible:session.isLoggedIn()},
+                    {name:translation.edt, href:'#/edt/'+session.getID(), active:$location.path().match(/^\/edt.*/g), visible:true},
+                    {name:translation.admin, href:'#/admin', active:$location.path()==='/admin', visible:session.isAdmin()}
                     //{name:translation.aboutus, href:'#/about', active:$location.path()==='/about', visible:true}
                 ];
             }      

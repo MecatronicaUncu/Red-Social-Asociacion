@@ -11,9 +11,9 @@
     'use strict';
 
     angular.module('linkedEnibApp')
-    .controller('ProfileCtrl', function ($scope,$http,$stateParams,session,formDataObject,$location) {
+    .controller('ProfileCtrl', function ($scope,$http,$stateParams,session,formDataObject,$location,REMOTE) {
 
-        $scope.image = session.host+':3000/usr/' + $stateParams.id + '/pic';
+        $scope.image = REMOTE+'/usr/' + $stateParams.id + '/pic';
                 
         $scope.fields = [
             {label:'Nombre', name:'firstName', model:'', icon:'fa-user'},
@@ -59,16 +59,13 @@
         };
 
         $scope.updateProfile = function(){
-            console.log('Update: ');
             var data = {changes: {}, id:0};
-            data.id = session.getId();
+            data.id = session.getID();
             $scope.fields.forEach(function(el,index){
                 data.changes[el.name] = $('#'+el.name).text().trim();
             });
 
-            console.log(data);
-
-            $http({method:'POST',url:session.host+':3000/uptprofile',data:data})
+            $http({method:'POST',url:REMOTE+'/uptprofile',data:data})
                     .success(function(){
                         $('#updateSubmit > span').removeClass('fa-refresh').addClass('fa-check');
                         $('#updateSubmit').prop('disabled',true);
@@ -76,39 +73,41 @@
                         $('.profile-data-table').css('border','none');
                     })
                     .error(function(data){
-                        console.log("Update Failed");
                         $('#updateSubmit > span').removeClass('fa-refresh').addClass('fa-warning');
                     }); 
         };
         
         $scope.loadProfile = function(){
-            $scope.itsme = session.isLogged() && ($stateParams.id == session.getId());
+            $scope.itsme = session.isLoggedIn() && ($stateParams.id == session.getID());
             if(! $scope.itsme){
-                var path = session.host+':3000/profile/' + $stateParams.id;
+                var path = REMOTE+'/profile/' + $stateParams.id;
                 $http({method:'GET', url:path})
                 .success(function (profile){
                     $scope.fields.forEach(function(el){
                         el.model=profile[el.name];
                     });
-                    console.log(profile);
                 })
                 .error(function(err){
                     console.log('Error loading profile');
                 });
             }else{
-                if(session.profile){
+                if(session.getProfile()){
+										var profile = session.getProfile();
                     $scope.fields.forEach(function(el){
-                        el.model=session.profile[el.name];
+                        el.model=profile[el.name];
                     });
                 }
             }
         };
         $scope.updateContacts = function(){
-            var results = session.contacts;
+            var results = session.getContacts();
+            if(results === null){
+              return;
+            }
             $scope.friends = [];
             results.friends.forEach( function(el){
                 var temp = el.data;
-                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['link'] = REMOTE+'/usr/'+el['id']+'/pic';
                 temp['idNEO'] = el['idNEO'];
                 $scope.friends.push(temp);
             });
@@ -116,7 +115,7 @@
             $scope.suggestedFriends = [];
             results.suggested.forEach( function(el){
                 var temp = el.data;
-                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['link'] = REMOTE+'/usr/'+el['id']+'/pic';
                 temp['idNEO'] = el['idNEO'];
                 $scope.suggestedFriends.push(temp);
             });
@@ -124,7 +123,7 @@
             $scope.requestedFriends = [];
             results.requested.forEach( function(el){
                 var temp = el.data;
-                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['link'] = REMOTE+'/usr/'+el['id']+'/pic';
                 temp['idNEO'] = el['idNEO'];
                 $scope.requestedFriends.push(temp);
             });
@@ -132,7 +131,7 @@
             $scope.demandedFriends = [];
             results.demanded.forEach( function(el){
                 var temp = el.data;
-                temp['link'] = session.host+':3000/usr/'+el['id']+'/pic';
+                temp['link'] = REMOTE+'/usr/'+el['id']+'/pic';
                 temp['idNEO'] = el['idNEO'];
                 $scope.demandedFriends.push(temp);
             });
@@ -142,16 +141,8 @@
            
         $scope.click = function(clicked){
             if(clicked.name==='Cerrar Sesión'){
-                $http({method:'POST',url:session.host+':3000/logout',data:{id:session.getId()}})
-                .success(function(){
-                        console.log('Success Logging out');
-                        session.log('out');
-                        $location.path('/');
-                })
-                .error(function(){
-                        console.log('Error logging out');
-                });
-                return;
+							session.logout();
+							return;
             }
             else if(clicked.name==='Eliminar Usuario'){
                 $scope.deleteUser();
@@ -164,15 +155,15 @@
         };
           
         $scope.makeFriend = function(id){
-            var ids = {idUsr:session.getId(),idFriend:id};
-            $http({method:'POST' , url:session.host+':3000/friend', data:ids})
+            var ids = {idUsr:session.getID(),idFriend:id};
+            $http({method:'POST' , url:REMOTE+'/friend', data:ids})
                 .success(function (data){
-                    session.getContacts();
+                    session.updateContacts();
             });
         };
           
         $scope.deleteFriend = function(id){
-            var path = session.host+':3000/delFriend';
+            var path = REMOTE+'/delFriend';
             $http({method:'POST',url:path})
                 .success(function (data){
                     $scope.updateContacts();
@@ -185,10 +176,9 @@
         };
          
         $scope.deleteUser = function(){
-            var path = session.host+':3000/delUser/' + session.getId();
+            var path = REMOTE+'/delUser/' + session.getID();
             $http({method:'POST',url:path})
                 .success(function (data){
-                    console.log('verify'); 
                     session.log('out');
             });
         };
@@ -206,42 +196,54 @@
         $scope.uploadPic = function() {
             var fd = new FormData();
             fd.append('image',$('#imginput')[0].files[0]);
-            return $http.post(session.host+':3000/profilepic/' + session.getId(),fd,{
+            return $http.post(REMOTE+'/profilepic/' + session.getID(),fd,{
 				transformRequest:angular.identity,
                 headers: {
                     'Content-Type': undefined
                 },
                 enctype:'multipart/form-data'
             }).success(function(data){
-                $scope.image = session.host+':3000/usr/' + session.getId() + '/pic#' + new Date().getTime();
+                $scope.image = REMOTE+'/usr/' + session.getID() + '/pic#' + new Date().getTime();
             });
         };
         
         $scope.changePass = function(pass){
-            pass['id']=session.getId();
-            var path = session.host+':3000/change';
+            pass['id']=session.getID();
+            var path = REMOTE+'/change';
             $http({method:'POST',url:path, data:pass})
                 .success(function(){
                     $scope.profileTab = 'Perfil';
                 });
         };
 
-        $scope.$on('gotContacts',function(){
+        $scope.$on('gotContacts',function(contacts){
+          if(contacts !== null){
             $scope.updateContacts();
+          }
         });
 
-        $scope.$on('gotProfile',function(){
-            $scope.fields.forEach(function(el){
-                el.model=session.profile[el.name];
-            });
+        $scope.$on('gotProfile',function(profile){
+						if(profile !== null){
+              $scope.fields.forEach(function(el){
+                el.model=profile[el.name];
+              });
+            }
         });
-                
-        if(session.contacts){
+
+        if(session.getContacts()){
             $scope.updateContacts();
         }
 
-        $scope.$on('login',function(){
+        $scope.$on('login',function(err){
+          if(err !== null){
             $scope.loadProfile();
+          }
+        });
+        
+        $scope.$on('logout',function(err){
+          if(err !== null){
+            $location.path('/');
+          }
         });
 
         $scope.loadProfile();

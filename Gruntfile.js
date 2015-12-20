@@ -424,7 +424,9 @@ module.exports = function ( grunt ) {
           '<%= vendor_files.js %>',
           '<%= html2js.app.dest %>',
           '<%= html2js.common.dest %>',
-          '<%= test_files.js %>'
+          '<%= test_files.js %>',
+          '<%= app_files.js %>',
+          '<%= app_files.jsunit %>'
         ]
       }
     },
@@ -434,7 +436,7 @@ module.exports = function ( grunt ) {
      */
     express: {
       options: {
-        output: 'Express server listening on port'
+        output: 'Express.*listening on port.*'
       },
       prod: {
         options: {
@@ -577,7 +579,7 @@ module.exports = function ( grunt ) {
        */
       express: {
         files: [ 'server/**/*.js' ],
-        task: [ 'express:unique' ],
+        tasks: [ 'express:dev' ],
         options: {
             spawn: false
         }
@@ -595,7 +597,7 @@ module.exports = function ( grunt ) {
    * before watching for changes.
    */
   grunt.renameTask( 'watch', 'delta' );
-  grunt.registerTask( 'watch', [ 'build', 'karma:unit', 'delta' ] );
+  grunt.registerTask( 'watch', [ 'build', 'karma:unit', 'express:dev', 'delta' ] );
 
   /**
    * The default task is to build and compile.
@@ -633,16 +635,24 @@ module.exports = function ( grunt ) {
   });
 
   /**
-   * A utility function to get all app JavaScript sources except for app.js.
+   * An utility function to get all app JavaScript sources except for app.js.
    */
   function filterForJS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /^((?!.*\/app\.js)(?!.*vendor)).*$/ );
+      return file.match( /^((?!.*\/app\.js)(?!.*vendor)(?!.*spec)).*$/ );
+    });
+  }
+	/*
+	 * An utility function to get just the testing files.
+	 */
+  function filterForSpecJS ( files ) {
+    return files.filter( function ( file ) {
+      return file.match( /^.*\.spec\.js.*$/ );
     });
   }
 
   /**
-   * A utility function to get all vendor JavaScript sources.
+   * An utility function to get all vendor JavaScript sources.
    */
   function filterForVendorJS ( files ) {
     return files.filter( function ( file ) {
@@ -651,7 +661,7 @@ module.exports = function ( grunt ) {
   }
 
   /*
-   * A utility function to get just app.js file (needs to be written on top of the others!)
+   * An utility function to get just app.js file (needs to be written on top of the others!)
    */
   function filterForAppJS (files) {
     return files.filter( function ( file ) {
@@ -659,8 +669,8 @@ module.exports = function ( grunt ) {
     });
   }
 
-  /**
-   * A utility function to get all app CSS sources.
+  /*
+   * An utility function to get all app CSS sources.
    */
   function filterForCSS ( files ) {
     return files.filter( function ( file ) {
@@ -713,6 +723,7 @@ module.exports = function ( grunt ) {
     var vendorjsFiles = filterForVendorJS ( this.filesSrc );
     var jsFiles = filterForJS( this.filesSrc );
     var appjsFile = filterForAppJS( this.filesSrc );
+    var specjsFiles = filterForSpecJS( this.filesSrc );
 
     grunt.file.copy( 'karma/karma-unit.tpl.js', grunt.config( 'build_dir' ) + '/karma-unit.js', { 
       process: function ( contents, path ) {
@@ -720,7 +731,8 @@ module.exports = function ( grunt ) {
           data: {
             vendorjs: vendorjsFiles,
             scripts: jsFiles,
-            appjs: appjsFile
+            appjs: appjsFile,
+            specjs: specjsFiles
           }
         });
       }
