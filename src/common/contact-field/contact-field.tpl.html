@@ -4,7 +4,7 @@
         <label id="title">{{person.firstName}}</label>&nbsp &nbsp<label id="title">{{person.lastName}}</label><br/>
     </div>
     <div class="nodeFieldBtns">
-        <button class="nodeFieldBtn edtSearchBtn" ng-show="session.loggedIn && !users.requested(person.idNEO) && !users.demanded(person.idNEO)"
+        <button class="nodeFieldBtn edtSearchBtn" ng-show="session.isLoggedIn() && !users.isRequested(person.idNEO) && !users.isDemanded(person.idNEO)"
                 ng-click="users.isFriend(person.idNEO)?users.deleteFriend(person.idNEO):users.makeFriend(person.idNEO)">
             <i class="fa fa-fw" 
                ng-class="users.isFriend(person.idNEO)?'fa-user-times':'fa-user-plus'">
@@ -12,19 +12,19 @@
         </button>
         <button class="nodeFieldBtn edtSearchBtn" 
                 ng-click="users.deleteFriend(person.idNEO)"
-                ng-show="session.loggedIn && users.demanded(person.idNEO)">
+                ng-show="session.isLoggedIn() && users.isDemanded(person.idNEO)">
             <i class="fa fa-fw fa-user-times">
             </i>
         </button>
         <button class="nodeFieldBtn edtSearchBtn" 
                 ng-click="users.makeFriend(person.idNEO)"
-                ng-show="session.loggedIn && users.requested(person.idNEO)">
+                ng-show="session.isLoggedIn() && users.isRequested(person.idNEO)">
             <i class="fa fa-fw fa-user-plus">
             </i>
         </button>
         <button class="nodeFieldBtn edtSearchBtn" 
                 ng-click="users.deleteFriend(person.idNEO)"
-                ng-show="session.loggedIn && users.requested(person.idNEO)">
+                ng-show="session.isLoggedIn() && users.isRequested(person.idNEO)">
             <i class="fa fa-fw fa-user-times">
             </i>
         </button>
