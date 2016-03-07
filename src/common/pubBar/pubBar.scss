@@ -1,0 +1,15 @@
+@import "../../sass/site-base";
+
+.pub-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0;
+  margin-bottom: 20px;
+  @include respond-to(mobile){display: none};
+}
+
+.pub-pic {
+  width: auto;
+  height: 60px;
+}

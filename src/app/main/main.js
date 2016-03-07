@@ -7,6 +7,16 @@
     'use strict';
 
     angular.module('linkedEnibApp')
+      .config(['navBarProvider',function(navBarProvider){
+        navBarProvider.addTab('main',function(session,$location){
+          var translation = session.getTranslation();
+          if(translation !== null){
+            return {name:translation.navBar.home, href:'#/', active:$location.path()==='/', visible:true};
+          }else{
+            return {};
+          }
+        });
+      }])
       .controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, session,users,REMOTE) {
         
         $scope.hideSignIn = true;

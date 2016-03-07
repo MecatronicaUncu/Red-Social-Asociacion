@@ -15,6 +15,9 @@ module.exports = function ( karma ) {
       //compiled app.js JavaScript
       <% appjs.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>
+      //compiled providers JavaScript
+      <% providers.forEach( function ( file ) { %>'<%= file %>',
+      <% }); %>
       //compiled app JavaScript
       <% scripts.forEach( function ( file ) { %>'<%= file %>',
       <% }); %>

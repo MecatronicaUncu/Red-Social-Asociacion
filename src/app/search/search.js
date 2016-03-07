@@ -11,6 +11,16 @@
     'use strict';
 
     angular.module('linkedEnibApp')
+      .config(['navBarProvider',function(navBarProvider){
+        navBarProvider.addTab('search',function(session,$location){
+          var translation = session.getTranslation();
+          if(translation !== null){
+            return {name:translation.navBar.search, href:'#/search', active:$location.path()==='/search', visible:true};
+          }else{
+            return {};
+          }
+        });
+      }])
     .controller('SearchCtrl', function ($scope,$http,session,users,formDataObject,REMOTE) {
 
         $scope.results = [];

@@ -639,7 +639,7 @@ module.exports = function ( grunt ) {
    */
   function filterForJS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /^((?!.*\/app\.js)(?!.*vendor)(?!.*spec)).*$/ );
+      return file.match( /^((?!.*\/app\.js)(?!.*vendor)(?!.*spec)(?!.*provider)).*$/ );
     });
   }
 	/*
@@ -660,6 +660,14 @@ module.exports = function ( grunt ) {
     });
   }
 
+  /**
+   * An utility function to get all providers JavaScript sources. Must be loaded before the rest of the modules.
+   */
+  function filterForProvidersJS ( files ) {
+    return files.filter( function ( file ) {
+      return file.match( /^.*\.provider\.js.*$/ );
+    });
+  }
   /*
    * An utility function to get just app.js file (needs to be written on top of the others!)
    */
@@ -692,6 +700,9 @@ module.exports = function ( grunt ) {
     var jsFiles = filterForJS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
+    var providersjsFiles = filterForProvidersJS( this.filesSrc ).map( function ( file ) {
+      return file.replace( dirRE, '' );
+    });
     var appjsFile = filterForAppJS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
@@ -705,6 +716,7 @@ module.exports = function ( grunt ) {
           data: {
             appjs: appjsFile,
             scripts: jsFiles,
+            providers: providersjsFiles,
             vendorjs: vendorjsFiles,
             styles: cssFiles,
             version: grunt.config( 'pkg.version' )
@@ -723,6 +735,7 @@ module.exports = function ( grunt ) {
     var vendorjsFiles = filterForVendorJS ( this.filesSrc );
     var jsFiles = filterForJS( this.filesSrc );
     var appjsFile = filterForAppJS( this.filesSrc );
+    var providersjsFiles = filterForProvidersJS( this.filesSrc );
     var specjsFiles = filterForSpecJS( this.filesSrc );
 
     grunt.file.copy( 'karma/karma-unit.tpl.js', grunt.config( 'build_dir' ) + '/karma-unit.js', { 
@@ -731,6 +744,7 @@ module.exports = function ( grunt ) {
           data: {
             vendorjs: vendorjsFiles,
             scripts: jsFiles,
+            providers: providersjsFiles,
             appjs: appjsFile,
             specjs: specjsFiles
           }
