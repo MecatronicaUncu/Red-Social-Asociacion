@@ -76,11 +76,11 @@ module.exports = {
       'vendor/angular-sanitize/angular-sanitize.min.js',
       'vendor/angular-cookies/angular-cookies.min.js',
       'vendor/bower-angular-placeholders/angular-placeholders.min.js',
-      'vendor/jQuery.mmenu/src/js/jquery.mmenu.min.js'
+      'vendor/jQuery.mmenu/dist/js/jquery.mmenu.min.js'
     ],
     css: [
       'vendor/bootstrap/dist/css/bootstrap.css',
-      'vendor/jQuery.mmenu/src/css/jquery.mmenu.css'
+      'vendor/jQuery.mmenu/dist/css/jquery.mmenu.css'
     ],
     assets: [
     ]
