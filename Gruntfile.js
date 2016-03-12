@@ -639,7 +639,7 @@ module.exports = function ( grunt ) {
    */
   function filterForJS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /^((?!.*\/app\.js)(?!.*vendor)(?!.*spec)(?!.*provider)).*$/ );
+      return file.match( /^((?!.*\/app\.js)(?!.*vendor)(?!.*spec)(?!.*provider)).*[.]js$/ );
     });
   }
 	/*
@@ -656,7 +656,7 @@ module.exports = function ( grunt ) {
    */
   function filterForVendorJS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /^.*vendor.*$/ );
+      return file.match( /^.*vendor.*[.]js$/ );
     });
   }
 
