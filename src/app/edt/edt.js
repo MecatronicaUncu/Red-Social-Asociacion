@@ -17,10 +17,10 @@
           }
         });
       }])
-      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, $timeout, $http) {
+      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, REMOTE, $timeout, $http) {
 
         $scope.partSearchResults = [];
-
+        $scope.dummy = [];
         $scope.whatIdToSearch = 0;
         $scope.whoIdToSearch = 0;
         
@@ -72,7 +72,7 @@
             console.log($scope.newAct.whatId);
             console.log($scope.newAct.whoId);
 
-            $http({method: 'GET', url: session.host + ':3000/acttypes', params: {partLabel: asoc.instLabel}})
+            $http({method: 'GET', url: REMOTE+'/acttypes', params: {partLabel: asoc.instLabel}})
                 .success(function (acttypes) {
                     $scope.actTypes = acttypes;
                     $scope.newAct.periods.forEach(function (period) {
@@ -133,11 +133,11 @@
 
         //Necesita translations..
         $scope.getAssociations = function () {
-            $http({method: 'GET', url: session.host + ':3000/asocs'})
+            $http({method: 'GET', url: REMOTE+'/asocs'})
                 .success(function (asocs) {
                     //TODO: Es necesario? el hecho de que sea PRIVATE la última siempre,
                     //para que buscar el label si sabemos que es PRIVATE?
-                    asocs[asocs.length - 1].instName = session.translation.labels[asocs[asocs.length - 1].instName];
+                    asocs[asocs.length - 1].instName = session.getTranslation().labels[asocs[asocs.length - 1].instName];
                     $scope.actAsocs = asocs;
                     $scope.selectAsoc(asocs[0]);
                     return;
@@ -160,7 +160,7 @@
                 $scope.partSearchResults = [];
                 return;
             }
-            var path = session.host + ':3000/search?what=Parts&term=' + $scope.partSearchTerm;
+            var path = REMOTE+'/search?what=Parts&term=' + $scope.partSearchTerm;
             $http({method: 'GET', url: path})
             .success(function (results) {
                 console.log(results);
@@ -314,7 +314,7 @@
             $scope.setDates();
             $scope.newActCollapse = true;
 
-            $scope.whoIdToSearch = session.getId();
+            $scope.whoIdToSearch = session.getID();
             $scope.whatIdToSearch = 0;
 
             $scope.edtGetTimes();
@@ -379,7 +379,7 @@
 
             //w = Math.ceil(w);	
             var info = ['<div style="padding-left: 3px; height: 100%">',
-                '<div style="height: 20%">' + session.translation.labels[timejson.type].substr(0, 15) + '</div>',
+                '<div style="height: 20%">' + session.getTranslation().labels[timejson.type].substr(0, 15) + '</div>',
                 '<div style="height: 20%">' + timejson.from + ' - ' + timejson.to + '</div>',
                 //TODO!!
                 //'<div style="height: 20%">' + timejson.where + '</div>',
@@ -619,6 +619,10 @@
         /**
          * Consulta al servidor la configuración del calendario, i.e colores y límites horarios.
          */
+        $scope.$on('edt:gotConfig',function(e,config){
+          $scope.config = config;
+        });
+        /*
         $scope.edtGetConfig = function () {
 
             edt.getConfig(function (err, config) {
@@ -626,12 +630,16 @@
                     console.log(err);
                     return;
                 } else {
-                    $scope.config = config;
-                    return;
-                    //$scope.timeplot($scope.times, $scope.config);
+                  if($scope.config == null) {
+                    $scope.config = {limits: {}, colors: {}};
+                  }
+                  $scope.config = config;
+                  return;
+                  //$scope.timeplot($scope.times, $scope.config);
                 }
             });
         };
+        */
 
         /**
          * Guarda en el objeto que representa la nueva actividad a guardar la fecha
@@ -691,20 +699,20 @@
                 if ($scope.getminutes(time.from) < $scope.getminutes($scope.config.limits.start)) {
                     msg = 'La hora inicial no puede ser anterior al inicio general! (' +
                         $scope.config.limits.start + ') en Periodo ' + (periodIndex + 1) + ', ' +
-                        session.translation.edt[$scope.daysToShow[dayIndex].name] +
+                        session.getTranslation().edt[$scope.daysToShow[dayIndex].name] +
                         ', Horario ' + (timeIndex + 1);
                 } else if ($scope.getminutes(time.to) > $scope.getminutes($scope.config.limits.end)) {
                     msg = 'La hora final no puede ser posterior al fin general! (' +
                         $scope.config.limits.end + ') en Periodo ' + (periodIndex + 1) + ', ' +
-                        session.translation.edt[$scope.daysToShow[dayIndex].name] +
+                        session.getTranslation().edt[$scope.daysToShow[dayIndex].name] +
                         ', Horario ' + (timeIndex + 1);
                 } else if ($scope.getminutes(time.from) > $scope.getminutes(time.to)) {
                     msg = 'La hora inicial no puede ser posterior que la final! en Periodo ' + (periodIndex + 1) + ', ' +
-                        session.translation.edt[$scope.daysToShow[dayIndex].name] +
+                        session.getTranslation().edt[$scope.daysToShow[dayIndex].name] +
                         ', Horario ' + (timeIndex + 1);
                 } else if ($scope.getminutes(time.from) === $scope.getminutes(time.to)) {
                     msg = 'La hora inicial y final no pueden ser iguales! en Periodo ' + (periodIndex + 1) + ', ' +
-                        session.translation.edt[$scope.daysToShow[dayIndex].name] +
+                        session.getTranslation().edt[$scope.daysToShow[dayIndex].name] +
                         ', Horario ' + (timeIndex + 1);
                 } else {
                     $('#WrongAct').prop('hidden', true);
@@ -785,24 +793,24 @@
                     if (error){
                         return;
                     }
-                    if (this.w == this.wfrom && (dayIndex + 1 < this.period.from.day)){
+                    if (w == wfrom && (dayIndex + 1 < period.from.day)){
                         return;
                     }
                     if ($scope.newActDays[periodIndex][dayIndex]) {
-                        error = $scope.checkTimes(this.periodIndex, dayIndex);
+                        error = $scope.checkTimes(periodIndex, dayIndex);
                         day.times.forEach(function (time) {
-                            this.actsToCreate.push({
+                            actsToCreate.push({
                                 day: dayIndex + 1,
-                                week: this.weekToInsert,
-                                year: this.yearToInsert,
-                                type: this.period.type,
-                                desc: this.period.desc,
+                                week: weekToInsert,
+                                year: yearToInsert,
+                                type: period.type,
+                                desc: period.desc,
                                 whatId: $scope.newAct.whatId,
                                 whoId: $scope.newAct.whoId,
                                 whatName: $scope.newAct.whatName,
                                 whoName: $scope.newAct.whoName,
-                                from: this.time.from,
-                                to: this.time.to,
+                                from: time.from,
+                                to: time.to,
                                 timezone: $scope.newAct.timezone
                             });
                         });
@@ -815,8 +823,7 @@
                         weekToInsert = w - $scope.weeksInYear();
                         yearToInsert = toYear;
                     }
-
-                    period.days.forEach(pushDayTimes,this);
+                    period.days.forEach(pushDayTimes);
                     if (error){
                         break;
                     }
@@ -926,16 +933,16 @@
             $scope.newAct.periods = [];
             $scope.newAct.whatId = $scope.actAsocs[0].instID;
             $scope.newAct.whatName = $scope.actAsocs[0].instName;
-            $scope.newAct.whoId = session.getId();
-            $scope.newAct.whoName = session.profile.firstName[0] + '. ' + session.profile.lastName;
+            $scope.newAct.whoId = session.getID();
+            $scope.newAct.whoName = session.getProfile().firstName[0] + '. ' + session.getProfile().lastName;
 
             if($stateParams.id){
                 $scope.whatIdToSearch = $stateParams.id;
                 $scope.whoIdToSearch = $stateParams.id;
             }else{
                 $scope.whatIdToSearch = 0;
-                if(session.loggedIn){
-                    $scope.whoIdToSearch = session.getId();
+                if(session.isLoggedIn()){
+                    $scope.whoIdToSearch = session.getID();
                 }else{
                     $scope.whoIdToSearch = 0;
                 }
@@ -988,50 +995,51 @@
         };
 
         $scope.$on('login', function () {
-            $scope.newAct.whoId = session.getId();
+            $scope.newAct.whoId = session.getID();
             if($stateParams.id){
                 $scope.whoIdToSearch = $stateParams.id;
             }else{
-                $scope.whoIdToSearch = session.getId();
+                $scope.whoIdToSearch = session.getID();
             }
         });
 
         $scope.$on('gotSubscriptions', function () {
-            $scope.subscriptions = session.subscriptions;
+            $scope.subscriptions = session.getSubscriptions();
             console.log($scope.subscriptions);
         });
 
         $scope.$on('gotTranslation', function () {
-            $scope.translation = session.translation;
+            $scope.translation = session.getTranslation();
             $scope.getAssociations();
         });
 
         $scope.$on('gotProfile', function () {
-            $scope.newAct.whoName = session.profile.firstName[0] + '. ' + session.profile.lastName;
+            $scope.newAct.whoName = session.getProfile().firstName[0] + '. ' + session.getProfile().lastName;
         });
 
-        if(session.subscriptions){
-            $scope.subscriptions = session.subscriptions;
+        if(session.getSubscriptions()){
+            $scope.subscriptions = session.getSubscriptions();
         }
 
-        if (session.loggedIn) {
-            $scope.newAct.whoId = session.getId();
+        if (session.isLoggedIn()) {
+            $scope.newAct.whoId = session.getID();
             if($stateParams.id){
                 $scope.whoIdToSearch = $stateParams.id;
             }else{
-                $scope.whoIdToSearch = session.getId();
+                $scope.whoIdToSearch = session.getID();
             }
         }
 
-        if (session.translation) {
-            $scope.translation = session.translation;
-            $scope.newAct.whatName = session.translation.labels['PRIVATE'];
+        if (session.getTranslation()) {
+            $scope.translation = session.getTranslation();
+            $scope.newAct.whatName = session.getTranslation().labels['PRIVATE'];
 
             $scope.getAssociations();
         }
 
-        if (session.profile) {
-            $scope.newAct.whoName = session.profile.firstName[0] + '. ' + session.profile.lastName;
+        if (session.getProfile()) {
+            var profile = session.getProfile();
+            $scope.newAct.whoName = profile.firstName[0] + '. ' + profile.lastName;
         }
 
         /**
@@ -1056,7 +1064,12 @@
                 $scope.actCats = {};
 
                 $scope.config = {limits: {}, colors: {}};
-                $scope.edtGetConfig();
+                //$scope.edtGetConfig();
+                edt.updateConfig(function(err,config){
+                  if(err == null){
+                    $scope.config = config;
+                  }
+                });
 
                 /*	Cargar las semanas en el año, sólo una vez al cargar el controlador
                  */

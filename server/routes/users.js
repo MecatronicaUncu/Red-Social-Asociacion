@@ -249,7 +249,7 @@ exports.getEdtConfig = function(req, res, next){
         }
         else{
             console.log(config);
-            res.status(200).send(config);
+            res.status(200).send({config: JSON.parse(config)});
         }
     });  
 };
@@ -351,7 +351,7 @@ exports.getTimes = function(req, res, next){
             return;
         } else {
             console.log(times);
-            res.status(200).send(times);
+            res.status(200).send({times: times});
             return;
         }
     });

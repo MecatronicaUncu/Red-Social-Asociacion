@@ -1,0 +1,13 @@
+{
+	"limits" : {
+        	"start" : "08h00",
+		"end" : "22h00"
+	},
+	"colors" : {
+		"CLASE" : "#B1C3F9",
+		"EXAMEN_PARCIAL" : "#9F8186",
+		"LECTURE" : "#FFED70",
+		"TP" : "#FF8680",
+		"NOT_SPECIFIED" : "#F7F5E4"
+	}
+}

@@ -1,6 +1,6 @@
 <div id="edt" hidden>
     <div class="edtBar" id="edtSearchBar">
-        <div class="edtSearchGroup" ng-show="newActCollapse && session.loggedIn">
+        <div class="edtSearchGroup" ng-show="newActCollapse && session.isLoggedIn()">
             <div id="edtSearchSelect" class="dropdown">
                 <button class="edtSearchBtn dropdown-toggle" data-toggle="dropdown" type="button">
                     <i id="edtSearchIcon" class="fa fa-fw fa-star"></i>
@@ -38,7 +38,7 @@
             </button>
         </div>
 
-        <div class="edtSearchGroup" ng-show="session.loggedIn">
+        <div class="edtSearchGroup" ng-show="session.isLoggedIn()">
             <button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse = !newActCollapse">
                 <i id="newActivityIcon" class="fa fa-fw" ng-class="{'fa-plus': newActCollapse, 'fa-calendar': !newActCollapse}"></i>
             </button>
@@ -146,10 +146,10 @@
                         <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">Fecha:</span>
                             <input id="newActFromDAY{{periodIndex}}" type="text" 
-                                   placeholder="Fecha" 
-                                   class="sign-input" data-parsley-ui-enabled="false" 
-                                   ng-model="dummy[periodIndex]"
-                                   ng-change="newActWhen(dummy[periodIndex], periodIndex)"
+				   placeholder="Fecha"
+				   class="sign-input" data-parsley-ui-enabled="false"
+				   ng-model="dummy[periodIndex]"
+	                           ng-change="newActWhen(dummy[periodIndex], periodIndex)"
                                    ng-required="daySelected(periodIndex)">
                         </div>
                     </div>
