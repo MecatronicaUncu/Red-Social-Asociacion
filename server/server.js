@@ -28,23 +28,25 @@ var express = require('express')
     //, upload = multer({dest: path.join(__dirname, 'routes/upload')})
     , cookieParser = require('cookie-parser')
     , serveStatic = require('serve-static')
-    , errorHandler = require('errorhandler');
+    , errorHandler = require('errorhandler')
+    , cors = require('cors');
 
 var app = express();
 
 
 /******************************************************************************/
-/*                    Cross domain configurations                             */
+/*                    CORS Whitelist & Options                                */
 /******************************************************************************/
-var allowCrossDomain = function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "https://127.0.0.1:3000");
-    //res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
-    //res.header("Access-Control-Allow-Headers", "DNT, X-Mx-ReqToken, Keep-Alive, User-Agent, If-Modified-Since, Cache-Control, Origin, X-Requested-With, Content-Type,Accept,Authorization,X-HTTP-Method-Override");
-    res.header('Access-Control-Allow-Credentials', true);
-    res.header('Access-Control-Max-Age', 3600);
-    next();
+var whiteList=['https://127.0.0.1:3000', 'https://localhost:3000'];
+var corsOptions = {
+  origin: function(origin, callback){
+    var originIsWhitelisted = whiteList.indexOf(origin) !== -1;
+    callback(null, originIsWhitelisted);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', /*'PUT', 'DELETE',*/ 'OPTIONS'],
+  //allowedHeaders: 
+  maxAge: 3600
 };
 
 
@@ -87,9 +89,9 @@ app.use(cookieParser("se3vf65dse"));
 //app.use(cookie2angular);
 
 // Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. 
-app.use(multer({dest: path.join(__dirname, 'routes/upload')}).single('image'))
+app.use(multer({dest: path.join(__dirname, 'routes/upload')}).single('image'));
 
-app.use(allowCrossDomain);
+app.use(cors(corsOptions));
 
 app.use(express.static(path.join(__dirname, '../build/src/app')));
 app.use(express.static(path.join(__dirname, '../build')));

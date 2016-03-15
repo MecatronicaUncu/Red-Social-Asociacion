@@ -1007,11 +1007,16 @@ exports.changeProperty = function (req, res, next) {
 
     if (tmp.hasOwnProperty('password')) {
         next();
+        return;
     }
+
     if(req.id && tmp.field && tmp.value)
         ;
     else
+    {
         res.sendStatus(401);
+        return;
+    }
     
     User.changeProperty(tmp.field, tmp.value, req.id, function(err){
         if(err){
