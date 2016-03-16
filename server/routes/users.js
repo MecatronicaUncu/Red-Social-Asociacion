@@ -13,8 +13,9 @@ exports.CookKeys = keys;
 var fs = require('fs'); //FILESYSTEM
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
-var templatesDir   = path.resolve(path.join(__dirname, '../templates'));
+var templatesDir = path.resolve(path.join(__dirname, '../templates'));
 var emailTemplates = require('email-templates');
+var domain="https://127.0.1.1:3000";
 
 /******************************************************************************/
 /*                          LOAD TRANSLATIONS                                 */
@@ -192,7 +193,7 @@ var sendActivationEmail = function(email,hash){
             var locals = {
               email: email,
               //hash: hash,
-              link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hashRep
+              link: domain+'/activate?email='+email+'&hash='+hashRep
             };
 
             // Send a single email
@@ -208,17 +209,6 @@ var sendActivationEmail = function(email,hash){
                   html: html
                   // generateTextFromHTML: true,
                 }, function(err, responseStatus) {
-                    if (err) {
-                        console.log(err);
-                        return false;
-                    } else {
-                        transport.sendMail({
-                        from: 'Admin <admin@admin.com>',
-                        to: locals.email,
-                        subject: 'Activacion',
-                        html: html,
-                        // generateTextFromHTML: true,
-                    }, function (err, responseStatus) {
                         if (err) {
                             console.log(err);
                             return false;
@@ -230,8 +220,6 @@ var sendActivationEmail = function(email,hash){
                 });
             }
         });
-        }
-    });
     return true;
 };
 
