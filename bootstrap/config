@@ -128,30 +128,28 @@ sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD
 # Set host location in app.js
 if [[ $# -eq 0 ]]
 then
-    hosts=("This computer only" "Local network" "The Internet")
+    hosts=("Local network" "The Internet")
     PS3="From where will Red-Social-Asociacion will be accessed? "
     echo -e $Y_COL
     select host in "${hosts[@]}"
     do
         case "$REPLY" in
-		1 ) loggerGreen "\nSetting host location to localhost...\n"; sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/localhost:3000')/" ../src/app/app.js; break;;
-            2 ) loggerGreen "\nSetting host location to this host LAN ip...\n"; sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//'):3000')/" ../src/app/app.js;break;;
-            3 ) loggerYellow "\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$SITE')/" ../src/app/app.js; break;;
+            1 ) loggerGreen "\nSetting host location to this host LAN ip...\n"; sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//'):3000')/" ../src/app/app.js; sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$(hostname -i | sed -e 's/[[:blank:]]//'):3000\";/" ../server/routes/users.js;break;;
+            2 ) loggerYellow "\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$SITE')/" ../src/app/app.js;  sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$SITE\";/" ../server/routes/users.js;break;;
             * ) loggerRed "Invalid input, try again...";continue;;
         esac
     done
 else
     HOST_TYPE="$2"
-    if [[ "$HOST_TYPE" = "LOC" ]]
-    then
-        sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/localhost:3000')/" ../src/app/app.js
-    elif [[ "$HOST_TYPE" = "LAN" ]]
+    if [[ "$HOST_TYPE" = "LAN" ]]
     then
         sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//'):3000')/" ../src/app/app.js
+        sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$(hostname -i | sed -e 's/[[:blank:]]//'):3000\";/" ../server/routes/users.js
     elif [[ "$HOST_TYPE" = "NET" ]]
     then
         SITE="$3"
-	sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$SITE')/" ../src/app/app.js
+		sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$SITE')/" ../src/app/app.js
+		sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$SITE\";/" ../server/routes/users.js
     fi
 fi
 
