@@ -13,8 +13,8 @@ exports.CookKeys = keys;
 var fs = require('fs'); //FILESYSTEM
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
-var templatesDir   = path.resolve(path.join(__dirname, '../templates'));
-var emailTemplates = require('email-templates');
+var EmailTemplate = require('email-templates').EmailTemplate;
+var domain="https://127.0.1.1:3000";
 
 /******************************************************************************/
 /*                          LOAD TRANSLATIONS                                 */
@@ -165,74 +165,58 @@ exports.extractCookieData = function (req, res, next) {
  * @param {string} hash: The user's hashed password
  * @returns {bool} Success state.
  */
-var sendActivationEmail = function(email,hash){
+var sendActivationEmail = function(email,hash,name,lastname){
+	
+	var templatesDir = path.resolve(path.join(__dirname, '../templates/email_activacion/'));
+	var emailTemplate = new EmailTemplate(templatesDir);
+	
+	// Prepare nodemailer transport object
+	var transport = nodemailer.createTransport({
+		service: "Gmail",
+		auth: {
+			user: "samplesample978@gmail.com",
+			pass: "sampleMail"
+		}
+	});
+	
+	//URL encoding
+    var hashRep = hash.replace("+","%2B");
+	
+	// An example users object with formatted email function
+	var locals = {
+	  email: email,
+	  //hash: hash,
+	  link: domain+'/activate?email='+email+'&hash='+hashRep,
+	  name: name,
+	  lastname: lastname
+	};
+	
+	// Send a single email
+	emailTemplate.render(locals, function (err, results) {
+	  if (err) {
+		console.error(err);
+		return;
+	  }
 
-    emailTemplates(templatesDir, function (err, template) {
-
-        if (err) {
-            console.log(err);
-            return false;
-        } else {
-
-            // ## Send a single email
-
-            // Prepare nodemailer transport object
-            var transport = nodemailer.createTransport("SMTP", {
-                service: "Gmail",
-                auth: {
-                    user: "samplesample978@gmail.com",
-                    pass: "sampleMail"
-                }
-            });
-            
-            //URL encoding
-            var hashRep = hash.replace("+","%2B");
-            
-            // An example users object with formatted email function
-            var locals = {
-              email: email,
-              //hash: hash,
-              link: 'https://127.0.0.1:3000/activate?email='+email+'&hash='+hashRep
-            };
-
-            // Send a single email
-            template('email_activacion', locals, function(err, html, text) {
-              if (err) {
-                console.log(err);
-                return false;
-              } else {
-                transport.sendMail({
-                  from: 'Admin <admin@admin.com>',
-                  to: locals.email,
-                  subject: 'Activacion',
-                  html: html
-                  // generateTextFromHTML: true,
-                }, function(err, responseStatus) {
-                    if (err) {
-                        console.log(err);
-                        return false;
-                    } else {
-                        transport.sendMail({
-                        from: 'Admin <admin@admin.com>',
-                        to: locals.email,
-                        subject: 'Activacion',
-                        html: html,
-                        // generateTextFromHTML: true,
-                    }, function (err, responseStatus) {
-                        if (err) {
-                            console.log(err);
-                            return false;
-                        } else {
-                            console.log(responseStatus.message);
-                        }
-                    });
-                }
-                });
-            }
-        });
-        }
-    });
-    return true;
+	  transport.sendMail({
+		from: 'Admin <admin@admin.com>',
+		to: locals.email,
+		subject: 'Activacion',
+		html: results.html,
+		attachments: [{
+						filename: 'pubMECUNCU.jpg',
+						path: path.resolve(path.join(templatesDir, 'pubMECUNCU.jpg')),
+						cid: 'unique@gmail' //same cid value as in the html img src
+					}]
+	  }, function (err, responseStatus) {
+		if (err) {
+		  console.error(err)
+		  return;
+		}
+		console.log(responseStatus.message);
+		return;
+	  })
+  })
 };
 
 /******************************************************************************/
@@ -691,8 +675,7 @@ exports.activate = function (req, res, next) {
                 res.status(401).send('Something went wrong');
                 return;
             }
-            //res.redirect(200,'http://localhost:9000/#/profile')
-            res.status(200).send("Gracias. Recarge la pagina https://127.0.0.1:3000/#/ para iniciar sesion");
+            res.status(200).send('<html><head><meta http-equiv="refresh" content="3;url='+domain+'" /></head><body><h1>Su cuenta ha sido activada. Redireccionando en 3 segundos...</h1></body></html>');
             return;
         });
     });
@@ -867,18 +850,15 @@ exports.signup = function (req, res, next) {
             res.status(400).send('email taken');
             return;
         } else if (idNEO) {
-            if(!sendActivationEmail(email,tempPass['pass'])){
-                res.status(400).send('Activation mail error');
-                return;
-            }
-            console.log(idNEO);
-            res.status(200).send({idNEO: idNEO});
-            return;
+			sendActivationEmail(email,tempPass['pass'],nodeData['firstName'],nodeData['lastName']);
+			res.status(200).send({idNEO: idNEO});
+			return;
         } else {
             res.status(500).send('Database error');
             return;
         }
     });
+    
 };
 
 /**

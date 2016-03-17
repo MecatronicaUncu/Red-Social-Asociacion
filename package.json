@@ -19,7 +19,7 @@
     "cors": "^2.7.1",
     "cozy-ical": "^1.1.6",
     "ejs": ">=0.0.1",
-    "email-templates": "^1.2.0",
+    "email-templates": "^2.2.0",
     "errorhandler": "^1.4.2",
     "express": "^4.8.0",
     "grunt-contrib-sass": "^0.8.1",
@@ -27,7 +27,7 @@
     "morgan": "^1.6.1",
     "multer": "^1.1.0",
     "neo4j": "~1.1",
-    "nodemailer": "~0.7.1",
+    "nodemailer": "~2.3.0",
     "serve-favicon": "^2.3.0",
     "serve-static": "^1.10.0"
   },
