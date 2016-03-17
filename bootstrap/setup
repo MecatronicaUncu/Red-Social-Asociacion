@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# Get program arguments
+VERBOSE=false
+while getopts ":v" opt; do
+  case $opt in
+    v)
+      echo "Verbose mode active" >&2
+      VERBOSE=true
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+
 DEPS="npm
 gem
 git"
@@ -12,7 +27,10 @@ NEO4J_VER=2.3.0
 
 TMP_DOWNLOAD_DIR=$MY_PATH/tmp_download_dir
 NEO4J_FILE=$TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER-unix.tar.gz
-LOG_FILE=$MY_PATH/setup.log
+
+if [ "$VERBOSE" = false ]; then
+  LOG_FILE=$MY_PATH/setup.log
+fi
 
 BIN_DIR=../server/bin
 LOCATION_FILE=$MY_PATH/rightLocation
@@ -25,12 +43,16 @@ DEF_COL="\e[39m"
 
 function loggerGreen {
 	echo -e $G_COL$1$DEF_COL
-	echo -e $1 >> $LOG_FILE
+  if [ "$VERBOSE" = false ]; then
+    echo -e $1 >> $LOG_FILE
+  fi
 }
 
 function loggerRed {
 	echo -e >&2 $R_COL$1$DEF_COL
-	echo -e $1 >> $LOG_FILE
+  if [ "$VERBOSE" = false ]; then
+    echo -e $1 >> $LOG_FILE
+  fi
 }
 
 #----------------------------------------#
@@ -48,7 +70,9 @@ cd "$MY_PATH"
 #----------------------------------------#
 
 # Clean log file
-echo "" > $LOG_FILE
+if [ "$VERBOSE" = false ]; then
+  echo "" > $LOG_FILE
+fi
 
 echo -e $G_COL$CONS_DIV"\n\n **Setup script for Red-Social-Asociacion**\n
 Please note that the following dependencies are needed before
@@ -84,13 +108,21 @@ if command -v bower >/dev/null 2>&1; then
    loggerGreen "bower installed, skipping...\n";
 else
   loggerGreen "Installing bower with npm (globally)...\n";
-  npm install -g bower >> $LOG_FILE 2>&1 || { loggerRed "npm bower failed!. See setup.log for details"; exit 1; }
+  if [ "$VERBOSE" = false ]; then
+    npm install -g bower >> $LOG_FILE 2>&1 || { loggerRed "npm bower failed!. See setup.log for details"; exit 1; }
+  else
+    npm install -g bower  || { loggerRed "npm bower failed!. See setup.log for details"; exit 1; }
+  fi
 fi
 
 #----------------------------------------#
 # Install node-neo4j library
 loggerGreen "Installing node-neo4j library...\n"
-npm install neo4j >> $LOG_FILE 2>&1 || { loggerRed "npm neo4j failed!. See setup.log for details"; exit 1; }
+if [ "$VERBOSE" = false ]; then
+  npm install neo4j >> $LOG_FILE 2>&1 || { loggerRed "npm neo4j failed!. See setup.log for details"; exit 1; }
+else
+  npm install neo4j || { loggerRed "npm neo4j failed!. See setup.log for details"; exit 1; }
+fi
 
 #----------------------------------------#
 # Download Neo4J
@@ -98,11 +130,19 @@ loggerGreen "Installing Neo4J Engine...\n"
 cd $TMP_DOWNLOAD_DIR
 if [ ! -e $NEO4J_FILE ] || [ ! -f $NEO4J_FILE ]
 then
+  if [ "$VERBOSE" = false ]; then
     wget -a $LOG_FILE -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
+  else
+    wget -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
+  fi
 fi
 
 # untar and move
-tar -xvf neo4j-community-$NEO4J_VER-unix.tar.gz >> $LOG_FILE 2>&1
+if [ "$VERBOSE" = false ]; then
+  tar -xvf neo4j-community-$NEO4J_VER-unix.tar.gz >> $LOG_FILE 2>&1
+else
+  tar -xvf neo4j-community-$NEO4J_VER-unix.tar.gz
+fi
 cd $MY_PATH
 
 mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
@@ -115,19 +155,32 @@ mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
 loggerGreen "Installing Sass and Compass...\n"
 for rprog in "sass" "compass"
 do
-  gem install $rprog >> $LOG_FILE 2>&1 || { loggerRed 'gem $rprog failed'; exit 1; }
+  if [ "$VERBOSE" = false ]; then
+    gem install $rprog >> $LOG_FILE 2>&1 || { loggerRed 'gem $rprog failed'; exit 1; }
+  else
+    gem install $rprog || { loggerRed 'gem $rprog failed'; exit 1; }
+  fi
 done
 
 #----------------------------------------#
 # Get npm and bower dependencies
 cd ..
 loggerGreen "Installing Npm and Bower dependencies...\n"
-npm install . >> $LOG_FILE 2>&1
-bower install -F >> $LOG_FILE 2>&1
+if [ "$VERBOSE" = false ]; then
+  npm install . >> $LOG_FILE 2>&1
+  bower install -F >> $LOG_FILE 2>&1
+else
+  npm install .
+  bower install
+fi
 
 # Install grunt-cli
 loggerGreen "Installing grunt-cli...\n"
-npm install -g grunt-cli >> $LOG_FILE 2>&1
+if [ "$VERBOSE" = false ]; then
+  npm install -g grunt-cli >> $LOG_FILE 2>&1
+else
+  npm install -g grunt-cli
+fi
 cd $MY_PATH
 
 #----------------------------------------#
