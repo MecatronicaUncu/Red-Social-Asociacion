@@ -5,7 +5,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(
     process.env['NEO4J_URL'] ||
     process.env['GRAPHENEDB_URL'] ||
-    'http://neo4j:neo@localhost:7474'
+    'http://neo4j:franco@localhost:4550'
 );
 
 var maxNode = 15;
@@ -707,8 +707,6 @@ User.signup = function (nodeData, callback) {
 	'RETURN ID(user) AS idNEO, user.c AS c'
     ].join('\n');
 
-    console.log(query);
-
     db.query(query, null, function (err, results) {
         if (err){
             throw err;
@@ -865,7 +863,7 @@ User.deleteUser = function (userId, callback) {
     var query = [
         'MATCH (user1:User)',
         'WHERE ID(user1)='+userId.toString(),
-        'MATCH (user1)-[rel:FRIENDS]-()',
+        'OPTIONAL MATCH (user1)-[rel:FRIENDS]-()',
         'DELETE rel,user1'
     ].join('\n');
     
