@@ -66,23 +66,25 @@
 
         //necesita llamada a getAssociations
         $scope.selectAsoc = function (asoc) {
+          console.log(asoc);
             $scope.newAct.whatId = asoc.instID;
             $scope.newAct.whatName = asoc.instName;
             
             console.log($scope.newAct.whatId);
             console.log($scope.newAct.whoId);
 
-            $http({method: 'GET', url: REMOTE+'/acttypes', params: {partLabel: asoc.instLabel}})
-                .success(function (acttypes) {
-                    $scope.actTypes = acttypes;
-                    $scope.newAct.periods.forEach(function (period) {
-                        period.type = $scope.actTypes[0].label;
-                    });
-                    return;
-                })
-                .error(function () {
-                    return;
-                });
+            edt.getActivityTypes(asoc.label, function(err, activityTypes){
+              if(err){
+                console.log('Error getting activity types: ',err);
+              }else{
+                $scope.actTypes = activityTypes;
+                if($scope.actTypes.length > 0){
+                  $scope.newAct.periods.forEach(function (period) {
+                    period.type = $scope.actTypes[0].label;
+                  });
+                }
+              }
+            });
         };
 
         $scope.selectActType = function (typeLabel, periodIndex) {
@@ -100,8 +102,8 @@
                 $scope.newAct.periods[periodIndex].desc = '';
                 $scope.newAct.periods[periodIndex].days = [{day: 'lu', times: [{}]},
                     {day: 'ma', times: [{}]}, {day: 'mi', times: [{}]}, {day: 'ju', times: [{}]},
-                    {day: 'vi', times: [{}]}, {day: 'sa', times: [{}]}];
-                $scope.newActDays.push([false, false, false, false, false, false]);
+                    {day: 'vi', times: [{}]}, {day: 'sa', times: [{}]}, {day: 'do', times: [{}]}];
+                $scope.newActDays.push([false, false, false, false, false, false, false]);
                 $scope.newAct.periods[periodIndex].repeat = 'n';
                 $scope.newAct.periods[periodIndex].type = ($scope.actTypes.length > 0) ? $scope.actTypes[0].label : 'NOT_SPECIFIED';
                 //TODO: Se puede hacer mas elegante esto?
@@ -133,18 +135,16 @@
 
         //Necesita translations..
         $scope.getAssociations = function () {
-            $http({method: 'GET', url: REMOTE+'/asocs'})
-                .success(function (asocs) {
-                    //TODO: Es necesario? el hecho de que sea PRIVATE la última siempre,
-                    //para que buscar el label si sabemos que es PRIVATE?
-                    asocs[asocs.length - 1].instName = session.getTranslation().labels[asocs[asocs.length - 1].instName];
-                    $scope.actAsocs = asocs;
-                    $scope.selectAsoc(asocs[0]);
-                    return;
-                })
-                .error(function () {
-                    return;
-                });
+          edt.getAssociations(function(err,asocs){
+            if(err){
+              return;
+            } else {
+              asocs[asocs.length - 1].instName = session.getTranslation().labels[asocs[asocs.length - 1].instName];
+              $scope.actAsocs = asocs;
+              $scope.selectAsoc(asocs[0]);
+              return;
+            }
+          });
         };
 
         $scope.partSearch = function () {
@@ -360,6 +360,10 @@
             {name: 'sa',
                 date: '',
                 collapsed: true
+            },
+            {name: 'do',
+              date: '',
+              collapsed: true
             }];
 
         /**
@@ -622,24 +626,6 @@
         $scope.$on('edt:gotConfig',function(e,config){
           $scope.config = config;
         });
-        /*
-        $scope.edtGetConfig = function () {
-
-            edt.getConfig(function (err, config) {
-                if (err) {
-                    console.log(err);
-                    return;
-                } else {
-                  if($scope.config == null) {
-                    $scope.config = {limits: {}, colors: {}};
-                  }
-                  $scope.config = config;
-                  return;
-                  //$scope.timeplot($scope.times, $scope.config);
-                }
-            });
-        };
-        */
 
         /**
          * Guarda en el objeto que representa la nueva actividad a guardar la fecha
@@ -748,7 +734,7 @@
             date = $scope.DobToYWDarr(date);
             
             // Evita la necesidad de checkboxes para un sólo día
-            $scope.newActDays[periodIndex] = [false,false,false,false,false,false];
+            $scope.newActDays[periodIndex] = [false,false,false,false,false,false,false];
             $scope.newActDays[periodIndex][date[2]-1] = true;
             
             $scope.newAct.periods[periodIndex].from = {year: date[0], week: date[1], day: date[2]};
@@ -1064,7 +1050,6 @@
                 $scope.actCats = {};
 
                 $scope.config = {limits: {}, colors: {}};
-                //$scope.edtGetConfig();
                 edt.updateConfig(function(err,config){
                   if(err == null){
                     $scope.config = config;

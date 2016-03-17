@@ -56,6 +56,29 @@ User.isAdmin = function(id, callback){
 /*                          GET METHODS                                       */
 /******************************************************************************/
 
+User.getActivityTypes = function(parent, callback){
+  
+  var query = [
+    'MATCH (a:nodeType)',
+    'WHERE ANY (p IN a.parent WHERE p IN ["ALL", "'+parent+'"])',
+    'RETURN a AS activityType, ID(a) AS idNEO'
+  ].join('\n');
+
+  db.query(query, null, function(err, res) {
+    if(err){
+      throw err;
+      return callback(err);
+    } else {
+      var activityTypes = [];
+      res.forEach(function(type){
+        type.activityType._data.data['idNEO']=type.idNEO;
+        activityTypes.push(type.activityType._data.data);
+      });
+      return callback(null, activityTypes);
+    }
+  });
+};
+
 User.getTimes = function(timeData, callback){
     
     var query = [
@@ -85,7 +108,7 @@ User.getAsocs = function(idNEO, callback){
     
     var query = [
         'MATCH (u:User)-[r]->(i) WHERE ID(u)='+idNEO,
-        'AND NOT TYPE(r) IN ["ADMINS","SUBSCRIBED","PARTOF"]',
+        'AND NOT TYPE(r) IN ["ADMINS","SUBSCRIBED","PARTOF","FRIENDS"]',
         'RETURN TYPE(r) as reltype, LABELS(i) AS instLabel, ID(i) AS instID, i.name AS instName'
     ].join('\n');
 

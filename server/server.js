@@ -107,7 +107,7 @@ if('development' == app.get('env')){
 /******************************************************************************/
 
 /****************************    EDT REQUESTS   *******************************/
-app.get('/acttypes', mongo.getTypes);
+app.get('/acttypes', users.extractCookieData, users.getActivityTypes);
 app.get('/times', users.getTimes);
 app.get('/edtconfig', users.getEdtConfig);
 app.get('/edtplaces', mongo.getPlaces);

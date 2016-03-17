@@ -357,6 +357,29 @@ exports.getTimes = function(req, res, next){
     });
 };
 
+exports.getActivityTypes = function (req, res, next) {
+
+  if (!req.id) {
+    res.status(401).send('Unauthorized');
+    return;
+  } else if (!req.query.parent) {
+    res.status(400).send('Missing parent');
+    return;
+  }
+
+  User.getActivityTypes(req.query.parent, function (err, activityTypes) {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error');
+      return;
+    } else {
+      console.log(activityTypes);
+      res.status(200).send({activityTypes: activityTypes});
+      return;
+    }
+  });
+};
+
 exports.getAsocs = function (req, res, next) {
 
     if (!req.id) {
@@ -371,7 +394,7 @@ exports.getAsocs = function (req, res, next) {
             return;
         } else {
             console.log(asocs);
-            res.status(200).send(asocs);
+            res.status(200).send({asocs: asocs});
             return;
         }
     });

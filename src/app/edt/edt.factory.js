@@ -34,6 +34,28 @@
           return next('Error Getting EDT Config',null);
          });
       },
+      getActivityTypes: function(parent, next){
+        $http({ method:'GET', url:REMOTE+'/acttypes',
+                params:{parent: parent}})
+        .success(function(data){
+          console.log(data.activityTypes);
+          return next(null,data.activityTypes);
+        })
+        .error(function(err){
+          return next(err);
+        });
+      },
+      getAssociations: function(next){
+        $http({method:'GET', url:REMOTE+'/asocs'})
+        .success(function(data){
+          console.log(data.asocs);
+          return next(null, data.asocs);
+        })
+        .error(function(err){
+          return next(err);
+        });
+      },
+      /*
       getPlaces: function(next){
         $http({method:'GET', url:REMOTE+'/edtplaces'})
         .success(function(data){
@@ -43,6 +65,7 @@
           return next('Error Getting EDT Places',null);
         });
       },
+      */
       newActivity: function(activities,next){
         $http({method:'POST', url:REMOTE+'/edtnewact', data:{activities:activities}})
         .success(function(){
