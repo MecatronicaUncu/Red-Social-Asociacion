@@ -675,8 +675,7 @@ exports.activate = function (req, res, next) {
                 res.status(401).send('Something went wrong');
                 return;
             }
-            //res.redirect(200,'http://localhost:9000/#/profile')
-            res.status(200).send("Gracias. Recarge la pagina https://127.0.0.1:3000/#/ para iniciar sesion");
+            res.status(200).send('<html><head><meta http-equiv="refresh" content="3;url='+domain+'" /></head><body><h1>Su cuenta ha sido activada. Redireccionando en 3 segundos...</h1></body></html>');
             return;
         });
     });
