@@ -155,10 +155,16 @@ mv $TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER $BIN_DIR
 loggerGreen "Installing Sass and Compass...\n"
 for rprog in "sass" "compass"
 do
-  if [ "$VERBOSE" = false ]; then
-    gem install $rprog >> $LOG_FILE 2>&1 || { loggerRed 'gem $rprog failed'; exit 1; }
+  isGemAvailable=$(gem list $rprog -i)
+  if [ "$isGemAvailable" = true ]; then
+    loggerGreen "$rprog gem is installed, skipping...\n"
+    continue
   else
-    gem install $rprog || { loggerRed 'gem $rprog failed'; exit 1; }
+    if [ "$VERBOSE" = false ]; then
+      gem install $rprog >> $LOG_FILE 2>&1 || { loggerRed 'gem $rprog failed'; exit 1; }
+    else
+      gem install $rprog || { loggerRed 'gem $rprog failed'; exit 1; }
+    fi
   fi
 done
 
