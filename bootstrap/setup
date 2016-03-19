@@ -181,12 +181,17 @@ else
 fi
 
 # Install grunt-cli
-loggerGreen "Installing grunt-cli...\n"
-if [ "$VERBOSE" = false ]; then
-  npm install -g grunt-cli >> $LOG_FILE 2>&1
+if command -v grunt >/dev/null 2>&1; then
+  loggerGreen "Grunt-cli installed, skipping...\n"
 else
-  npm install -g grunt-cli
+  loggerGreen "Installing grunt-cli...\n"
+  if [ "$VERBOSE" = false ]; then
+    npm install -g grunt-cli >> $LOG_FILE 2>&1
+  else
+    npm install -g grunt-cli
+  fi
 fi
+
 cd $MY_PATH
 
 #----------------------------------------#
