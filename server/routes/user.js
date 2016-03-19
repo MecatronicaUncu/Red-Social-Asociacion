@@ -5,7 +5,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(
     process.env['NEO4J_URL'] ||
     process.env['GRAPHENEDB_URL'] ||
-    'http://neo4j:neo4j@localhost:7474'
+    'http://neo4j:asoc@localhost:4550'
 );
 
 var maxNode = 15;
@@ -181,6 +181,7 @@ User.getAdminNodes = function(idNEO, callback){
         }else{
             results.forEach(function(res){
                 res.nodeData = res.nodeData._data.data;
+                res.label = res.label[0];
             });
             return callback(null, results);
         }
@@ -195,7 +196,7 @@ User.getNodeContents = function(idNEO, callback){
 		'TYPE(r) AS reltype, \'\' AS instName',
 		'UNION',
 		'MATCH (e)-[r]->(u) WHERE ID(u)='+idNEO.toString(),
-		'AND NOT TYPE(r) IN ["PARTOF","ADMINS","SUBSCRIBED"]',
+		'AND NOT TYPE(r) IN ["PARTOF","ADMINS","SUBSCRIBED","FRIENDS"]',
 		'RETURN distinct e as nodeData, ID(e) AS idNEO, LABELS(e) AS label,',
         'TYPE(r) AS reltype, \'\' AS instName'
 //		'UNION',
@@ -234,6 +235,60 @@ User.getNodeContents = function(idNEO, callback){
 		   	return callback(null, contents);
         }
      });
+};
+
+User.getNodeRelTypes = function(memberof, callback){
+
+  var query = [
+    'MATCH (part:nodeType)',
+    'WHERE NOT part.type IN ["ActivityType", "User"]',
+    'AND part.parent="'+memberof+'"',
+    'RETURN part AS nodeData'
+  ].join('\n');
+
+  db.query(query, null, function(err, results){
+    if(err){
+      throw err;
+      return callback(err);
+    }else{
+      var parts = [];
+      var rels = [];
+      
+      results.forEach(function(res){
+        res = res.nodeData._data.data;
+        if(res.label === 'User'){
+          //Handle relationships
+        } else {
+          parts.push(res);
+        }
+      });
+
+      return callback(null,parts,rels);
+    }
+  });
+};
+
+User.getNodeRelFields = function(label, callback){
+
+  var query = [
+    'MATCH (u:nodeType)',
+    'WHERE u.label="'+label+'"',
+    'RETURN u.fields AS fields'
+  ].join('\n');
+
+  db.query(query, null, function(err, results){
+    if(err){
+      throw err;
+      return callback(err);
+    }else{
+      if(results.length != 1){
+        return callback('More than one label matched!');
+      }
+      else {
+        return callback(null, results[0].fields);
+      }
+    }
+  });
 };
 
 User.getThey = function (callback) {

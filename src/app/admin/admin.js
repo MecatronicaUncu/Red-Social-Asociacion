@@ -15,17 +15,15 @@
           }
         });
       }])
-      .controller('AdminCtrl', function ($scope, session, $http) {
+      .controller('AdminCtrl', function ($scope, session, REMOTE, $http) {
 		
-		if(session.translation){
-			$scope.translation = session.translation;
+		if(session.getTranslation()){
+			$scope.translation = session.getTranslation();
 		}
 		
 		$scope.$on('gotTranslation',function(){
-			$scope.translation = session.translation;
+			$scope.translation = session.getTranslation();
 		});
-
-		$scope.translation = session.translation;
 
 		$scope.nodeRelToCreate = {};
 
@@ -61,10 +59,10 @@
 
 			$scope.nodeRelToCreate = nodetype;
 
-			$http({method:'GET', url:session.host+':3000/fields/'+nodetype.label})
+			$http({method:'GET', url:REMOTE+'/fields/'+nodetype.label})
 			.success(function(data){
 				console.log(data);
-				$scope.nodeFields = data.formFields;
+				$scope.nodeFields = data.fields;
 				return;
 			})
 			.error(function(data){
@@ -85,9 +83,9 @@
 
 			var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
 
-			$http({method:'POST', url:session.host+':3000/newrel', data:{
+			$http({method:'POST', url:REMOTE+'/newrel', data:{
 				usrID:$scope.newRel.idNEO,
-				relType:$scope.nodeRelToCreate.label,
+				relType:$scope.nodeRelToCreate.type,
 				instId:inst.idNEO}})
 			.success(function(data){
 				$scope.cancelNewNodeRel();
@@ -103,8 +101,8 @@
 		$scope.createNewPart = function(){ 
 			var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
 
-			$http({method:'POST', url:session.host+':3000/newpart', data:{
-				label:$scope.nodeRelToCreate.label,
+			$http({method:'POST', url:REMOTE+'/newpart', data:{
+				label:$scope.nodeRelToCreate.type,
 				partData:$scope.newNode,
 				instID:inst.idNEO}})
 			.success(function(data){
@@ -135,7 +133,7 @@
 		};
 
 		$scope.getNodeRelTypes = function(node){
-			$http({method:'GET', url:session.host+':3000/nodereltypes', params:{memberof:node.label}})
+			$http({method:'GET', url:REMOTE+'/nodereltypes', params:{memberof:node.label}})
 			.success(function(data){
 				console.log(data);
 				$scope.nodetypes = data.nodetypes;
@@ -146,6 +144,7 @@
 			});
 		};
 
+    //idx: indice en los labels de navegación
 		$scope.getNodeContent = function(node,idx){
 
 			$scope.cancelNewNodeRel();
@@ -154,12 +153,13 @@
 				$scope.nodeNavLevels = $scope.nodeNavLevels.slice(0,idx); 
 			}
 
-			$http({method:'GET', url:session.host+':3000/nodecontents',params:{institutionID:node.idNEO}})
+			$http({method:'GET', url:REMOTE+'/nodecontents',params:{institutionID:node.idNEO}})
 			.success(function(data){
 				console.log(data);
 				$scope.noderelToShow.parts = data.parts;
 				$scope.noderelToShow.rels = data.rels;
 				$scope.nodeNavLevels.push(node);
+        console.log($scope.nodeNavLevels[$scope.nodeNavLevels.length-1]);
 
 				$scope.getNodeRelTypes(node);
 			})
@@ -175,11 +175,11 @@
 			$scope.nodetypes = [];
 			$scope.reltypes = [];
 
-			$http({method:'GET', url:session.host+':3000/adminnodes'})
-			.success(function(adminnodes){
-				console.log(adminnodes);
+			$http({method:'GET', url:REMOTE+'/adminnodes'})
+			.success(function(data){
+				console.log(data.adminnodes);
 				$scope.noderelToShow.rels = [];
-				$scope.noderelToShow.parts = adminnodes;
+				$scope.noderelToShow.parts = data.adminnodes;
 			})
 			.error(function(data){
 				console.log('Error Getting Admin Nodes',data);
@@ -197,13 +197,13 @@
 				$scope.nodeSearchResults = [];
 				return;
 			}
-			var path = session.host+':3000/search?what=Users&term='+text+'&fnm='+text+'&lnm='+text+'&prf='+text+text+'&ema='+text;
+			var path = REMOTE+'/search?what=Users&term='+text+'&fnm='+text+'&lnm='+text+'&prf='+text+text+'&ema='+text;
 			$http({method:'GET', url:path})
 			.success(function (results){
 				console.log(results);
 				$scope.nodeSearchResults=results;
 				$scope.nodeSearchResults.forEach(function(el){
-					el['link']=session.host+':3000/usr/'+el['idNEO'].toString()+'/pic';
+					el['link']=REMOTE+'/usr/'+el['idNEO'].toString()+'/pic';
 				}); 
 			});
 		};

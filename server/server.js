@@ -4,7 +4,6 @@
 /******************************************************************************/
 var express = require('express')
     , users = require('./routes/users.js')
-    , mongo = require('./routes/mongo.js')
     , fs = require('fs')
     , http = require('http')
     , https = require('https')
@@ -110,7 +109,7 @@ if('development' == app.get('env')){
 app.get('/acttypes', users.extractCookieData, users.getActivityTypes);
 app.get('/times', users.getTimes);
 app.get('/edtconfig', users.getEdtConfig);
-app.get('/edtplaces', mongo.getPlaces);
+app.get('/edtplaces', users.getPlaces);
 app.get('/getTimesIcal', users.getTimesIcal);
 app.get('/subscriptions', users.extractCookieData, users.getSubscriptions);
 app.post('/edtnewact', users.newActivity);
@@ -154,7 +153,7 @@ app.post('/login', users.extractCookieData, users.login);
 /**************************  LOGGED USERS' REQUESTS   *************************/
 app.get('/contacts', users.extractCookieData, users.getContacts);
 app.get('/profile', users.extractCookieData, users.getProfile);
-app.get('/fields/:label', mongo.getFields);
+app.get('/fields/:label', users.extractCookieData, users.getNodeRelFields);
 app.get('/asocs', users.extractCookieData, users.getAsocs);
 app.get('/usr/:id/isFriend', users.extractCookieData, users.isFriend);
 app.post('/profilepic/:id', users.extractCookieData, users.uploadPic);
@@ -179,7 +178,7 @@ app.post('/uptprofile', users.extractCookieData, users.updateProfile);
 /******************************************************************************/
 
 /****************************  ADMINS' REQUESTS   *****************************/
-app.get('/nodereltypes', users.extractCookieData, mongo.getNodeRelTypes);
+app.get('/nodereltypes', users.extractCookieData, users.getNodeRelTypes);
 app.get('/nodecontents', users.extractCookieData, users.getNodeContents);
 app.get('/adminnodes', users.extractCookieData, users.getAdminNodes);
 app.post('/newpart', users.extractCookieData, users.newPart);

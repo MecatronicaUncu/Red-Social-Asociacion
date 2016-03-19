@@ -2,7 +2,7 @@
     <div id="newNodeBar">
         <div class="nodeSearchGroup">
             <div id="nodeTypeSelect" class="dropdown">
-                <button class="nodeSearchBtn dropdown-toggle" type="button">
+                <button class="nodeSearchBtn dropdown-toggle" data-toggle="dropdown" type="button">
                     {{translation.admin['add']}}:
                     <span class="caret"></span>
                 </button>
@@ -73,7 +73,7 @@
         <div class="wrongNodeRel" class="alert alert-danger" hidden></div>
 
         <span class="newNodeLabel">
-            {{translation.admin['create']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['in']}} {{nodeNavLevels[nodeNavLevels.length - 1].name}}</span>
+            {{translation.admin['create']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['in']}} {{nodeNavLevels[nodeNavLevels.length - 1].nodeData.name}}</span>
 
         <form id="newNodeForm" ng-submit="createNewPart()" data-parsley-validate>
             <div class="sign-input-wrap" ng-repeat="field in nodeFields">
