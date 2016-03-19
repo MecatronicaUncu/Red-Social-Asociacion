@@ -2,7 +2,6 @@
 // Routes to CRUD users.
 
 var User = require('./user.js');
-var Mongo = require('./mongo.js');
 var path = require('path');
 var cookies = require('cookies');
 var keygrip = require('keygrip');

@@ -39,7 +39,6 @@ Get Linux.
 
 1. From the `server/bin` directory:
   1. Start [neo4j](http://neo4j.org/): `./neoRun`
-  2. Start [MongoDB](http://www.mongodb.org/): `./mongoRun`
 2. From the root directory:
   1. `grunt build`
   2. `grunt express`

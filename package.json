@@ -23,7 +23,6 @@
     "errorhandler": "^1.4.2",
     "express": "^4.8.0",
     "grunt-contrib-sass": "^0.8.1",
-    "mongodb": "^1.4.19",
     "morgan": "^1.6.1",
     "multer": "^1.1.0",
     "neo4j": "~1.1",
