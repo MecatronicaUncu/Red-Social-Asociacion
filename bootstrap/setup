@@ -9,11 +9,9 @@ MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 
 NODEJS_VER=0.10
 NEO4J_VER=2.3.0
-MONGODB_VER=3.0.6
 
 TMP_DOWNLOAD_DIR=$MY_PATH/tmp_download_dir
 NEO4J_FILE=$TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER-unix.tar.gz
-MONGO_FILE=$TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER.tgz
 LOG_FILE=$MY_PATH/setup.log
 
 BIN_DIR=../server/bin
@@ -121,20 +119,6 @@ do
 done
 
 #----------------------------------------#
-# Install and configure MongoDB
-loggerGreen "Installing MongoDB...\n"
-cd $TMP_DOWNLOAD_DIR
-if [ ! -e $MONGO_FILE ] || [ ! -f $MONGO_FILE ]
-then
-    curl -O -s https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VER.tgz >> $LOG_FILE
-fi
-#curl -O http://localhost:8000/Volatile/mongodb-linux-x86_64-$MONGODB_VER.tgz
-tar -zxvf $MONGO_FILE >> $LOG_FILE 2>&1
-cd $MY_PATH
-mkdir -p $BIN_DIR/mongodb
-cp -R -n $TMP_DOWNLOAD_DIR/mongodb-linux-x86_64-$MONGODB_VER/ $BIN_DIR/mongodb
-mkdir -p $BIN_DIR/mongodata/db
-
 # Get npm and bower dependencies
 cd ..
 loggerGreen "Installing Npm and Bower dependencies...\n"
@@ -157,14 +141,6 @@ chmod +x $BIN_DIR/neoRun
 cat $LOCATION_FILE > $BIN_DIR/neoStop
 echo "./neo4j-community-$NEO4J_VER/bin/neo4j stop" >> $BIN_DIR/neoStop
 chmod +x $BIN_DIR/neoStop
-
-cat $LOCATION_FILE > $BIN_DIR/mongoRun
-echo "./mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --dbpath ./mongodata/db/" >> $BIN_DIR/mongoRun
-chmod +x $BIN_DIR/mongoRun
-
-cat $LOCATION_FILE > $BIN_DIR/mongoStop
-echo "./mongodb/mongodb-linux-x86_64-$MONGODB_VER/bin/mongod --shutdown --dbpath mongodata/db" >> $BIN_DIR/mongoStop
-chmod +x $BIN_DIR/mongoStop
 
 #-----------------------------------------#
 # Done!

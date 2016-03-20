@@ -2,7 +2,6 @@
 // Routes to CRUD users.
 
 var User = require('./user.js');
-var Mongo = require('./mongo.js');
 var path = require('path');
 var cookies = require('cookies');
 var keygrip = require('keygrip');
@@ -223,6 +222,10 @@ var sendActivationEmail = function(email,hash,name,lastname){
 /*                          GET METHODS                                       */
 /******************************************************************************/
 
+exports.getPlaces = function(req, res, next){
+  res.status(501).send('Not Implemented');
+};
+
 exports.getTranslation = function(req,res,next){
     
     var lang = req.params.lang;
@@ -249,7 +252,7 @@ exports.getEdtConfig = function(req, res, next){
         }
         else{
             console.log(config);
-            res.status(200).send(config);
+            res.status(200).send({config: JSON.parse(config)});
         }
     });  
 };
@@ -351,10 +354,33 @@ exports.getTimes = function(req, res, next){
             return;
         } else {
             console.log(times);
-            res.status(200).send(times);
+            res.status(200).send({times: times});
             return;
         }
     });
+};
+
+exports.getActivityTypes = function (req, res, next) {
+
+  if (!req.id) {
+    res.status(401).send('Unauthorized');
+    return;
+  } else if (!req.query.parent) {
+    res.status(400).send('Missing parent');
+    return;
+  }
+
+  User.getActivityTypes(req.query.parent, function (err, activityTypes) {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error');
+      return;
+    } else {
+      console.log(activityTypes);
+      res.status(200).send({activityTypes: activityTypes});
+      return;
+    }
+  });
 };
 
 exports.getAsocs = function (req, res, next) {
@@ -371,7 +397,7 @@ exports.getAsocs = function (req, res, next) {
             return;
         } else {
             console.log(asocs);
-            res.status(200).send(asocs);
+            res.status(200).send({asocs: asocs});
             return;
         }
     });
@@ -505,18 +531,60 @@ exports.getAdminNodes = function (req, res, next) {
         return;
     }
 
-    User.getAdminNodes(req.id, function (err, nodes) {
+    User.getAdminNodes(req.id, function (err, adminnodes) {
         if (err) {
             res.status(500).send('Error');
             return;
         }
-        if (nodes) {
-            res.status(200).send(nodes);
+        if (adminnodes) {
+            res.status(200).send({adminnodes: adminnodes});
             return;
         }
         res.status(500).send('Error');
         return;
     });
+};
+
+exports.getNodeRelTypes = function(req, res, next){
+
+  if(!req.id){
+    res.status(401).send('Unauthorized');
+    return;
+  } else if(!req.query.memberof || req.query.memberof == ''){
+    res.status(400).send('Missing MemberOf');
+    return;
+  }
+
+  User.getNodeRelTypes(req.query.memberof, function(err, nodeTypes, relTypes){
+    if(err || !nodeTypes || !relTypes){
+      res.status(500).send('Error getting Node Rel Types');
+      return;
+    } else{
+      res.status(200).send({nodetypes: nodeTypes, reltypes: relTypes});
+    }
+  });
+};
+
+exports.getNodeRelFields = function(req, res, next){
+
+  if(!req.id){
+    res.status(401).send('Unauthorized');
+    return;
+  } else if(!req.params.label){
+    res.status(400).send('Missing Label');
+    return;
+  }
+
+  User.getNodeRelFields(req.params.label, function(err, fields){
+    if(err){
+      res.status(500).send('Error getting fields');
+      return;
+    }else{
+      console.log(fields);
+      res.status(200).send({fields: fields});
+      return;
+    }
+  });
 };
 
 /**

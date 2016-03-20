@@ -140,51 +140,6 @@
                 });
             };
         })
-      .service('edt',function($http, session,REMOTE){
-
-        var funcs = {
-            getTimes: function(whatId,whoId,week,year, next){
-                $http({method:'GET', url:REMOTE+'/times',
-                    params:{whatId:whatId, whoId:whoId, week:week, year:year}})
-                .success(function(times){
-                        return next(null,times);
-                })
-                .error(function(data){
-                        return next('Error Getting Times',data);
-                });
-            },
-            getConfig: function(next){
-                $http({method:'GET', url:REMOTE+'/edtconfig'})
-                .success(function(config){
-                    console.log(config);
-                    return next(null,config);
-                })
-                .error(function(data){
-                  return next('Error Getting EDT Config',data);
-                });
-            },
-            getPlaces: function(next){
-                $http({method:'GET', url:REMOTE+'/edtplaces'})
-                .success(function(data){
-                    return next(null,data.data);
-                })
-                .error(function(data){
-                    return next('Error Getting EDT Places',data);
-                });
-            },
-            newActivity: function(activities,next){
-                $http({method:'POST', url:REMOTE+'/edtnewact', data:{activities:activities}})
-                .success(function(){
-                    return next(null);
-                })
-                .error(function(){
-                    return next('Error Saving New Activities');
-                });
-            }
-        };
-
-        return funcs;
-      })
       .factory('formDataObject', function() {
         return function(data) {
             var fd = new FormData();

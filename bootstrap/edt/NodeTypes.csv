@@ -1,0 +1,11 @@
+#If multiple parents, write one line per parent
+type,label,parent
+University,UNIVERSITY,NONE
+Faculty,FACULTY,University
+CarreraDeGrado,CARRERA_GRADO,Faculty
+Materia,MATERIA,CarreraDeGrado
+ActivityType,TP,Materia
+ActivityType,EXAMEN_PARCIAL,Materia
+ActivityType,EXAMEN_FINAL,Materia
+ActivityType,CLASE,Materia
+ActivityType,NOT_SPECIFIED,ALL

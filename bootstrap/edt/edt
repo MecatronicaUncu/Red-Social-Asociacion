@@ -1,0 +1,75 @@
+#!/bin/bash
+
+NEO4J_VER=2.3.0
+
+MY_PATH="`dirname \"$0\"`" 
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+LOG_FILE=$MY_PATH/edt.log
+
+SRV_DIR=../../server
+BIN_DIR=$SRV_DIR/bin
+NEO_DIR=$SRV_DIR/bin/neo4j-community-$NEO4J_VER
+
+CONS_DIV="##################################################"
+R_COL="\e[31m"
+G_COL="\e[92m"
+DEF_COL="\e[39m"
+
+function loggerGreen {
+    echo -e $G_COL$1$DEF_COL
+    echo -e $1 >> $LOG_FILE
+}
+            
+function loggerRed {
+    echo -e >&2 $R_COL$1$DEF_COL
+    echo -e $1 >> $LOG_FILE
+}
+
+#----------------------------------------#
+
+# Getting in the right location
+
+if [ -z "$MY_PATH" ] ; then
+  # error; for some reason, the path is not accessible
+  # to the script (e.g. permissions re-evaled after suid)
+  loggerRed "Please verify permissions on bootstrap folder!\n"
+  exit 1  # fail
+fi
+cd "$MY_PATH"
+
+#---------------------------------------
+
+# 0. Welcome message
+loggerGreen $CONS_DIV"\nThis script will populate your Neo4J database with some node types for the calendar system. Press Enter to continue or Ctrl-C to abort."
+if [[ $# -ne 0 ]] && [[ "$1" = "no-wait" ]]
+then
+   :
+else
+    read
+fi
+
+# 0.1. Verify status of neo4j
+STATUS=`./$NEO_DIR/bin/neo4j status`
+if [[ $STATUS == *"not"* ]]
+then
+    loggerGreen "Starting Neo4J Server...\n"
+	./$BIN_DIR/neoRun >/dev/null 2>&1 || { loggerRed "Error starting Neo4J Server!\n"; exit 1; }
+fi
+
+# 1. Check that node in present
+loggerGreen "Checking dependencies...\n"
+command -v node >/dev/null 2>&1 || { loggerRed "NodeJS not installed!"; exit 1; }
+command -v npm >/dev/null 2>&1 || { loggerRed "npm not installed!"; exit 1; }
+npm install fast-csv >/dev/null 2>&1 || { loggerRed "npm fast-csv failed!"; exit 1; }
+loggerGreen "Dependencies OK!\n"
+
+# 2. Register nodes in Neo4J
+loggerGreen "Registering nodes in database...\n"
+node regEdtNodes.js
+
+# 3. Stop Neo4J Server
+loggerGreen "Stopping Neo4J Server...\n"
+./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J Server!\n"; exit 1; }
+
+# 7. Done
+loggerGreen "Nodes created!\n"

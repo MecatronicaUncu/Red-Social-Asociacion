@@ -3,7 +3,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(
     process.env['NEO4J_URL'] ||
     process.env['GRAPHENEDB_URL'] ||
-    'http://neo4j:asoc@localhost:7474'
+    'http://neo4j:neo@localhost:7474'
 );
 
 csv
