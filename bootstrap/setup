@@ -19,7 +19,7 @@ DEPS="npm
 gem
 git"
 
-MY_PATH="`dirname \"$0\"`" 
+MY_PATH="`dirname \"$0\"`"
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 
 NODEJS_VER=0.10
@@ -131,9 +131,9 @@ cd $TMP_DOWNLOAD_DIR
 if [ ! -e $NEO4J_FILE ] || [ ! -f $NEO4J_FILE ]
 then
   if [ "$VERBOSE" = false ]; then
-    wget -a $LOG_FILE -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
+    curl -s -o neo4j-community-$NEO4J_VER-unix.tar.gz http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz | tee -a $LOG_FILE
   else
-    wget -q http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
+    curl -s -o neo4j-community-$NEO4J_VER-unix.tar.gz http://dist.neo4j.org/neo4j-community-$NEO4J_VER-unix.tar.gz
   fi
 fi
 

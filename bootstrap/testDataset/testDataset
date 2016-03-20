@@ -83,7 +83,7 @@ node usersRel.js
 loggerGreen "Downloading random profile pictures. This may take a while...\n"
 mkdir -p $SRV_DIR/routes/upload
 for (( i = 0; i < 50; i++ )); do
-	wget -q -O $SRV_DIR/routes/upload/img$i.png http://lorempixel.com/150/150
+  curl -s -o $SRV_DIR/routes/upload/img$i.png http://lorempixel.com/150/150/
 done
 
 # 7. Stop Neo4J Server
