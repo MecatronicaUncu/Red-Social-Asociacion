@@ -1,6 +1,6 @@
 Red-Social-Asociacion
 ==========
-[![Build Status](https://img.shields.io/travis/MecatronicaUncu/Red-Social-Asociacion/master.svg)](https://travis-ci.org/MecatronicaUncu/Red-Social-Asociacion)
+[![Build Status](https://img.shields.io/travis/MecatronicaUncu/Red-Social-Asociacion/develop.svg)](https://travis-ci.org/MecatronicaUncu/Red-Social-Asociacion)
 
 ## Objective
 
