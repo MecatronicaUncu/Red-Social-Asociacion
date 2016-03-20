@@ -95,7 +95,7 @@ loggerGreen "Dependencies OK!\n"
 # Cleanup bin directory
 loggerGreen "Cleaning bin directory...\n"
 rm -rf $BIN_DIR >/dev/null 2>&1
-mkdir $BIN_DIR
+mkdir -p $BIN_DIR
 
 #----------------------------------------#
 # Create download dir
