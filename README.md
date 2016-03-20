@@ -6,46 +6,91 @@ Red-Social-Asociacion
 
 To implement a small open source social network for any small community.
 
+## Install and Run in Linux
 
-## Linux install guide
+### Using Docker (preferred)
 
-1. Install dependencies: nodejs 0.10, ruby and git.
-  1. Install Node Version Manager ([nvm](https://github.com/creationix/nvm))
-  2. `nvm install 0.10`
-  3. Install Ruby Version Manager with Ruby stable ([rvm](https://rvm.io/rvm/install)).
-  4. Install git
-  6. `nvm use 0.10`.  You may need to add `.rvm/rubies/default/bin/` to PATH.
-3. Clone repository
-4. `cd bootstrap` and execute `./setup`. It will take some time, you may have a coffee.
-5. From within `bootstrap/` execute `./config`. It will guide you through the configuration of
-   the server. Follow the steps.
+This is the simplest way to run the project. You only need Docker
+running as a dependency. Then, you can pull a complete image from Docker
+Hub.
+```
+docker pull mecatronicauncu/red-social-asociacion-dev
+docker run -p 3000:3000 -t -i red-social-asociacion-dev
+```
 
-**Note**: `config` accepts the following parameters:
+You can access to the website using your preferred browser
+```
+https://localhost:3000/
+```
+
+Alternatively, you can build your own Docker image using the Dockerfile
+provided in this repository.
+```
+git clone https://github.com/MecatronicaUncu/Red-Social-Asociacion.git
+cd Red-Social-Asociacion
+docker build -t red-social-asociacion-dev .
+docker run -p 3000:3000 -t -i red-social-asociacion-dev
+```
+
+### Native install
+
+This method is a little bit more complicated and requires the following
+dependencies.
+
+- git
+- nodejs (version 0.10)
+- npm
+- ruby and ruby-dev
+- curl
+- A running jre (we have tested openjdk)
+- lsof
+
+If you don't have nodejs installed, you can use Node Version Manager
+([nvm](https://github.com/creationix/nvm)). In the same way, you can
+install ruby using Ruby Version Manager ([rvm](https://rvm.io/rvm/install)). Please be sure to source the appropriate files in your `.bashrc` or `.zshrc`.
+
+#### Installing the server
+
+Clone the repository and execute the install script.
+```
+git clone https://github.com/MecatronicaUncu/Red-Social-Asociacion.git
+cd Red-Social-Asociacion
+./bootstrap/setup
+```
+
+Afterwards, you will need to configure the server.
+```
+./bootstrap/config
+```
+
+**Note**: `config` script accepts the following parameters:
 
 1. password
 2. HOST_TYPE. One of these:
-  1. LOC
-  2. LAN
-  3. NET
-3. SITE
+  1. LAN: If you are going to use the local network.
+  2. NET: If the service will be exposed to the internet, in SITE.
+3. SITE: The website where the sevice will be running. Only required if
+   `NET` host is selected.
 
-`SITE` is only required if `NET` host is selected. You can use this to automate your scripts (like our `.travis.yml`)
+#### Running the server
 
-## Windows install guide
-
-Get Linux.
-
-## Run
-
-1. From the `server/bin` directory:
-  1. Start [neo4j](http://neo4j.org/): `./neoRun`
-2. From the root directory:
-  1. `grunt build`
-  2. `grunt express`
+1. Start the database server [neo4j](http://neo4j.org/)
+```
+server/bin/neoRun
+```
+2. Run the server
+```
+grunt build
+grunt express
+```
 
 The Social Network will be available at the host you specified using port 3000: `HOST:3000`
 
-**Note** For the moment and until test files are ready, `grunt build` will fail, forcing the execution of `grunt express` to serve files.
+## Install and Run in Windows/OS X
+
+The installation using Docker should work out of the box. Please refer
+to Linux Install and Run Guide using Docker.
+
 
 ## Files
 
@@ -56,17 +101,17 @@ Most important:
 ```
 |-- server
 
-    |-- server.js       Server (expressjs) configuration 
+    |-- server.js       Server (expressjs) configuration
 
     |-- routes
 
-        |-- user.js     Database (neo4j) query functions 
+        |-- user.js     Database (neo4j) query functions
 
-        |-- users.js    Cookies, access restrictions, 
+        |-- users.js    Cookies, access restrictions,
                         connection between neo4j and expressjs.
         |-- upload      Uploaded files (such as profile images) *
 
-    |-- bin             Binary files (neo4j and MongoDB). 
+    |-- bin             Binary files (neo4j and MongoDB).
                         Available after running ```./setup.sh```.
 
 |-- src                 Front-end stuff
@@ -82,18 +127,21 @@ Most important:
     |-- app.js          Angular app main module
 ```
 
-## Test Dataset
+## Test Datasets
 
-You will find in the folder `bootstrap/testDataset` a script that will register 50 users in your database and add some relationships. After running it, you can check the user list with their login info inside `people_email_pass.csv`. Just `cd bootstrap/testDataset && ./testDataset`. Be sure your Neo4J server is running.
+You may register fictitious users in the database, for test purposes.
 
-If you want to clean your database before running this script, execute the following query in the Neo4J browser: ```MATCH (u)-[r]-() DELETE r,u```.
+For instance, `bootstrap/testDataset/testDataset` will register 50 users
+in your database and add some relationships. After running it, you can
+check the user list with their login info inside
+`people_email_pass.csv`.
 
-**Note**: The list of users IDs (saved in ```usersIDs.csv```) is not deterministic. Running the script twice will result in relationships not intended to be created. This will not have adverse effects, but is to be taken into consideration.
+If you want to clean your database, execute the following query in the Neo4J browser: ```MATCH (u)-[r]-() DELETE r,u```.
+
+**Note**: The list of users IDs (saved in ```usersIDs.csv```) is not deterministic. Running the script twice will result in relationships not intended to be created. This will not have adverse effects, but it must be taken into consideration.
 
 **Note**: `testDataset` accepts one parameter: `no-wait`. This will assume your Neo4J server is running and continue the process without asking.
 
 ## Contribute
 
-There is a list of tasks in `TODO.md`.
-
-Don't hesitate to submit your pull request!
+Don't hesitate to submit your issue or pull request!
