@@ -124,6 +124,9 @@ sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD
 # Set Neo4J user and password in routes
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" $BIN_DIR/../routes/*.js
 
+# Set Neo4J user and password in edt/regEdtNodes.js
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./edt/regEdtNodes.js
+
 #-----------------------------------------#
 # Set host location in app.js
 if [[ $# -eq 0 ]]
