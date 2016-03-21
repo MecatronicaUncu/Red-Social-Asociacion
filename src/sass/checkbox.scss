@@ -29,7 +29,8 @@
 /* checked mark aspect */
 [type="checkbox"]:not(:checked) + label:after,
 [type="checkbox"]:checked + label:after {
-  content: '✔';
+  font-family: "FontAwesome";
+  content: '\f00c';
   position: absolute;
   top: 0; left: 4px;
   font-size: 20px;

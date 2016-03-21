@@ -4,6 +4,9 @@
 /******************************************************************************/
 var express = require('express')
     , users = require('./routes/users.js')
+    , edt = require('./routes/edt.js')
+    , admin = require('./routes/admin.js')
+    , secur = require('./routes/secur.js')
     , fs = require('fs')
     , http = require('http')
     , https = require('https')
@@ -106,17 +109,17 @@ if('development' == app.get('env')){
 /******************************************************************************/
 
 /****************************    EDT REQUESTS   *******************************/
-app.get('/acttypes', users.extractCookieData, users.getActivityTypes);
-app.get('/times', users.getTimes);
-app.get('/edtconfig', users.getEdtConfig);
-app.get('/edtplaces', users.getPlaces);
-app.get('/getTimesIcal', users.getTimesIcal);
-app.get('/subscriptions', users.extractCookieData, users.getSubscriptions);
-app.post('/edtnewact', users.newActivity);
+app.get('/acttypes', secur.extractCookieData, edt.getActivityTypes);
+app.get('/times', edt.getTimes);
+app.get('/edtconfig', edt.getEdtConfig);
+app.get('/edtplaces', edt.getPlaces);
+app.get('/getTimesIcal', edt.getTimesIcal);
+app.get('/subscriptions', secur.extractCookieData, users.getSubscriptions);
+app.post('/edtnewact', edt.newActivity);
 /******************************************************************************/
 
 /****************************   COOKIES REQUESTS   ****************************/
-app.get('/checkCookie', users.extractCookieData, function (req, res) {
+app.get('/checkCookie', secur.extractCookieData, function (req, res) {
 
     if (req.id) {
         res.status(200).send({idNEO: req.id, lang: req.lang});
@@ -124,10 +127,10 @@ app.get('/checkCookie', users.extractCookieData, function (req, res) {
         res.sendStatus(500);
     }
 });
-app.get('/checkAdminCookie', users.extractCookieData, function (req, res) {
+app.get('/checkAdminCookie', secur.extractCookieData, function (req, res) {
 
     if (req.id) {
-        users.isAdmin(req.id, function (is) {
+        secur.isAdmin(req.id, function (is) {
             if (is)
                 res.status(200).send({idNEO: req.id, lang: req.lang});
             else
@@ -140,49 +143,49 @@ app.get('/checkAdminCookie', users.extractCookieData, function (req, res) {
 /******************************************************************************/
 
 /**************************  ALL USERS' REQUESTS   ****************************/
-app.get('/search', users.extractCookieData, users.search);
+app.get('/search', secur.extractCookieData, users.search);
 app.get('/usr/:id/pic', users.getPicture);
-app.get('/profile/:id', users.extractCookieData, users.getProfile);
+app.get('/profile/:id', secur.extractCookieData, users.getProfile);
 app.get('/translation/:lang', users.getTranslation);
 app.get('/they', users.getThey);
 app.get('/activate', users.activate);
 app.post('/signup', users.signup);
-app.post('/login', users.extractCookieData, users.login);
+app.get('/nodecontents', users.getNodeContents);
+app.post('/login', secur.extractCookieData, users.login);
 /******************************************************************************/
 
 /**************************  LOGGED USERS' REQUESTS   *************************/
-app.get('/contacts', users.extractCookieData, users.getContacts);
-app.get('/profile', users.extractCookieData, users.getProfile);
-app.get('/fields/:label', users.extractCookieData, users.getNodeRelFields);
-app.get('/asocs', users.extractCookieData, users.getAsocs);
-app.get('/usr/:id/isFriend', users.extractCookieData, users.isFriend);
-app.post('/profilepic/:id', users.extractCookieData, users.uploadPic);
-app.post('/friend', users.extractCookieData, users.friend);
-app.post('/delFriend', users.extractCookieData, users.deleteFriend);
-app.post('/subscribe', users.extractCookieData, users.subscribe);
-app.post('/unsubscribe', users.extractCookieData, users.unsubscribe);
-app.post('/delUser/:id', users.extractCookieData, users.deleteUser, function (req, res, next) {
+app.get('/contacts', secur.extractCookieData, users.getContacts);
+app.get('/profile', secur.extractCookieData, users.getProfile);
+app.get('/asocs', secur.extractCookieData, users.getAsocs);
+app.get('/usr/:id/isFriend', secur.extractCookieData, users.isFriend);
+app.post('/profilepic/:id', secur.extractCookieData, users.uploadPic);
+app.post('/friend', secur.extractCookieData, users.friend);
+app.post('/delFriend', secur.extractCookieData, users.deleteFriend);
+app.post('/subscribe', secur.extractCookieData, users.subscribe);
+app.post('/unsubscribe', secur.extractCookieData, users.unsubscribe);
+app.post('/delUser/:id', secur.extractCookieData, users.deleteUser, function (req, res, next) {
     if (req.id) {
         res.clearCookie('LinkedEnibId');
     }
     res.sendStatus(200);
 });
-app.post('/logout', users.extractCookieData, function (req, res, next) {
+app.post('/logout', secur.extractCookieData, function (req, res, next) {
     if (req.id) {
         res.clearCookie('LinkedEnibId');
     }
     res.sendStatus(200);
 });
-app.post('/change', users.extractCookieData, users.changeProperty, users.verifyPassword, users.changePassword);
-app.post('/uptprofile', users.extractCookieData, users.updateProfile);
+app.post('/change', secur.extractCookieData, users.changeProperty, secur.verifyPassword, users.changePassword);
+app.post('/uptprofile', secur.extractCookieData, users.updateProfile);
 /******************************************************************************/
 
 /****************************  ADMINS' REQUESTS   *****************************/
-app.get('/nodereltypes', users.extractCookieData, users.getNodeRelTypes);
-app.get('/nodecontents', users.extractCookieData, users.getNodeContents);
-app.get('/adminnodes', users.extractCookieData, users.getAdminNodes);
-app.post('/newpart', users.extractCookieData, users.newPart);
-app.post('/newrel', users.extractCookieData, users.newRel);
+app.get('/nodereltypes', secur.extractCookieData, admin.getNodeRelTypes);
+app.get('/fields/:label', secur.extractCookieData, admin.getNodeRelFields);
+app.get('/adminnodes', secur.extractCookieData, admin.getAdminNodes);
+app.post('/newpart', secur.extractCookieData, admin.newPart);
+app.post('/newrel', secur.extractCookieData, admin.newRel);
 /******************************************************************************/
 
 /****************************  GENERAL REQUESTS   *****************************/

@@ -81,11 +81,11 @@ fi
 
 if [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
 then
-    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
+    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
 elif [[ $# -gt 3 ]]
 then
-    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
+    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
 fi
 
@@ -120,8 +120,9 @@ curl -H "Content-Type: application/json" -X POST -d "{\"password\":\"$PASSWORD\"
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/usersRel.js
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/regUsers.js
 
-# Set Neo4J user and password in routes/user.js
-sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" $BIN_DIR/../routes/user.js
+#-----------------------------------------#
+# Set Neo4J user and password in routes
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" $BIN_DIR/../routes/*.js
 
 # Set Neo4J user and password in edt/regEdtNodes.js
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./edt/regEdtNodes.js

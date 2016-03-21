@@ -32,77 +32,9 @@ Object.defineProperty(User.prototype, 'name', {
     }
 });
 
-User.isAdmin = function(id, callback){
-    
-    var query = [
-        'MATCH (a)-[:ADMINS]->()',
-        'WHERE ID(a)='+id,
-        'RETURN ID(a)'].join('\n');
-    
-    db.query(query, null, function(err, results) {
-        if(err){
-            throw err;
-            console.log('err isAdmin');
-            return callback(false);
-        }
-        if(results.length>0)
-            return callback(true);
-        else
-            return callback(false);
-    });
-};
-
 /******************************************************************************/
 /*                          GET METHODS                                       */
 /******************************************************************************/
-
-User.getActivityTypes = function(parent, callback){
-  
-  var query = [
-    'MATCH (a:nodeType)',
-    'WHERE ANY (p IN a.parent WHERE p IN ["ALL", "'+parent+'"])',
-    'RETURN a AS activityType, ID(a) AS idNEO'
-  ].join('\n');
-
-  db.query(query, null, function(err, res) {
-    if(err){
-      throw err;
-      return callback(err);
-    } else {
-      var activityTypes = [];
-      res.forEach(function(type){
-        type.activityType._data.data['idNEO']=type.idNEO;
-        activityTypes.push(type.activityType._data.data);
-      });
-      return callback(null, activityTypes);
-    }
-  });
-};
-
-User.getTimes = function(timeData, callback){
-    
-    var query = [
-        'MATCH (a:ACTIVITY)',
-        'WHERE (a.whatId='+timeData.whatId+' OR a.whoId='+timeData.whoId+')',
-        'AND a.week='+timeData.week+' AND a.year='+timeData.year,
-        'RETURN a AS time, ID(a) AS idNEO'
-    ].join('\n');
-    
-    db.query(query, null, function (err, res) {
-        if (err){
-			throw err;
-            console.log("err get Profile");
-            return callback(err);
-        }else{
-            var times = [];
-            res.forEach(function(time){
-                time.time._data.data['idNEO']=time.idNEO;
-                times.push(time.time._data.data);
-            });
-            return callback(null, times);
-        }
-     });  
-};
 
 User.getAsocs = function(idNEO, callback){
     
@@ -161,33 +93,6 @@ User.getProfile = function(idNEO,public,callback){
     
 };
 
-User.getAdminNodes = function(idNEO, callback){
-	
-	var query = [
-        'MATCH (admin)-[:ADMINS]->(nodes)',
-        'WHERE ID(admin) = '+idNEO,
-        'OPTIONAL MATCH (nodes)-[:PARTOF]->(parent)',
-        'RETURN distinct nodes as nodeData, ID(nodes) AS idNEO,',
-        'LABELS(nodes) AS label, parent.name AS parentName'
-    ].join('\n');
-
-    db.query(query, null, function (err, results) {
-        if (err){
-			throw err;
-            console.log("err get AdminNodes");
-            return callback(err);
-        }else if(results.length === 0){
-            return callback('Unauthorized');
-        }else{
-            results.forEach(function(res){
-                res.nodeData = res.nodeData._data.data;
-                res.label = res.label[0];
-            });
-            return callback(null, results);
-        }
-     });        	
-};
-
 User.getNodeContents = function(idNEO, callback){
 
 	var query = [
@@ -235,60 +140,6 @@ User.getNodeContents = function(idNEO, callback){
 		   	return callback(null, contents);
         }
      });
-};
-
-User.getNodeRelTypes = function(memberof, callback){
-
-  var query = [
-    'MATCH (part:nodeType)',
-    'WHERE NOT part.type IN ["ActivityType", "User"]',
-    'AND part.parent="'+memberof+'"',
-    'RETURN part AS nodeData'
-  ].join('\n');
-
-  db.query(query, null, function(err, results){
-    if(err){
-      throw err;
-      return callback(err);
-    }else{
-      var parts = [];
-      var rels = [];
-      
-      results.forEach(function(res){
-        res = res.nodeData._data.data;
-        if(res.label === 'User'){
-          //Handle relationships
-        } else {
-          parts.push(res);
-        }
-      });
-
-      return callback(null,parts,rels);
-    }
-  });
-};
-
-User.getNodeRelFields = function(label, callback){
-
-  var query = [
-    'MATCH (u:nodeType)',
-    'WHERE u.label="'+label+'"',
-    'RETURN u.fields AS fields'
-  ].join('\n');
-
-  db.query(query, null, function(err, results){
-    if(err){
-      throw err;
-      return callback(err);
-    }else{
-      if(results.length != 1){
-        return callback('More than one label matched!');
-      }
-      else {
-        return callback(null, results[0].fields);
-      }
-    }
-  });
 };
 
 User.getThey = function (callback) {
@@ -625,62 +476,6 @@ User.subscribe = function(idNEO, instId, callback){
     });    
 };
 
-User.newActivity = function(acts, callback){
-    
-    var ids = [];
-    var query = '';
-    
-    acts.forEach(function(act){
-        var params = '';
-        for(var key in act){
-            if(act.hasOwnProperty(key)){
-                if(typeof act[key] == "number")
-                    params += (key+':'+act[key]+', ');
-                else
-                    params += (key+':"'+act[key]+'", ');
-            }
-        }
-        //Borra el ultimo ', ' no deseado.
-        params = params.slice(0,-2);    
-
-        query = query.concat(
-            ['CREATE (a:ACTIVITY {'+params+'})',
-            'RETURN ID(a) AS idNEO',
-            'UNION',
-            ''
-            ].join('\n'));
-    });
-    
-    //REMOVES LAST UNION\n
-    query = query.slice(0,-6);
-    
-    db.query(query, null, function (err, results) {
-        if (err){
-            console.log(err);
-            console.log("err USER newActivity");
-            return callback(true);
-        }else{
-            results.forEach(function(el){
-                ids.push(el.idNEO);
-            });
-            query = [
-                'MATCH (a:ACTIVITY) WHERE ID(a) IN ['+ids+']',
-                'SET a.group='+ids[0]
-            ].join('\n');
-            
-            db.query(query, null, function (err, results) {
-                if (err){
-                    console.log(err);
-                    console.log("err USER newActivity");
-                    return callback(true);
-                }else{
-                    return callback(false,ids);
-                }
-            });  
-        }
-    });    
-};
-
 User.updateProfile = function(idNEO, changes, callback){
     
     var params = '';
@@ -712,54 +507,6 @@ User.updateProfile = function(idNEO, changes, callback){
             return callback(null, profile);
         }
      });  
-};
-
-User.newRel = function(relData,callback){
-  
-    var params = {
-        instID: relData.instId,
-        usrID: relData.usrID
-    };
-  
-    var query = [
-    'MATCH (u),(i) WHERE ID(u)=' + relData.usrID.toString() +' AND ID(i)=' + relData.instId.toString(),
-    'CREATE (u)-[:'+relData.relType + ']->(i)'
-    ].join('\n');
-    
-    console.log(query);
-    
-    db.query(query, null, function (err, results) {
-        if (err){
-            console.log(err);
-            console.log('Err User newRel');
-            return callback(err);
-        }else{
-            return callback(null);
-        }
-    });    
-};
-
-User.newPart = function(data,callback){
-    
-    var query = [
-    'MATCH (i) WHERE ID(i)='+data.instID,
-    'CREATE (p:'+data.label+'{ partData })-[:PARTOF]->(i)',
-	'RETURN ID(p) AS idNEO'
-    ].join('\n');
-    
-    var params = {
-        partData: data.partData
-    };
-    
-    db.query(query, params, function (err, results) {
-        if (err){
-            console.log(err);
-            console.log('Err User newPart');
-            return callback(err);
-        }
-		//console.log('Part: ',results[0]);
-        return callback(null,results[0].idNEO);
-    });
 };
 
 User.signup = function (nodeData, callback) {
@@ -872,23 +619,6 @@ User.changeProperty = function (field,value,id,callback){
             return callback(err);
         }
         return callback(null);
-    });
-};
-
-User.verifyPassword = function (id,callback){
-    
-    var query = [
-        'MATCH (u)',
-        'WHERE ID(u)=' + id.toString(),
-        'RETURN u.password AS pass, u.salt AS salt'
-    ].join('\n');
-    
-    db.query(query, null, function (err, results) {
-        if(err){
-            console.log("err change prop");
-            return callback(err);
-        }
-        return callback(null, results[0]);
     });
 };
 
