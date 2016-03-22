@@ -7,7 +7,8 @@
       "firstName": "Nombre",
       "lastName": "Apellido",
       "profession": "Profesión",
-      "code": "Código"
+      "code": "Código",
+      "country": "País"
     },
     "params": {
       "memberAs": "Participa como",

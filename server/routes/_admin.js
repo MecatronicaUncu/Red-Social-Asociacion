@@ -39,7 +39,7 @@ exports.getNodeRelTypes = function(memberof, callback){
   var query = [
     'MATCH (part:nodeType)',
     'WHERE NOT part.type IN ["ActivityType", "User"]',
-    'AND part.parent="'+memberof+'"',
+    'AND "'+memberof+'" IN part.parent',
     'RETURN part AS nodeData'
   ].join('\n');
 
