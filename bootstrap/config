@@ -81,11 +81,11 @@ fi
 
 if [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
 then
-    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
+    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
 elif [[ $# -gt 3 ]]
 then
-    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LOC,LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
+    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
     exit 1
 fi
 
@@ -129,7 +129,6 @@ curl -H "Content-Type: application/json" -X POST -d "{\"password\":\"$PASSWORD\"
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/usersRel.js
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/regUsers.js
 
-#-----------------------------------------#
 # Set Neo4J user and password in routes
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" $BIN_DIR/../routes/*.js
 
@@ -146,8 +145,8 @@ then
     select host in "${hosts[@]}"
     do
         case "$REPLY" in
-            1 ) loggerGreen "\nSetting host location to this host LAN ip...\n"; sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//'):3000')/" ../src/app/app.js; sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$(hostname -i | sed -e 's/[[:blank:]]//'):3000\";/" ../server/routes/users.js;break;;
-            2 ) loggerYellow "\nPlease enter your website: ";read SITE; sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$SITE')/" ../src/app/app.js;  sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$SITE\";/" ../server/routes/users.js;break;;
+            1 ) loggerGreen "\nSetting host location to this host LAN ip...\n"; sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$(hostname -i | sed -e 's/[[:blank:]]//'):3000\";/" ../server/routes/users.js;break;;
+            2 ) loggerYellow "\nPlease enter your website: ";read SITE; sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$SITE\";/" ../server/routes/users.js;break;;
             * ) loggerRed "Invalid input, try again...";continue;;
         esac
     done
@@ -155,13 +154,11 @@ else
     HOST_TYPE="$2"
     if [[ "$HOST_TYPE" = "LAN" ]]
     then
-        sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$(hostname -i | sed -e 's/[[:blank:]]\+$//'):3000')/" ../src/app/app.js
         sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$(hostname -i | sed -e 's/[[:blank:]]//'):3000\";/" ../server/routes/users.js
     elif [[ "$HOST_TYPE" = "NET" ]]
     then
         SITE="$3"
-		sed -i "s/^\(.*\)REMOTE','http.*$/\1REMOTE','https:\/\/$SITE')/" ../src/app/app.js
-		sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$SITE\";/" ../server/routes/users.js
+	sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$SITE\";/" ../server/routes/users.js
     fi
 fi
 

@@ -15,7 +15,7 @@
           }
         });
       }])
-      .controller('AdminCtrl', function ($scope, session, REMOTE, $http) {
+      .controller('AdminCtrl', function ($scope, session, $http) {
 		
 		if(session.getTranslation()){
 			$scope.translation = session.getTranslation();
@@ -59,7 +59,7 @@
 
 			$scope.nodeRelToCreate = nodetype;
 
-			$http({method:'GET', url:REMOTE+'/fields/'+nodetype.label})
+			$http({method:'GET', url:'/fields/'+nodetype.label})
 			.success(function(data){
 				console.log(data);
 				$scope.nodeFields = data.fields;
@@ -83,7 +83,7 @@
 
 			var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
 
-			$http({method:'POST', url:REMOTE+'/newrel', data:{
+			$http({method:'POST', url:'/newrel', data:{
 				usrID:$scope.newRel.idNEO,
 				relType:$scope.nodeRelToCreate.type,
 				instId:inst.idNEO}})
@@ -101,7 +101,7 @@
 		$scope.createNewPart = function(){ 
 			var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
 
-			$http({method:'POST', url:REMOTE+'/newpart', data:{
+			$http({method:'POST', url:'/newpart', data:{
 				label:$scope.nodeRelToCreate.type,
 				partData:$scope.newNode,
 				instID:inst.idNEO}})
@@ -133,7 +133,7 @@
 		};
 
 		$scope.getNodeRelTypes = function(node){
-			$http({method:'GET', url:REMOTE+'/nodereltypes', params:{memberof:node.label}})
+			$http({method:'GET', url:'/nodereltypes', params:{memberof:node.label}})
 			.success(function(data){
 				console.log(data);
 				$scope.nodetypes = data.nodetypes;
@@ -153,7 +153,7 @@
 				$scope.nodeNavLevels = $scope.nodeNavLevels.slice(0,idx); 
 			}
 
-			$http({method:'GET', url:REMOTE+'/nodecontents',params:{institutionID:node.idNEO}})
+			$http({method:'GET', url:'/nodecontents',params:{institutionID:node.idNEO}})
 			.success(function(data){
 				console.log(data);
 				$scope.noderelToShow.parts = data.parts;
@@ -175,7 +175,7 @@
 			$scope.nodetypes = [];
 			$scope.reltypes = [];
 
-			$http({method:'GET', url:REMOTE+'/adminnodes'})
+			$http({method:'GET', url:'/adminnodes'})
 			.success(function(data){
 				console.log(data.adminnodes);
 				$scope.noderelToShow.rels = [];
@@ -197,13 +197,13 @@
 				$scope.nodeSearchResults = [];
 				return;
 			}
-			var path = REMOTE+'/search?what=Users&term='+text+'&fnm='+text+'&lnm='+text+'&prf='+text+text+'&ema='+text;
+			var path = '/search?what=Users&term='+text+'&fnm='+text+'&lnm='+text+'&prf='+text+text+'&ema='+text;
 			$http({method:'GET', url:path})
 			.success(function (results){
 				console.log(results);
 				$scope.nodeSearchResults=results;
 				$scope.nodeSearchResults.forEach(function(el){
-					el['link']=REMOTE+'/usr/'+el['idNEO'].toString()+'/pic';
+					el['link']='/usr/'+el['idNEO'].toString()+'/pic';
 				}); 
 			});
 		};
