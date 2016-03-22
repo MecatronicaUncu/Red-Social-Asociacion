@@ -21,9 +21,9 @@
           }
         });
       }])
-    .controller('ProfileCtrl', function ($scope,$http,$stateParams,session,formDataObject,$location,REMOTE) {
+    .controller('ProfileCtrl', function ($scope,$http,$stateParams,session,formDataObject,$location) {
 
-        $scope.image = REMOTE+'/usr/' + $stateParams.id + '/pic';
+        $scope.image = '/usr/' + $stateParams.id + '/pic';
                 
         $scope.fields = [
             {label:'Nombre', name:'firstName', model:'', icon:'fa-user'},
@@ -75,7 +75,7 @@
                 data.changes[el.name] = $('#'+el.name).text().trim();
             });
 
-            $http({method:'POST',url:REMOTE+'/uptprofile',data:data})
+            $http({method:'POST',url:'/uptprofile',data:data})
                     .success(function(){
                         $('#updateSubmit > span').removeClass('fa-refresh').addClass('fa-check');
                         $('#updateSubmit').prop('disabled',true);
@@ -90,7 +90,7 @@
         $scope.loadProfile = function(){
             $scope.itsme = session.isLoggedIn() && ($stateParams.id == session.getID());
             if(! $scope.itsme){
-                var path = REMOTE+'/profile/' + $stateParams.id;
+                var path = '/profile/' + $stateParams.id;
                 $http({method:'GET', url:path})
                 .success(function (profile){
                     $scope.fields.forEach(function(el){
@@ -117,7 +117,7 @@
             $scope.friends = [];
             results.friends.forEach( function(el){
                 var temp = el.data;
-                temp['link'] = REMOTE+'/usr/'+el['id']+'/pic';
+                temp['link'] = '/usr/'+el['id']+'/pic';
                 temp['idNEO'] = el['idNEO'];
                 $scope.friends.push(temp);
             });
@@ -125,7 +125,7 @@
             $scope.suggestedFriends = [];
             results.suggested.forEach( function(el){
                 var temp = el.data;
-                temp['link'] = REMOTE+'/usr/'+el['id']+'/pic';
+                temp['link'] = '/usr/'+el['id']+'/pic';
                 temp['idNEO'] = el['idNEO'];
                 $scope.suggestedFriends.push(temp);
             });
@@ -133,7 +133,7 @@
             $scope.requestedFriends = [];
             results.requested.forEach( function(el){
                 var temp = el.data;
-                temp['link'] = REMOTE+'/usr/'+el['id']+'/pic';
+                temp['link'] = '/usr/'+el['id']+'/pic';
                 temp['idNEO'] = el['idNEO'];
                 $scope.requestedFriends.push(temp);
             });
@@ -141,7 +141,7 @@
             $scope.demandedFriends = [];
             results.demanded.forEach( function(el){
                 var temp = el.data;
-                temp['link'] = REMOTE+'/usr/'+el['id']+'/pic';
+                temp['link'] = '/usr/'+el['id']+'/pic';
                 temp['idNEO'] = el['idNEO'];
                 $scope.demandedFriends.push(temp);
             });
@@ -166,14 +166,14 @@
           
         $scope.makeFriend = function(id){
             var ids = {idUsr:session.getID(),idFriend:id};
-            $http({method:'POST' , url:REMOTE+'/friend', data:ids})
+            $http({method:'POST' , url:'/friend', data:ids})
                 .success(function (data){
                     session.updateContacts();
             });
         };
           
         $scope.deleteFriend = function(id){
-            var path = REMOTE+'/delFriend';
+            var path = '/delFriend';
             $http({method:'POST',url:path})
                 .success(function (data){
                     $scope.updateContacts();
@@ -186,7 +186,7 @@
         };
          
         $scope.deleteUser = function(){
-            var path = REMOTE+'/delUser/' + session.getID();
+            var path = '/delUser/' + session.getID();
             $http({method:'POST',url:path})
                 .success(function (data){
                     session.log('out');
@@ -206,20 +206,20 @@
         $scope.uploadPic = function() {
             var fd = new FormData();
             fd.append('image',$('#imginput')[0].files[0]);
-            return $http.post(REMOTE+'/profilepic/' + session.getID(),fd,{
+            return $http.post('/profilepic/' + session.getID(),fd,{
 				transformRequest:angular.identity,
                 headers: {
                     'Content-Type': undefined
                 },
                 enctype:'multipart/form-data'
             }).success(function(data){
-                $scope.image = REMOTE+'/usr/' + session.getID() + '/pic#' + new Date().getTime();
+                $scope.image = '/usr/' + session.getID() + '/pic#' + new Date().getTime();
             });
         };
         
         $scope.changePass = function(pass){
             pass['id']=session.getID();
-            var path = REMOTE+'/change';
+            var path = '/change';
             $http({method:'POST',url:path, data:pass})
                 .success(function(){
                     $scope.profileTab = 'Perfil';

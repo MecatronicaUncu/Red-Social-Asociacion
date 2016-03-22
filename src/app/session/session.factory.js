@@ -3,7 +3,7 @@
 		'use strict';
 
 		angular.module('linkedEnibApp')
-      .factory('session',function($rootScope,$http,REMOTE) {
+      .factory('session',function($rootScope,$http) {
         var ID = 0;
         var admin = false;
         var loggedIn = false;
@@ -85,7 +85,7 @@
           }
 				};
 				var checkAdminCookie = function(){
-          $http({method:'GET', url:REMOTE+'/checkAdminCookie'})
+          $http({method:'GET', url:'/checkAdminCookie'})
           .success(function(){
               setAdmin(true);
               $rootScope.$broadcast('gotAdmin');
@@ -101,7 +101,7 @@
 
 				var api = {
 					logout: function(){
-						$http({method:'POST',url:REMOTE+'/logout',data:{id:api.getID()}})
+						$http({method:'POST',url:'/logout',data:{id:api.getID()}})
 							.success(function(){
 								log('out',null,null);
               })
@@ -110,7 +110,7 @@
               });
 					},
           login: function(person){
-            $http({method:'POST',url:REMOTE+'/login',data:person})
+            $http({method:'POST',url:'/login',data:person})
             .success(function(data){
               if (data && data.idNEO){
                 log('in', data.idNEO, null);
@@ -124,7 +124,7 @@
             });
           },
 					checkCookie: function() {
-            $http({method:'GET', url:REMOTE+'/checkCookie'})
+            $http({method:'GET', url:'/checkCookie'})
             .success(function (data){
               log('in',data.idNEO);
               checkAdminCookie();
@@ -134,7 +134,7 @@
             });
 					},
 					updateContacts: function(){
-            $http({method:'GET', url:REMOTE+'/contacts'})
+            $http({method:'GET', url:'/contacts'})
             .success(function (_contacts){
 								setContacts(_contacts);
                 return;
@@ -147,7 +147,7 @@
 						return angular.copy(contacts);
 					},
 					updateSubscriptions: function(){
-            $http({method:'GET', url:REMOTE+'/subscriptions'})
+            $http({method:'GET', url:'/subscriptions'})
             .success(function (_subscriptions){
 								setSubscriptions(_subscriptions);
                 return;
@@ -160,7 +160,7 @@
 						return angular.copy(subscriptions);
 					},
 					updateProfile: function(){
-            $http({method:'GET', url:REMOTE+'/profile/'+api.getID()})
+            $http({method:'GET', url:'/profile/'+api.getID()})
             .success(function (_profile){
 								setProfile(_profile);
 								setLang(_profile.lang);
@@ -174,7 +174,7 @@
 						return angular.copy(profile);
 					},
 					updateTranslation: function(){
-            $http({method:'GET', url:REMOTE+'/translation/'+api.getLang()})
+            $http({method:'GET', url:'/translation/'+api.getLang()})
             .success(function(data){
               if(data.translation){
                 setTranslation(data.translation);
@@ -190,7 +190,7 @@
 						if(_lang){
 							setLang(_lang);
 						}else{
-							$http({method:'POST', url:REMOTE+'/change', data:{field:'lang', value:api.getLang()}})
+							$http({method:'POST', url:'/change', data:{field:'lang', value:api.getLang()}})
 							.success(function(){
 								//Ok. Nothing to do
 							})

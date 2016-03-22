@@ -51,7 +51,6 @@
 
         $httpProvider.defaults.withCredentials = true;
       })
-			.constant('REMOTE','https://localhost:3000')
       .factory('formDataObject', function() {
         return function(data) {
             var fd = new FormData();

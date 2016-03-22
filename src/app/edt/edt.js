@@ -17,10 +17,12 @@
           }
         });
       }])
-      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, REMOTE, $timeout, $http) {
+      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, $timeout, $http) {
 
         $scope.partSearchResults = [];
+        //Required. If not present produce errors.
         $scope.dummy = [];
+        $scope.dummy2 = [];
         $scope.whatIdToSearch = 0;
         $scope.whoIdToSearch = 0;
         
@@ -160,7 +162,7 @@
                 $scope.partSearchResults = [];
                 return;
             }
-            var path = REMOTE+'/search?what=Parts&term=' + $scope.partSearchTerm;
+            var path = '/search?what=Parts&term=' + $scope.partSearchTerm;
             $http({method: 'GET', url: path})
             .success(function (results) {
                 console.log(results);

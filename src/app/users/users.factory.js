@@ -3,11 +3,11 @@
   'use strict';
 
   angular.module('linkedEnibApp')
-  .factory('users', function($http, $rootScope, session, REMOTE) {
+  .factory('users', function($http, $rootScope, session) {
 
     var api = {
       they: function(next){
-        $http({method:'GET', url:REMOTE+'/they'})
+        $http({method:'GET', url:'/they'})
         .success(function (data){
           return next(null,data.they);
          })
@@ -16,7 +16,7 @@
          });
       },
       signup: function(user,next){
-        $http({method:'POST',url:REMOTE+'/signup',data:user})
+        $http({method:'POST',url:'/signup',data:user})
         .success(function(data){
           if (data.idNEO == null){
             return next('ID was null',null);
@@ -30,7 +30,7 @@
       },
       makeFriend: function(friendID,next){
         var ids = {idUsr:session.getID(),idFriend:friendID};
-        $http({method:'POST' , url:REMOTE+'/friend', data:ids})
+        $http({method:'POST' , url:'/friend', data:ids})
         .success(function (){
           session.updateContacts();
           return next(null,null);
@@ -40,7 +40,7 @@
         });
       },
       deleteFriend: function(friendID,next){
-        $http({method:'POST',url:REMOTE+'/delFriend',data:{idFriend:friendID}})
+        $http({method:'POST',url:'/delFriend',data:{idFriend:friendID}})
         .success(function (){
           session.updateContacts();
           return next(null,null);
@@ -122,7 +122,7 @@
         }
       },
       subscribeTo: function(instID,next){
-        $http({method:'POST',url:REMOTE+'/subscribe',data:{instID:instID}})
+        $http({method:'POST',url:'/subscribe',data:{instID:instID}})
         .success(function(){
           session.updateSubscriptions();
           return next(null,null);
@@ -132,7 +132,7 @@
         });
       },
       unsubscribeFrom: function(instID,next){
-        $http({method:'POST',url:REMOTE+'/unsubscribe',data:{instID:instID}})
+        $http({method:'POST',url:'/unsubscribe',data:{instID:instID}})
         .success(function(){
           session.updateSubscriptions();
           return next(null,null);

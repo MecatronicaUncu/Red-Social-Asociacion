@@ -17,7 +17,7 @@
           }
         });
       }])
-      .controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, session,users,REMOTE) {
+      .controller('MainCtrl', function ($scope, $rootScope, $http, $cookieStore, session,users) {
         
         $scope.hideSignIn = true;
         $scope.hideSignUp = true;
@@ -35,7 +35,7 @@
                 } else {
                     $scope.they = users;
                     $scope.they.forEach(function(el){
-                        el['link']=REMOTE+'/usr/'+el['idNEO'].toString()+'/pic';
+                        el['link']='/usr/'+el['idNEO'].toString()+'/pic';
                     });
                 }
             });

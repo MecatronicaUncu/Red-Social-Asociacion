@@ -7,11 +7,6 @@
 	ngDescribe({
 		name: 'Session factory',
 		module: 'linkedEnibApp',
-		mock: {
-			linkedEnibApp: {
-				REMOTE: '',
-			}
-		},
 		inject: ['session', '$httpBackend'],
 		tests: function(deps){
 

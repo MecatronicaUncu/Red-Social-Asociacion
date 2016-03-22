@@ -3,7 +3,7 @@
   'use strict';
 
   angular.module('linkedEnibApp')
-    .factory('edt',function($http, $rootScope, session, REMOTE){
+    .factory('edt',function($http, $rootScope, session){
 
     var config = null;
 
@@ -14,7 +14,7 @@
 
     var api = {
       getTimes: function(whatId, whoId, week, year, next){
-        $http({ method:'GET', url:REMOTE+'/times',
+        $http({ method:'GET', url:'/times',
                 params:{whatId:whatId, whoId:whoId, week:week, year:year}})
         .success(function(data){
           return next(null,data.times);
@@ -24,7 +24,7 @@
         });
       },
       updateConfig: function(next){
-        $http({method:'GET', url:REMOTE+'/edtconfig'})
+        $http({method:'GET', url:'/edtconfig'})
         .success(function(data){
           console.log(data.config);
           setConfig(data.config);
@@ -35,7 +35,7 @@
          });
       },
       getActivityTypes: function(parent, next){
-        $http({ method:'GET', url:REMOTE+'/acttypes',
+        $http({ method:'GET', url:'/acttypes',
                 params:{parent: parent}})
         .success(function(data){
           console.log(data.activityTypes);
@@ -46,7 +46,7 @@
         });
       },
       getAssociations: function(next){
-        $http({method:'GET', url:REMOTE+'/asocs'})
+        $http({method:'GET', url:'/asocs'})
         .success(function(data){
           console.log(data.asocs);
           return next(null, data.asocs);
@@ -57,7 +57,7 @@
       },
       /*
       getPlaces: function(next){
-        $http({method:'GET', url:REMOTE+'/edtplaces'})
+        $http({method:'GET', url:'/edtplaces'})
         .success(function(data){
           return next(null,data.places);
         })
@@ -67,7 +67,7 @@
       },
       */
       newActivity: function(activities,next){
-        $http({method:'POST', url:REMOTE+'/edtnewact', data:{activities:activities}})
+        $http({method:'POST', url:'/edtnewact', data:{activities:activities}})
         .success(function(){
           return next(null,null);
         })
