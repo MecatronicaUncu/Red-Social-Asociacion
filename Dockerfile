@@ -14,9 +14,7 @@ RUN apt-get install -y nodejs
 RUN apt-get install -y npm
 RUN apt-get install -y ruby ruby-dev
 RUN apt-get install -y curl
-# Revisar jre, puede que funcione sin eso
-RUN apt-get install -y openjdk-7-jre
-RUN apt-get install -y openjdk-7-jdk
+RUN apt-get install -y openjdk-7-jre-headless
 RUN apt-get install -y lsof
 
 # Install firefox and xvfb for karma tests
