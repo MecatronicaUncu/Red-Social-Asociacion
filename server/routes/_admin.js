@@ -37,10 +37,10 @@ exports.getAdminNodes = function(idNEO, callback){
 exports.getNodeRelTypes = function(memberof, callback){
 
   var query = [
-    'MATCH (part:nodeType)',
-    'WHERE NOT part.type IN ["ActivityType", "User"]',
-    'AND "'+memberof+'" IN part.parent',
-    'RETURN part AS nodeData'
+    'MATCH (partrel:nodeType)',
+    'WHERE NOT partrel.type="ActivityType"',
+    'AND "'+memberof+'" IN partrel.parent',
+    'RETURN partrel AS nodeData'
   ].join('\n');
 
   db.query(query, null, function(err, results){
@@ -53,9 +53,11 @@ exports.getNodeRelTypes = function(memberof, callback){
       
       results.forEach(function(res){
         res = res.nodeData._data.data;
-        if(res.label === 'User'){
+        if(res.type === 'User'){
           //Handle relationships
+          rels.push(res);
         } else {
+          //Handle parts
           parts.push(res);
         }
       });

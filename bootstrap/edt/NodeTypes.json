@@ -48,6 +48,36 @@
       "type": "ActivityType",
       "label": "NOT_SPECIFIED",
       "parent": ["ALL"]
+    },
+    {
+      "type": "User",
+      "label": "PROFESOR_TITULAR",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "User",
+      "label": "PROFESOR_ADJUNTO",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "User",
+      "label": "PROFESOR_JTP",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "User",
+      "label": "DECANO",
+      "parent": ["Faculty"]
+    },
+    {
+      "type": "User",
+      "label": "RECTOR",
+      "parent": ["University"]
+    },
+    {
+      "type": "User",
+      "label": "DIRECTOR",
+      "parent": ["CarreraDeGrado"]
     }
   ]
 }

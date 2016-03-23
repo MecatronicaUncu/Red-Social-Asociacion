@@ -85,7 +85,7 @@
 
 			$http({method:'POST', url:'/newrel', data:{
 				usrID:$scope.newRel.idNEO,
-				relType:$scope.nodeRelToCreate.type,
+				relType:$scope.nodeRelToCreate.label,
 				instId:inst.idNEO}})
 			.success(function(data){
 				$scope.cancelNewNodeRel();

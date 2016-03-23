@@ -50,7 +50,7 @@
         </div>
 
         <span class="newRelLabel" ng-show="newRel.firstName">
-            {{translation.admin['define']}} {{newRel.firstName}} {{newRel.lastName}} {{translation.admin['as']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['of']}} {{nodeNavLevels[nodeNavLevels.length - 1].name}} ?</span>
+            {{translation.admin['define']}} {{newRel.firstName}} {{newRel.lastName}} {{translation.admin['as']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['of']}} {{nodeNavLevels[nodeNavLevels.length - 1].nodeData.name}} ?</span>
         <div class="dropdown newActSelect" ng-repeat="(paramIndex, param) in nodeRelToCreate.params" ng-show="newRel.firstName">
             <span class="edtSearchBtn newActBtn newActLbl">{{translation.params[param.label]}}:</span>
             <button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
