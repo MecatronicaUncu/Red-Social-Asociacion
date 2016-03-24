@@ -97,7 +97,7 @@ exports.newRel = function(relData,callback){
   
     var query = [
     'MATCH (u),(i) WHERE ID(u)=' + relData.usrID.toString() +' AND ID(i)=' + relData.instId.toString(),
-    'CREATE (u)-[:'+relData.relType + ']->(i)'
+    'MERGE (u)-[:'+relData.relType + ']->(i)'
     ].join('\n');
     
     console.log(query);
@@ -117,7 +117,7 @@ exports.newPart = function(data,callback){
     
     var query = [
     'MATCH (i) WHERE ID(i)='+data.instID,
-    'CREATE (p:'+data.label+'{ partData })-[:PARTOF]->(i)',
+    'MERGE (p:'+data.label+'{ partData })-[:PARTOF]->(i)',
 	'RETURN ID(p) AS idNEO'
     ].join('\n');
     
