@@ -8,6 +8,7 @@
 		"EXAMEN_PARCIAL" : "#9F8186",
 		"LECTURE" : "#FFED70",
 		"TP" : "#FF8680",
-		"NOT_SPECIFIED" : "#F7F5E4"
+		"NOT_SPECIFIED" : "#F7F5E4",
+		"EXAMEN_FINAL" : "#6BA6D4"
 	}
 }

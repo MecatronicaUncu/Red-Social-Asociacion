@@ -41,21 +41,25 @@ User.getAsocs = function(idNEO, callback){
     var query = [
         'MATCH (u:User)-[r]->(i) WHERE ID(u)='+idNEO,
         'AND NOT TYPE(r) IN ["ADMINS","SUBSCRIBED","PARTOF","FRIENDS"]',
-        'RETURN TYPE(r) as reltype, LABELS(i) AS instLabel, ID(i) AS instID, i.name AS instName'
+        'RETURN TYPE(r) as reltype, LABELS(i) AS label, ID(i) AS instID, i.name AS name'
     ].join('\n');
 
     db.query(query, null, function (err, results) {
         if (err){
 			throw err;
-            console.log("err get Profile");
+            console.log("err get associations");
             return callback(err);
         }else{
-            results.push({label:"PRIVATE",instID:-1,instName:"PRIVATE"});
-            if(results.length > 0){
-                return callback(null, results);
-            }else{
-                return callback('No Results');
-            }
+          results.forEach(function(res){
+            res.label = res.label[0];
+          });
+
+          results.push({label:"PRIVATE",instID:-1,name:"PRIVATE"});
+          if(results.length > 0){
+              return callback(null, results);
+          }else{
+              return callback('No Results');
+          }
         }
      });  
 };

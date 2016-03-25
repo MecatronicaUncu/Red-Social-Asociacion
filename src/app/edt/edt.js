@@ -70,7 +70,7 @@
         $scope.selectAsoc = function (asoc) {
           console.log(asoc);
             $scope.newAct.whatId = asoc.instID;
-            $scope.newAct.whatName = asoc.instName;
+            $scope.newAct.whatName = asoc.name;
             
             console.log($scope.newAct.whatId);
             console.log($scope.newAct.whoId);
@@ -141,7 +141,7 @@
             if(err){
               return;
             } else {
-              asocs[asocs.length - 1].instName = session.getTranslation().labels[asocs[asocs.length - 1].instName];
+              asocs[asocs.length - 1].name = session.getTranslation().labels[asocs[asocs.length - 1].name];
               $scope.actAsocs = asocs;
               $scope.selectAsoc(asocs[0]);
               return;
@@ -920,7 +920,7 @@
         $scope.clearAct = function () {
             $scope.newAct.periods = [];
             $scope.newAct.whatId = $scope.actAsocs[0].instID;
-            $scope.newAct.whatName = $scope.actAsocs[0].instName;
+            $scope.newAct.whatName = $scope.actAsocs[0].name;
             $scope.newAct.whoId = session.getID();
             $scope.newAct.whoName = session.getProfile().firstName[0] + '. ' + session.getProfile().lastName;
 

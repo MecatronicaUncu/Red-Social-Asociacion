@@ -37,6 +37,7 @@ exports.getActivityTypes = function(parent, callback){
   var query = [
     'MATCH (a:nodeType)',
     'WHERE ANY (p IN a.parent WHERE p IN ["ALL", "'+parent+'"])',
+    'AND a.type="ActivityType"',
     'RETURN a AS activityType, ID(a) AS idNEO'
   ].join('\n');
 
