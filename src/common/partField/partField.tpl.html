@@ -6,8 +6,8 @@
     </div>
     <div class="nodeFieldBtns">
         <button class="nodeFieldBtn edtSearchBtn" 
-                ng-show="session.loggedIn"
-                ng-click="users.isSubscribed(part.idNEO)?users.unsubscribe(part.idNEO):users.subscribe(part.idNEO)">
+                ng-show="session.isLoggedIn()"
+                ng-click="subscribe(part.idNEO)">
             <i class="fa fa-fw partFieldIcon" ng-class="users.isSubscribed(part.idNEO)?'fa-star':'fa-star-o'">
                 
             </i>

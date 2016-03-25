@@ -403,14 +403,14 @@ exports.activate = function (req, res, next) {
 /******************************************************************************/
 exports.unsubscribe = function(req, res, next){
     
-    if (req.id && req.body.instId){
+    if (req.id && req.body.instID){
         ;
     }else{
         res.status(401).send('Unauthorized');
         return;
     }
     
-    User.unsubscribe(req.id, req.body.instId, function(err){
+    User.unsubscribe(req.id, req.body.instID, function(err){
         if(err){
             console.log(err);
             res.status(500).send('ERROR');
@@ -422,14 +422,14 @@ exports.unsubscribe = function(req, res, next){
 
 exports.subscribe = function(req, res, next){
     
-    if (req.id && req.body.instId){
+    if (req.id && req.body.instID){
         ;
     }else{
         res.status(401).send('Unauthorized');
         return;
     }
     
-    User.subscribe(req.id, req.body.instId, function(err){
+    User.subscribe(req.id, req.body.instID, function(err){
         if(err){
             console.log(err);
             res.status(500).send('ERROR');
