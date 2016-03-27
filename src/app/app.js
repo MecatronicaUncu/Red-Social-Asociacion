@@ -39,12 +39,7 @@
                 controller: 'AdminCtrl'
             })
             .state('edt',{
-                url: '/edt',
-                templateUrl: 'edt/edt.tpl.html',
-                controller: 'EdtCtrl'
-            })
-            .state('edt.id',{
-                url: '/:id',
+                url: '/edt/:id',
                 templateUrl: 'edt/edt.tpl.html',
                 controller: 'EdtCtrl'
             });
