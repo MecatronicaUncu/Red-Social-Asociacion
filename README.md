@@ -15,7 +15,7 @@ running as a dependency. Then, you can pull a complete image from Docker
 Hub.
 ```
 docker pull mecatronicauncu/red-social-asociacion-dev
-docker run -p 3000:3000 -t -i red-social-asociacion-dev
+docker run -p 3000:3000 -t -i mecatronicauncu/red-social-asociacion-dev
 ```
 
 You can access to the website using your preferred browser
