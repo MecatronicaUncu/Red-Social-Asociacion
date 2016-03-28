@@ -75,14 +75,16 @@ Afterwards, you will need to configure the server.
 #### Running the server
 
 1. Start the database server [neo4j](http://neo4j.org/)
-```
-server/bin/neoRun
-```
+
+    ```
+    server/bin/neoRun
+    ```
 2. Run the server
-```
-grunt build
-grunt express
-```
+
+    ```
+    grunt build
+    grunt express
+    ```
 
 The Social Network will be available at the host you specified using port 3000: `HOST:3000`
 
@@ -113,7 +115,7 @@ docker exec -i -t CONTAINER_ID /bin/bash
 Docker dev images have `sudo` access enabled. Hence, you are able to install
 your favorite software for development.
 
-If you want to interact with Github (`push`/fetch`/`pull`) you will need to
+If you want to interact with Github (`push/fetch/pull`) you will need to
 change the repository remote address (to use SSH instead of HTTP), and
 you will need to set up your SSH keys.
 
