@@ -10,9 +10,10 @@ To implement a small open source social network for any small community.
 
 ### Using Docker (preferred)
 
-This is the simplest way to run the project. You only need Docker
-running as a dependency. Then, you can pull a complete image from Docker
-Hub.
+This is the simplest way to run the project. Only Docker is needed
+as a dependency.
+
+Pull and run a complete image from Docker Hub.
 ```
 docker pull mecatronicauncu/red-social-asociacion-dev
 docker run -p 3000:3000 -t -i mecatronicauncu/red-social-asociacion-dev
@@ -23,7 +24,7 @@ You can access to the website using your preferred browser
 https://localhost:3000/
 ```
 
-Alternatively, you can build your own Docker image using the Dockerfile
+Alternatively, build your own Docker image using the Dockerfile
 provided in this repository.
 ```
 git clone https://github.com/MecatronicaUncu/Red-Social-Asociacion.git
@@ -45,9 +46,10 @@ dependencies.
 - A running jre (we have tested openjdk)
 - lsof
 
-If you don't have nodejs installed, you can use Node Version Manager
-([nvm](https://github.com/creationix/nvm)). In the same way, you can
-install ruby using Ruby Version Manager ([rvm](https://rvm.io/rvm/install)). Please be sure to source the appropriate files in your `.bashrc` or `.zshrc`.
+If you don't have nodejs installed, use Node Version Manager
+([nvm](https://github.com/creationix/nvm)). In the same way,
+install Ruby using Ruby Version Manager ([rvm](https://rvm.io/rvm/install)).
+Please be sure to source the appropriate files in your `.bashrc` or `.zshrc`.
 
 #### Installing the server
 
@@ -58,7 +60,7 @@ cd Red-Social-Asociacion
 ./bootstrap/setup
 ```
 
-Afterwards, you will need to configure the server.
+Afterwards, configure the server.
 ```
 ./bootstrap/config
 ```
@@ -86,12 +88,12 @@ Afterwards, you will need to configure the server.
     grunt express
     ```
 
-The Social Network will be available at the host you specified using port 3000: `HOST:3000`
+The Social Network will be available at  port 3000: `HOST:3000`
 
 ## Install and Run in Windows/OS X
 
 The installation using Docker should work out of the box. Please refer
-to Linux Install and Run Guide using Docker.
+to [Install and Run in Linux](#using-docker-preferred).
 
 ## Develop
 
@@ -101,11 +103,11 @@ to Linux Install and Run Guide using Docker.
 Guide](https://docs.docker.com/engine/userguide/intro/) to understand
 how Docker works.
 
-You can run a shell in a container using the following command
+Run a shell in a container using the following command
 ```
 docker run -p 3000:3000 -t -i mecatronicauncu/red-social-asociacion-dev /bin/bash
 ```
-Then, you may run the server using the commands from the section
+Then, run the server using the commands from the section
 [Running the server](#running-the-server).
 
 Multiple shells may be executed in the same container.
@@ -115,13 +117,13 @@ docker exec -i -t CONTAINER_ID /bin/bash
 Docker dev images have `sudo` access enabled. Hence, you are able to install
 your favorite software for development.
 
-If you want to interact with Github (`push/fetch/pull`) you will need to
-change the repository remote address (to use SSH instead of HTTP), and
-you will need to set up your SSH keys.
+If you want to interact with Github (`push/fetch/pull`), change the
+repository remote address (to use SSH instead of HTTP), and set up your
+SSH keys.
 
 #### Copy SSH keys from Host to Container
 
-You may copy your SSH keys from the Docker Host to a running container
+Copy your SSH keys from the Docker Host to a running container
 with the following command
 ```
 docker cp /path/to/.ssh CONTAINER_ID:/red-social-asoc/.ssh
@@ -134,11 +136,11 @@ Remember to fix `.ssh` folder permissions inside the running container
 #### Generate new SSH keys
 
 The [GitHub Tutorial for SSH keys](https://help.github.com/articles/generating-an-ssh-key/)
-is a good ressource for SSH keys.
+is a good resource for SSH keys.
 
 ## Files
 
-We follow the approach of [ngbp](https://github.com/ngbp/ngbp). We've adapted the code to meet our requirements.
+We follow the approach of [ngbp](https://github.com/ngbp/ngbp).
 
 Most important:
 
@@ -180,7 +182,7 @@ in your database and add some relationships. After running it, you can
 check the user list with their login info inside
 `people_email_pass.csv`.
 
-If you want to clean your database, execute the following query in the Neo4J browser: ```MATCH (u)-[r]-() DELETE r,u```.
+To clean your database, execute the following query in the Neo4J browser: ```MATCH (u)-[r]-() DELETE r,u```.
 
 **Note**: The list of users IDs (saved in ```usersIDs.csv```) is not deterministic. Running the script twice will result in relationships not intended to be created. This will not have adverse effects, but it must be taken into consideration.
 
