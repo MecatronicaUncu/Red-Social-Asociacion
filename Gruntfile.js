@@ -366,12 +366,13 @@ module.exports = function ( grunt ) {
         configFile: '<%= build_dir %>/karma-unit.js'
       },
       unit: {
-        port: 9019,
-        background: true
-      },
-      continuous: {
+        //port: 9019,
+        //background: true,
         singleRun: true
       }
+      //continuous: {
+       // singleRun: true
+      //}
     },
 
     /**
@@ -494,7 +495,7 @@ module.exports = function ( grunt ) {
         files: [ 
           '<%= app_files.js %>'
         ],
-        tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs' ]
+        tasks: [ 'jshint:src', 'karma:unit', 'copy:build_appjs' ]
       },
 
       /**
@@ -505,7 +506,7 @@ module.exports = function ( grunt ) {
         files: [ 
           '<%= app_files.coffee %>'
         ],
-        tasks: [ 'coffeelint:src', 'coffee:source', 'karma:unit:run', 'copy:build_appjs' ]
+        tasks: [ 'coffeelint:src', 'coffee:source', 'karma:unit', 'copy:build_appjs' ]
       },
 
       /**
@@ -554,7 +555,7 @@ module.exports = function ( grunt ) {
         files: [
           '<%= app_files.jsunit %>'
         ],
-        tasks: [ 'jshint:test', 'karma:unit:run' ],
+        tasks: [ 'jshint:test', 'karma:unit' ],
         options: {
           livereload: false
         }
@@ -568,7 +569,7 @@ module.exports = function ( grunt ) {
         files: [
           '<%= app_files.coffeeunit %>'
         ],
-        tasks: [ 'coffeelint:test', 'karma:unit:run' ],
+        tasks: [ 'coffeelint:test', 'karma:unit' ],
         options: {
           livereload: false
         }
@@ -597,7 +598,7 @@ module.exports = function ( grunt ) {
    * before watching for changes.
    */
   grunt.renameTask( 'watch', 'delta' );
-  grunt.registerTask( 'watch', [ 'build', 'karma:unit', 'express:dev', 'delta' ] );
+  grunt.registerTask( 'watch', [ 'build', 'express:dev', 'delta' ] );
 
   /**
    * The default task is to build and compile.
@@ -611,7 +612,7 @@ module.exports = function ( grunt ) {
     'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'sass:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
     'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_vendorcss', 'index:build', 'karmaconfig',
-    'karma:continuous' 
+    'karma:unit'
   ]);
 
   /**
