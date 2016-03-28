@@ -27,8 +27,7 @@ https://localhost:3000/
 Alternatively, build your own Docker image using the Dockerfile
 provided in this repository.
 ```
-git clone https://github.com/MecatronicaUncu/Red-Social-Asociacion.git
-cd Red-Social-Asociacion
+curl https://raw.githubusercontent.com/mecatronicauncu/Red-Social-Asociacion/develop/Dockerfile > Dockerfile
 docker build -t red-social-asociacion-dev .
 docker run -p 3000:3000 -t -i red-social-asociacion-dev
 ```
