@@ -91,6 +91,48 @@ The Social Network will be available at the host you specified using port 3000: 
 The installation using Docker should work out of the box. Please refer
 to Linux Install and Run Guide using Docker.
 
+## Develop
+
+### Using Docker
+
+**Note**: It is a good idea to have a quick look to the [Docker User
+Guide](https://docs.docker.com/engine/userguide/intro/) to understand
+how Docker works.
+
+You can run a shell in a container using the following command
+```
+docker run -p 3000:3000 -t -i mecatronicauncu/red-social-asociacion-dev /bin/bash
+```
+Then, you may run the server using the commands from the section
+[Running the server](#running-the-server).
+
+Multiple shells may be executed in the same container.
+```
+docker exec -i -t CONTAINER_ID /bin/bash
+```
+Docker dev images have `sudo` access enabled. Hence, you are able to install
+your favorite software for development.
+
+If you want to interact with Github (`push`/fetch`/`pull`) you will need to
+change the repository remote address (to use SSH instead of HTTP), and
+you will need to set up your SSH keys.
+
+#### Copy SSH keys from Host to Container
+
+You may copy your SSH keys from the Docker Host to a running container
+with the following command
+```
+docker cp /path/to/.ssh CONTAINER_ID:/red-social-asoc/.ssh
+```
+
+Remember to fix `.ssh` folder permissions inside the running container
+```
+(inside container)$ sudo chown -R swuser:swuser ~/.ssh/
+```
+#### Generate new SSH keys
+
+The [GitHub Tutorial for SSH keys](https://help.github.com/articles/generating-an-ssh-key/)
+is a good ressource for SSH keys.
 
 ## Files
 
