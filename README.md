@@ -153,7 +153,7 @@ Most important:
                         connection between neo4j and expressjs.
         |-- upload      Uploaded files (such as profile images) *
 
-    |-- bin             Binary files (neo4j and MongoDB).
+    |-- bin             Binary files (neo4j).
                         Available after running ```./setup.sh```.
 
 |-- src                 Front-end stuff
