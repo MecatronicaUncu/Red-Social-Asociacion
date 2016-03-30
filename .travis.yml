@@ -2,7 +2,7 @@ language: node_js
 node_js:
     - "stable"
 before_install:
-    - curl -sSL https://get.rvm.io | bash -s stable --ruby
+    - rvm install 2.1.5
     - ./bootstrap/setup
     - ./bootstrap/config asoc LAN
     - ./bootstrap/testDataset/testDataset no-wait
