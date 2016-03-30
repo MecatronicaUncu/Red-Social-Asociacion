@@ -146,30 +146,36 @@ Most important:
 ```
 |-- server
 
-    |-- server.js       Server (expressjs) configuration
+    |-- server.js           Server (expressjs) configuration
 
     |-- routes
 
-        |-- user.js     Database (neo4j) query functions
+        |-- moduleName.js   High level API calls
 
-        |-- users.js    Cookies, access restrictions,
-                        connection between neo4j and expressjs.
-        |-- upload      Uploaded files (such as profile images) *
+        |-- _moduleName.js  Database access functions for module
 
-    |-- bin             Binary files (neo4j).
-                        Available after running ```./setup.sh```.
+        |-- users.js        Database (neo4j) query functions
 
-|-- src                 Front-end stuff
+        |-- _users.js       Cookies, access restrictions,
+                            connection between neo4j and expressjs.
 
-    |-- app             State templates, sass and javascript (views)
+        |-- upload          Uploaded files (such as profile images) *
 
-    |-- assets          Static content. Fonts, Styles, etc
+    |-- bin                 Binary files (neo4j).
+                            Available after running ```./setup.sh```.
 
-    |-- common          Directives
+|-- src                     Front-end stuff
 
-    |-- Sass            Sass main file and co.
+    |-- app                 State templates, sass and javascript (views)
 
-    |-- app.js          Angular app main module
+        |-- app.js          Angular app main module
+
+    |-- assets              Static content. Fonts, Styles, etc
+
+    |-- common              Directives
+
+    |-- sass                Sass main file and co.
+
 ```
 
 ## Test Datasets
