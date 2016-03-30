@@ -74,7 +74,7 @@ exports.newActivity = function(acts, callback){
         params = params.slice(0,-2);    
 
         query = query.concat(
-            ['CREATE (a:ACTIVITY {'+params+'})',
+            ['MERGE (a:ACTIVITY {'+params+'})',
             'RETURN ID(a) AS idNEO',
             'UNION',
             ''

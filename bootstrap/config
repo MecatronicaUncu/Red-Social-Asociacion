@@ -93,12 +93,12 @@ fi
 # Create Dummy node:
 # Requires a running server of Neo4J!
 loggerGreen "Creating dummy node...\n"
-./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE (:DUMMY);' >/dev/null 2>&1 || { loggerRed "Could not create dummy node. Are you sure your Neo4J server is up and running?"; exit 1; }
+./$NEO4J_DIR/bin/neo4j-shell -c 'MERGE (:DUMMY);' >/dev/null 2>&1 || { loggerRed "Could not create dummy node. Are you sure your Neo4J server is up and running?"; exit 1; }
 
 #-----------------------------------------#
 # Create email constraint
 loggerGreen "Creating email uniqueness constraint...\n"
-./$NEO4J_DIR/bin/neo4j-shell -c 'CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;' >/dev/null 2>&1 ||  { loggerRed "Could not create constraint. Are you sure your Neo4J server is up and running?"; exit 1; }
+./$NEO4J_DIR/bin/neo4j-shell -c 'MERGE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE;' >/dev/null 2>&1 ||  { loggerRed "Could not create constraint. Are you sure your Neo4J server is up and running?"; exit 1; }
 
 #-----------------------------------------#
 # Set new Neo4J server password
