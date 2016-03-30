@@ -108,6 +108,8 @@ docker run -p 3000:3000 -t -i mecatronicauncu/red-social-asociacion-dev /bin/bas
 ```
 Then, run the server using the commands from the section
 [Running the server](#running-the-server).
+`grunt watch` may be used instead of `grunt express` to trigger
+automatic builds when files are modified.
 
 Multiple shells may be executed in the same container.
 ```
