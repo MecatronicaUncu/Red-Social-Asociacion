@@ -156,11 +156,6 @@ Most important:
 
         |-- _moduleName.js  Database access functions for module
 
-        |-- users.js        Database (neo4j) query functions
-
-        |-- _users.js       Cookies, access restrictions,
-                            connection between neo4j and expressjs.
-
         |-- upload          Uploaded files (such as profile images) *
 
     |-- bin                 Binary files (neo4j).
