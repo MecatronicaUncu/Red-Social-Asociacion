@@ -212,7 +212,7 @@ cd $MY_PATH
 loggerGreen "Installing service start and shutdown scripts...\n"
 
 cat $LOCATION_FILE > $BIN_DIR/neoRun
-echo "./neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseConcMarkSweepGC" >> $BIN_DIR/neoRun
+echo "./neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseG1GC" >> $BIN_DIR/neoRun
 chmod +x $BIN_DIR/neoRun
 
 cat $LOCATION_FILE > $BIN_DIR/neoStop
