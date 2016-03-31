@@ -16,7 +16,7 @@ describe("Email functionalities", function(){
 		
 		beforeEach(function(done) {
 			var pass = secur.hash("testPass",null);
-			users.sendActivationEmail("francoamg@gmail.com",pass['pass'],"Franco","Ardiani", 
+			users.sendActivationEmail("---@gmail.com",pass['pass'],"---","---", 
 				function (result) {
 					ret = result;
 					done();
