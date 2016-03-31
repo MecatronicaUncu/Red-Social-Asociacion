@@ -1,0 +1,69 @@
+{
+  "nodes": [
+    {
+      "type": "University",
+      "fields": {"name": "Universidad Nacional de Cuyo", "country":"Argentina"}
+    },
+    {
+      "type": "Faculty",
+      "parentName": "Universidad Nacional de Cuyo",
+      "fields": {"name": "Facultad de Ingeniería"}
+    },
+    {
+      "type": "CarreraDeGrado",
+      "parentName": "Facultad de Ingeniería",
+      "fields": {"name": "Ingeniería en Mecatrónica"}
+    },
+    {
+      "type": "Materia",
+      "parentName": "Ingeniería en Mecatrónica",
+      "fields": {"name": "Informática"}
+    },
+    {
+      "type": "Materia",
+      "parentName": "Ingeniería en Mecatrónica",
+      "fields": {"name": "Análisis Matemático I"}
+    },
+    {
+      "type": "Materia",
+      "parentName": "Ingeniería en Mecatrónica",
+      "fields": {"name": "Producmática"}
+    },
+    {
+      "type": "User",
+      "instName": "Universidad Nacional de Cuyo",
+      "relType": "RECTOR",
+      "usermail": "laurencepray@mecatronicauncu.org"
+    },
+    {
+      "type": "User",
+      "instName": "Facultad de Ingeniería",
+      "relType": "DECANO",
+      "usermail": "goldencornman@mecatronicauncu.org"
+    },
+    {
+      "type": "User",
+      "instName": "Ingeniería en Mecatrónica",
+      "relType": "DIRECTOR",
+      "usermail": "vickyculligan@mecatronicauncu.org"
+    },
+    {
+      "type": "User",
+      "instName": "Informática",
+      "relType": "PROFESOR_TITULAR",
+      "usermail": "claricenorthrop@mecatronicauncu.org"
+    },
+    {
+      "type": "User",
+      "instName": "Análisis Matemático I",
+      "relType": "PROFESOR_ADJUNTO",
+      "usermail": "osvaldobagnell@mecatronicauncu.org"
+    },
+    {
+      "type": "User",
+      "instName": "Producmática",
+      "relType": "PROFESOR_JTP",
+      "usermail": "terinaly@mecatronicauncu.org"
+    }
+  ]
+}
