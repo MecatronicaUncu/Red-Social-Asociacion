@@ -99,7 +99,8 @@ exports.newRel = function(relData,callback){
   
     var query = [
     'MATCH (u),(i) WHERE ID(u)=' + relData.usrID.toString() +' AND ID(i)=' + relData.instId.toString(),
-    'MERGE (u)-[:'+relData.relType + ']->(i)'
+    'MERGE (u)-[:'+relData.relType + ']->(i)',
+    'MERGE (u)-[:ADMINS]->(i)'
     ].join('\n');
     
     console.log(query);
