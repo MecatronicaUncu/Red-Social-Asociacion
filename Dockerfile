@@ -17,9 +17,6 @@ RUN apt-get install -y curl
 RUN apt-get install -y openjdk-7-jre-headless
 RUN apt-get install -y lsof
 
-# Install firefox and xvfb for karma tests
-RUN apt-get install -y xvfb firefox
-
 # Install sudo
 RUN apt-get install -y sudo
 
@@ -57,4 +54,4 @@ RUN cd Red-Social-Asociacion && ./bootstrap/testDataset/testDataset no-wait
 
 # Entry point command: build and run tests on project, then launch
 # server
-CMD (sudo Xvfb :10 -ac) & (export DISPLAY=:10; cd Red-Social-Asociacion; ./server/bin/neoRun; grunt watch)
+CMD cd Red-Social-Asociacion && ./server/bin/neoRun && grunt watch
