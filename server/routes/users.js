@@ -10,6 +10,7 @@ var nodemailer = require('nodemailer');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var domain="https://127.0.1.1:3000";
 var secur = require('./secur.js');
+var config = require('./../config/config.js');
 
 /******************************************************************************/
 /*                          LOAD TRANSLATIONS                                 */
@@ -33,17 +34,23 @@ fs.readFile(transFile, 'utf-8', function (err, t) {
  * @param {string} hash: The user's hashed password
  * @returns {bool} Success state.
  */
-var sendActivationEmail = function(email,hash,name,lastname){
+exports.sendActivationEmail = function(email,hash,name,lastname,callback){
+	
+	if (!config.mailServedConfigured)
+	{
+		console.error("No se ha configurado el servidor mail");
+		return callback(false);
+	}
 	
 	var templatesDir = path.resolve(path.join(__dirname, '../templates/email_activacion/'));
 	var emailTemplate = new EmailTemplate(templatesDir);
 	
 	// Prepare nodemailer transport object
 	var transport = nodemailer.createTransport({
-		service: "Gmail",
+		service: config.smtpHost,
 		auth: {
-			user: "samplesample978@gmail.com",
-			pass: "sampleMail"
+			user: config.smtpUser,
+			pass: config.smtpPass
 		}
 	});
 	
@@ -62,12 +69,12 @@ var sendActivationEmail = function(email,hash,name,lastname){
 	// Send a single email
 	emailTemplate.render(locals, function (err, results) {
 	  if (err) {
-		console.error(err);
-		return;
+		console.error("Error: "+ err);
+		return callback(false);
 	  }
 
 	  transport.sendMail({
-		from: 'Admin <admin@admin.com>',
+		from: config.mailFrom,
 		to: locals.email,
 		subject: 'Activacion',
 		html: results.html,
@@ -78,11 +85,11 @@ var sendActivationEmail = function(email,hash,name,lastname){
 					}]
 	  }, function (err, responseStatus) {
 		if (err) {
-		  console.error(err)
-		  return;
+		  console.error("Error: " + err)
+		  return callback(false);
 		}
 		console.log(responseStatus.message);
-		return;
+		return callback(true);
 	  })
   })
 };

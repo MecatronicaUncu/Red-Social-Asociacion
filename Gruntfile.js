@@ -19,6 +19,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-express-server');
+  grunt.loadNpmTasks('grunt-jasmine-nodejs');
 
   /**
    * Load in our build configuration file.
@@ -278,6 +279,67 @@ module.exports = function ( grunt ) {
           compass: true
         }
       }
+    },
+    
+    /**
+     * Jasmine config for server-side unit testing.
+     */
+	
+	jasmine_nodejs: {
+        // task specific (default) options
+        options: {
+            specNameSuffix: "spec.js",
+            helperNameSuffix: "helper.js",
+            useHelpers: false,
+            random: false,
+            seed: null,
+            defaultTimeout: 20000, // defaults to 5000
+            stopOnFailure: false,
+            traceFatal: true,
+            // configure one or more built-in reporters
+            reporters: {
+                console: {
+                    colors: true,        // (0|false)|(1|true)|2
+                    cleanStack: 1,       // (0|false)|(1|true)|2|3
+                    verbosity: 4,        // (0|false)|1|2|3|(4|true)
+                    listStyle: "indent", // "flat"|"indent"
+                    activity: false
+                },
+                // junit: {
+                //     savePath: "./reports",
+                //     filePrefix: "junit-report",
+                //     consolidate: true,
+                //     useDotNotation: true
+                // },
+                // nunit: {
+                //     savePath: "./reports",
+                //     filename: "nunit-report.xml",
+                //     reportName: "Test Results"
+                // },
+                // terminal: {
+                //     color: false,
+                //     showStack: false,
+                //     verbosity: 2
+                // },
+                // teamcity: true,
+                // tap: true
+            },
+            // add custom Jasmine reporter(s)
+            customReporters: []
+        },
+        your_target: {
+            // target specific options
+            options: {
+                useHelpers: true
+            },
+            // spec files
+            specs: [
+				'server/specs/*spec.js'
+            ]
+            //helpers: [
+            //    "test/helpers/**"
+            //]
+        }
     },
 
     /**
@@ -611,8 +673,8 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'build', [
     'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'sass:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
-    'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_vendorcss', 'index:build', 'karmaconfig',
-    'karma:unit'
+    'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_vendorcss', 'index:build', 
+    'jasmine_nodejs', 'karmaconfig', 'karma:unit' 
   ]);
 
   /**
