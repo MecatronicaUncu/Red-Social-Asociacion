@@ -1,10 +1,11 @@
 // Admin database access functions
 
 var neo4j = require('neo4j');
+var config = require('./../config/config.js');
 var db = new neo4j.GraphDatabase(
     process.env['NEO4J_URL'] ||
     process.env['GRAPHENEDB_URL'] ||
-    'http://neo4j:neo@localhost:7474'
+    config.dbURL
 );
 
 exports.getAdminNodes = function(idNEO, callback){
