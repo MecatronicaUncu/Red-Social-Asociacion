@@ -3,6 +3,13 @@
 # This script is intended to create a fast instance of
 # Red-social-asociacion in a VPS running ubuntu (14.04).
 
+# Add a swap file
+sudo dd if=/dev/zero of=/var/swapfile bs=1M count=2048
+sudo chmod 600 /var/swapfile
+sudo mkswap /var/swapfile
+echo /var/swapfile none swap defaults 0 0 | sudo tee -a /etc/fstab
+sudo swapon -a
+
 # Install and run latest docker
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates
