@@ -7,8 +7,8 @@ var cookies = require('cookies');
 var fs = require('fs'); //FILESYSTEM
 var nodemailer = require('nodemailer');
 var EmailTemplate = require('email-templates').EmailTemplate;
-var domain="https://127.0.1.1:3000";
 var secur = require('./secur.js');
+var config = require('./../config/config.js');
 
 /******************************************************************************/
 /*                          LOAD TRANSLATIONS                                 */
@@ -32,17 +32,23 @@ fs.readFile(transFile, 'utf-8', function (err, t) {
  * @param {string} hash: The user's hashed password
  * @returns {bool} Success state.
  */
-var sendActivationEmail = function(email,hash,name,lastname){
+var sendActivationEmail = function(email,hash,name,lastname,callback){
+	
+	if (!config.mailServedConfigured)
+	{
+		console.error("No se ha configurado el servidor mail");
+		return callback(false);
+	}
 	
 	var templatesDir = path.resolve(path.join(__dirname, '../templates/email_activacion/'));
 	var emailTemplate = new EmailTemplate(templatesDir);
 	
 	// Prepare nodemailer transport object
 	var transport = nodemailer.createTransport({
-		service: "Gmail",
+		service: config.smtpHost,
 		auth: {
-			user: "samplesample978@gmail.com",
-			pass: "sampleMail"
+			user: config.smtpUser,
+			pass: config.smtpPass
 		}
 	});
 	
@@ -53,7 +59,7 @@ var sendActivationEmail = function(email,hash,name,lastname){
 	var locals = {
 	  email: email,
 	  //hash: hash,
-	  link: domain+'/activate?email='+email+'&hash='+hashRep,
+	  link: config.domain+'/activate?email='+email+'&hash='+hashRep,
 	  name: name,
 	  lastname: lastname
 	};
@@ -61,12 +67,12 @@ var sendActivationEmail = function(email,hash,name,lastname){
 	// Send a single email
 	emailTemplate.render(locals, function (err, results) {
 	  if (err) {
-		console.error(err);
-		return;
+		console.error("Error: "+ err);
+		return callback(false);
 	  }
 
 	  transport.sendMail({
-		from: 'Admin <admin@admin.com>',
+		from: config.mailFrom,
 		to: locals.email,
 		subject: 'Activacion',
 		html: results.html,
@@ -77,11 +83,11 @@ var sendActivationEmail = function(email,hash,name,lastname){
 					}]
 	  }, function (err, responseStatus) {
 		if (err) {
-		  console.error(err)
-		  return;
+		  console.error("Error: " + err)
+		  return callback(false);
 		}
 		console.log(responseStatus.message);
-		return;
+		return callback(true);
 	  })
   })
 };
@@ -391,7 +397,7 @@ exports.activate = function (req, res, next) {
                 res.status(401).send('Something went wrong');
                 return;
             }
-            res.status(200).send('<html><head><meta http-equiv="refresh" content="3;url='+domain+'" /></head><body><h1>Su cuenta ha sido activada. Redireccionando en 3 segundos...</h1></body></html>');
+            res.status(200).send('<html><head><meta http-equiv="refresh" content="3;url='+config.domain+'" /></head><body><h1>Su cuenta ha sido activada. Redireccionando en 3 segundos...</h1></body></html>');
             return;
         });
     });
@@ -488,7 +494,8 @@ exports.signup = function (req, res, next) {
             res.status(400).send('email taken');
             return;
         } else if (idNEO) {
-			sendActivationEmail(email,tempPass['pass'],nodeData['firstName'],nodeData['lastName']);
+			var ret = false;
+			sendActivationEmail(email,tempPass['pass'],nodeData['firstName'],nodeData['lastName'],function(result){});
 			res.status(200).send({idNEO: idNEO});
 			return;
         } else {

@@ -1,0 +1,25 @@
+var mailFrom = 'Admin <admin@mecatronica.org>';
+var fromName = 'Red Social Asociacion';
+var smtpUser = 'samplesample978@gmail.com';
+var smtpPass = 's4mpl3M41l';
+var smtpHost = 'Gmail';
+var portServ = 3000;
+var sslAcept = true;
+var sslKey   = 0;
+var sslCert  = 0;
+var mailServedConfigured = true;
+var domain="https://127.0.1.1:3000";
+var dbURL = 'http://neo4j:neo@localhost:7474'
+
+exports.mailFrom = mailFrom;
+exports.fromName = fromName;
+exports.smtpUser = smtpUser;
+exports.smtpPass = smtpPass;
+exports.smtpHost = smtpHost;
+exports.portServ = portServ;
+exports.sslAcept = sslAcept;
+exports.sslKey = sslKey;
+exports.sslCert = sslCert;
+exports.mailServedConfigured = mailServedConfigured;
+exports.domain = domain;
+exports.dbURL = dbURL;
