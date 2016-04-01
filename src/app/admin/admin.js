@@ -65,14 +65,20 @@
     };
 
     $scope.removePart = function(part){
+      var instID = ($scope.nodeNavLevels.length === 0)?part.idNEO:$scope.nodeNavLevels[$scope.nodeNavLevels.length-1].idNEO;
+      var idNEO = ($scope.nodeNavLevels.length === 0)?session.getID():part.idNEO;
       $http({method:'POST', url:'/delnoderel', data:{
-        idNEO: part.idNEO,
-        instID: $scope.nodeNavLevels[$scope.nodeNavLevels.length-1].idNEO,
+        idNEO: idNEO,
+        instID: instID,
         relType: 'PARTOF'
       }})
       .success(function(data){
         var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
-				$scope.getNodeContent(inst,$scope.nodeNavLevels.length-1);
+        if(inst){
+          $scope.getNodeContent(inst,$scope.nodeNavLevels.length-1);
+        }else{
+          $scope.getAdminNodes();
+        }
         console.log(data);
         return;
       })
