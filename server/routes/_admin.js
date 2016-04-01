@@ -38,10 +38,10 @@ exports.getAdminNodes = function(idNEO, callback){
 exports.getNodeRelTypes = function(memberof, callback){
 
   var query = [
-    'MATCH (part:nodeType)',
-    'WHERE NOT part.type IN ["ActivityType", "User"]',
-    'AND part.parent="'+memberof+'"',
-    'RETURN part AS nodeData'
+    'MATCH (partrel:nodeType)',
+    'WHERE NOT partrel.type="ActivityType"',
+    'AND "'+memberof+'" IN partrel.parent',
+    'RETURN partrel AS nodeData'
   ].join('\n');
 
   db.query(query, null, function(err, results){
@@ -54,9 +54,11 @@ exports.getNodeRelTypes = function(memberof, callback){
       
       results.forEach(function(res){
         res = res.nodeData._data.data;
-        if(res.label === 'User'){
+        if(res.type === 'User'){
           //Handle relationships
+          rels.push(res);
         } else {
+          //Handle parts
           parts.push(res);
         }
       });
@@ -98,7 +100,8 @@ exports.newRel = function(relData,callback){
   
     var query = [
     'MATCH (u),(i) WHERE ID(u)=' + relData.usrID.toString() +' AND ID(i)=' + relData.instId.toString(),
-    'MERGE (u)-[:'+relData.relType + ']->(i)'
+    'MERGE (u)-[:'+relData.relType + ']->(i)',
+    'MERGE (u)-[:ADMINS]->(i)'
     ].join('\n');
     
     console.log(query);
@@ -137,3 +140,20 @@ exports.newPart = function(data,callback){
     });
 };
 
+exports.delNodeRel = function(data,callback){
+
+  var query = [
+    'MATCH (u)-[r]->(i) WHERE ID(u)='+data.idNEO,
+    'AND ID(i)='+data.instID+' AND TYPE(r) IN ["ADMINS", "'+data.relType+'"]',
+    'DELETE r'
+  ].join('\n');
+
+  db.query(query, null, function(err, results) {
+    if(err){
+      console.log(err);
+      return callback(err);
+    }else{
+      return callback(null);
+    }
+  });
+};

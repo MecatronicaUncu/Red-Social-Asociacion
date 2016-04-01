@@ -46,6 +46,48 @@
 
 		$scope.nodeFields = [];
 
+    $scope.removeRel = function(rel){
+      $http({method:'POST', url:'/delnoderel', data:{
+        idNEO: rel.idNEO,
+        instID: $scope.nodeNavLevels[$scope.nodeNavLevels.length-1].idNEO,
+        relType: rel.reltype
+      }})
+      .success(function(data){
+        console.log(data);
+        var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
+				$scope.getNodeContent(inst,$scope.nodeNavLevels.length-1);
+        return;
+      })
+      .error(function(err){
+        console.log(err);
+        return;
+      });
+    };
+
+    $scope.removePart = function(part){
+      var instID = ($scope.nodeNavLevels.length === 0)?part.idNEO:$scope.nodeNavLevels[$scope.nodeNavLevels.length-1].idNEO;
+      var idNEO = ($scope.nodeNavLevels.length === 0)?session.getID():part.idNEO;
+      $http({method:'POST', url:'/delnoderel', data:{
+        idNEO: idNEO,
+        instID: instID,
+        relType: 'PARTOF'
+      }})
+      .success(function(data){
+        var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
+        if(inst){
+          $scope.getNodeContent(inst,$scope.nodeNavLevels.length-1);
+        }else{
+          $scope.getAdminNodes();
+        }
+        console.log(data);
+        return;
+      })
+      .error(function(err){
+        console.log(err);
+        return;
+      });
+    };
+
 		$scope.newRelForm = function(reltype){
 			$scope.newRelCollapse = false;
 			$scope.newNodeCollapse = true;
@@ -85,7 +127,7 @@
 
 			$http({method:'POST', url:'/newrel', data:{
 				usrID:$scope.newRel.idNEO,
-				relType:$scope.nodeRelToCreate.type,
+				relType:$scope.nodeRelToCreate.label,
 				instId:inst.idNEO}})
 			.success(function(data){
 				$scope.cancelNewNodeRel();

@@ -85,7 +85,7 @@
                     <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
                         <li role="presentation" ng-repeat="asoc in actAsocs">
                             <a role="menuitem" tabindex="-1" 
-                               ng-click="selectAsoc(asoc)">{{asoc.instName}}</a>
+                               ng-click="selectAsoc(asoc)">{{asoc.name}}</a>
                         </li>
                     </ul>
                 </div>
@@ -204,7 +204,7 @@
                     <div class="sign-input-wrap">
                         <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">Tipo de actividad:</span>
-                            <button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
+                            <button class="edtSearchBtn newActBtn dropdown-toggle" data-toggle="dropdown" type="button">
                                 {{translation.labels[newAct.periods[periodIndex].type]}}
                             </button>
                             <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">

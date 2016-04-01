@@ -52,6 +52,9 @@ RUN cd Red-Social-Asociacion && ./bootstrap/config LAN
 # Setup some users
 RUN cd Red-Social-Asociacion && ./bootstrap/testDataset/testDataset no-wait
 
+# Setup some nodes for the EDT
+RUN cd Red-Social-Asociacion && ./bootstrap/edt/edt no-wait
+
 # Entry point command: build and run tests on project, then launch
 # server
 CMD cd Red-Social-Asociacion && ./server/bin/neoRun && grunt watch

@@ -185,6 +185,7 @@ app.get('/fields/:label', secur.extractCookieData, admin.getNodeRelFields);
 app.get('/adminnodes', secur.extractCookieData, admin.getAdminNodes);
 app.post('/newpart', secur.extractCookieData, admin.newPart);
 app.post('/newrel', secur.extractCookieData, admin.newRel);
+app.post('/delnoderel', secur.extractCookieData, admin.delNodeRel);
 /******************************************************************************/
 
 /****************************  GENERAL REQUESTS   *****************************/

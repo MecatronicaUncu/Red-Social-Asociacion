@@ -1,0 +1,83 @@
+{
+  "nodes": [
+    {
+      "type": "University",
+      "label": "UNIVERSITY",
+      "parent": ["NONE"],
+      "fields": ["name", "country"]
+    },
+    {
+      "type": "Faculty",
+      "label": "FACULTY",
+      "parent": ["University"],
+      "fields": ["name"]
+    },
+    {
+      "type": "CarreraDeGrado",
+      "label": "CARRERA_GRADO",
+      "parent": ["Faculty"],
+      "fields": ["name"]
+    },
+    {
+      "type": "Materia",
+      "label": "MATERIA",
+      "parent": ["CarreraDeGrado"],
+      "fields": ["name"]
+    },
+    {
+      "type": "ActivityType",
+      "label": "TP",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "ActivityType",
+      "label": "EXAMEN_FINAL",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "ActivityType",
+      "label": "EXAMEN_PARCIAL",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "ActivityType",
+      "label": "CLASE",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "ActivityType",
+      "label": "NOT_SPECIFIED",
+      "parent": ["ALL"]
+    },
+    {
+      "type": "User",
+      "label": "PROFESOR_TITULAR",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "User",
+      "label": "PROFESOR_ADJUNTO",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "User",
+      "label": "PROFESOR_JTP",
+      "parent": ["Materia"]
+    },
+    {
+      "type": "User",
+      "label": "DECANO",
+      "parent": ["Faculty"]
+    },
+    {
+      "type": "User",
+      "label": "RECTOR",
+      "parent": ["University"]
+    },
+    {
+      "type": "User",
+      "label": "DIRECTOR",
+      "parent": ["CarreraDeGrado"]
+    }
+  ]
+}

@@ -50,7 +50,7 @@
         </div>
 
         <span class="newRelLabel" ng-show="newRel.firstName">
-            {{translation.admin['define']}} {{newRel.firstName}} {{newRel.lastName}} {{translation.admin['as']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['of']}} {{nodeNavLevels[nodeNavLevels.length - 1].name}} ?</span>
+            {{translation.admin['define']}} {{newRel.firstName}} {{newRel.lastName}} {{translation.admin['as']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['of']}} {{nodeNavLevels[nodeNavLevels.length - 1].nodeData.name}} ?</span>
         <div class="dropdown newActSelect" ng-repeat="(paramIndex, param) in nodeRelToCreate.params" ng-show="newRel.firstName">
             <span class="edtSearchBtn newActBtn newActLbl">{{translation.params[param.label]}}:</span>
             <button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
@@ -98,7 +98,7 @@
             </div>
             <div class="nodeFieldBtns">
                 <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-pencil"></i></button>
-                <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-close"></i></button>
+                <button class="nodeFieldBtn edtSearchBtn" ng-click="removeRel(rel)"><i class="fa fa-fw fa-close"></i></button>
             </div>
         </div>
         <label class="nodeRelDataHeading" ng-show="noderelToShow.parts.length != 0">{{translation.admin['parts']}}</label>
@@ -109,7 +109,7 @@
             </div>
             <div class="nodeFieldBtns">
                 <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-pencil"></i></button>
-                <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-close"></i></button>
+                <button class="nodeFieldBtn edtSearchBtn" ng-click="removePart(part)"><i class="fa fa-fw fa-close"></i></button>
             </div>
         </div>
     </div>

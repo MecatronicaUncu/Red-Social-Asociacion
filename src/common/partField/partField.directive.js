@@ -11,6 +11,16 @@
           $scope.users = users;
           $scope.session = session;
           $scope.location = $location;
+
+          $scope.subscribe = function(idNEO) {
+            if(users.isSubscribed(idNEO)) {
+              users.unsubscribeFrom(idNEO, function(){
+              });
+            } else {
+              users.subscribeTo(idNEO, function(){
+              });
+            }
+          };
         },
         scope: {
           part: '='
