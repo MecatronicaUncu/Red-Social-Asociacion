@@ -19,7 +19,6 @@ var express = require('express')
         passphrase: passphrase
     }
     , path = require('path')
-    , cookies = require('cookies')
     , cluster = require('cluster')
     , domain = require('domain')
     , numCPU = require('os').cpus().length
