@@ -576,7 +576,7 @@ User.friend = function (userId, otherId, callback) {
     var query = [
         'MATCH (user1:User),(user2:User)',
         'WHERE ID(user1)='+userId.toString()+' and ID(user2)='+otherId.toString(),
-        'CREATE (user1)-[:FRIENDS]->(user2)'
+        'MERGE (user1)-[:FRIENDS]->(user2)'
     ].join('\n');
     
     db.query(query, null, function (err) {
