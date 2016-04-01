@@ -5,7 +5,6 @@ var User = require('./_users.js');
 var path = require('path');
 var cookies = require('cookies');
 var fs = require('fs'); //FILESYSTEM
-var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var domain="https://127.0.1.1:3000";
