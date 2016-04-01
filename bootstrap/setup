@@ -129,15 +129,6 @@ else
 fi
 
 #----------------------------------------#
-# Install node-neo4j library
-loggerGreen "Installing node-neo4j library...\n"
-if [ "$VERBOSE" = false ]; then
-  npm install neo4j >> $LOG_FILE 2>&1 || { loggerRed "npm neo4j failed!. See setup.log for details"; exit 1; }
-else
-  npm install neo4j || { loggerRed "npm neo4j failed!. See setup.log for details"; exit 1; }
-fi
-
-#----------------------------------------#
 # Download Neo4J
 loggerGreen "Installing Neo4J Engine...\n"
 cd $TMP_DOWNLOAD_DIR
