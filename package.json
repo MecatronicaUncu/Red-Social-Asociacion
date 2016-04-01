@@ -14,7 +14,7 @@
   },
 "dependencies": {
     "body-parser": "^1.14.1",
-    "coffeelint": "^1.14.1", A DEV?
+    "coffeelint": "^1.14.1",
     "cookie-parser": "^1.1.0",
     "cookies": "^0.5.0",
     "cors": "^2.7.1",
