@@ -98,7 +98,7 @@
             </div>
             <div class="nodeFieldBtns">
                 <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-pencil"></i></button>
-                <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-close"></i></button>
+                <button class="nodeFieldBtn edtSearchBtn" ng-click="removeRel(rel)"><i class="fa fa-fw fa-close"></i></button>
             </div>
         </div>
         <label class="nodeRelDataHeading" ng-show="noderelToShow.parts.length != 0">{{translation.admin['parts']}}</label>
@@ -109,7 +109,7 @@
             </div>
             <div class="nodeFieldBtns">
                 <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-pencil"></i></button>
-                <button class="nodeFieldBtn edtSearchBtn"><i class="fa fa-fw fa-close"></i></button>
+                <button class="nodeFieldBtn edtSearchBtn" ng-click="removePart(part)"><i class="fa fa-fw fa-close"></i></button>
             </div>
         </div>
     </div>

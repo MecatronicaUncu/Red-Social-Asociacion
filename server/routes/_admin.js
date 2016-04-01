@@ -139,3 +139,20 @@ exports.newPart = function(data,callback){
     });
 };
 
+exports.delNodeRel = function(data,callback){
+
+  var query = [
+    'MATCH (u)-[r]->(i) WHERE ID(u)='+data.idNEO,
+    'AND ID(i)='+data.instID+' AND TYPE(r) IN ["ADMINS", "'+data.relType+'"]',
+    'DELETE r'
+  ].join('\n');
+
+  db.query(query, null, function(err, results) {
+    if(err){
+      console.log(err);
+      return callback(err);
+    }else{
+      return callback(null);
+    }
+  });
+};

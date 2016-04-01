@@ -135,3 +135,35 @@ exports.newPart = function (req, res, next) {
         }
     });
 };
+
+/**
+ * POST /delnoderel
+ */
+exports.delNodeRel = function (req, res, next){
+
+  var data = req.body;
+
+  if(!req.id){
+    res.status(401).send('Unauthorized');
+    return;
+  }else if(!data.hasOwnProperty('idNEO')){
+    res.status(400).send('Missing ID');
+    return;
+  }else if(!data.hasOwnProperty('instID')){
+    res.status(400).send('Missing Organism ID');
+    return;
+  }else if(!data.hasOwnProperty('relType')){
+    res.status(400).send('Missing relationship type');
+    return;
+  }
+  console.log(data);
+  Admin.delNodeRel(data, function(err){
+    if(err){
+      res.status(400).send('Error deleting node or rel');
+      return;
+    }else{
+      res.status(200).send('Deleted node or rel');
+      return;
+    }
+  });
+};

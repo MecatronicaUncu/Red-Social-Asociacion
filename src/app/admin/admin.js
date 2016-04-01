@@ -46,6 +46,42 @@
 
 		$scope.nodeFields = [];
 
+    $scope.removeRel = function(rel){
+      $http({method:'POST', url:'/delnoderel', data:{
+        idNEO: rel.idNEO,
+        instID: $scope.nodeNavLevels[$scope.nodeNavLevels.length-1].idNEO,
+        relType: rel.reltype
+      }})
+      .success(function(data){
+        console.log(data);
+        var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
+				$scope.getNodeContent(inst,$scope.nodeNavLevels.length-1);
+        return;
+      })
+      .error(function(err){
+        console.log(err);
+        return;
+      });
+    };
+
+    $scope.removePart = function(part){
+      $http({method:'POST', url:'/delnoderel', data:{
+        idNEO: part.idNEO,
+        instID: $scope.nodeNavLevels[$scope.nodeNavLevels.length-1].idNEO,
+        relType: 'PARTOF'
+      }})
+      .success(function(data){
+        var inst = $scope.nodeNavLevels[$scope.nodeNavLevels.length-1];
+				$scope.getNodeContent(inst,$scope.nodeNavLevels.length-1);
+        console.log(data);
+        return;
+      })
+      .error(function(err){
+        console.log(err);
+        return;
+      });
+    };
+
 		$scope.newRelForm = function(reltype){
 			$scope.newRelCollapse = false;
 			$scope.newNodeCollapse = true;
