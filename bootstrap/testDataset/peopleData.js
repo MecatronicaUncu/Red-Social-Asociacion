@@ -37,7 +37,7 @@ csv
         nodeData.password = tempPass['pass'];
         nodeData.salt = tempPass['salt'];
         nodeData.url = 'upload/img'+(i++)+'.png';
-        nodeData.lang = 'ar';
+        nodeData.lang = 'es';
         return nodeData;
    })
    .pipe(csv.createWriteStream({headers: true}))
