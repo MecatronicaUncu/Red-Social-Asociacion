@@ -7,7 +7,7 @@
         var ID = 0;
         var admin = false;
         var loggedIn = false;
-        var lang = 'ar';
+        var lang = 'es';
         var profile = null;
         var translation = null;
         var subscriptions = null;
