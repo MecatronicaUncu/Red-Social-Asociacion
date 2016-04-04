@@ -88,6 +88,7 @@ User.getProfile = function(idNEO,public,callback){
                 delete profile.password;
                 delete profile.salt;
                 delete profile.c;
+                delete profile.lang;
                 console.log(profile);
                 return callback(null, profile);
             }else{
