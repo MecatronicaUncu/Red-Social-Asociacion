@@ -23,6 +23,7 @@
         $scope.hideSignUp = true;
 
         $scope.session = session;
+        $scope.translation = session.getTranslation();
 
         $scope.they = [];
         
@@ -41,6 +42,10 @@
             });
 
         });
+
+		$scope.$on('gotTranslation',function(){
+			$scope.translation = session.getTranslation();
+		});
 
 				$scope.$on('logout',function(e, err){
 					if(err){
