@@ -121,19 +121,11 @@ app.post('/edtnewact', edt.newActivity);
 app.get('/checkCookie', secur.extractCookieData, function (req, res) {
 
     if (req.id) {
-        res.status(200).send({idNEO: req.id, lang: req.lang});
-    } else {
-        res.sendStatus(500);
-    }
-});
-app.get('/checkAdminCookie', secur.extractCookieData, function (req, res) {
-
-    if (req.id) {
         secur.isAdmin(req.id, function (is) {
             if (is)
-                res.status(200).send({idNEO: req.id, lang: req.lang});
+                res.status(200).send({idNEO: req.id, lang: req.lang, admin: true});
             else
-                res.sendStatus(500);
+                res.status(200).send({idNEO: req.id, lang: req.lang, admin: false});
         });
     } else {
         res.sendStatus(500);

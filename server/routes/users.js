@@ -546,17 +546,26 @@ exports.login = function (req, res, next) {
             if (!secur.loggedIn(req, res)) {
                 var cook = new cookies(req, res, secur.cookKeys);
                 cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
+                cook.set('LinkedEnibLang', results.lang, {signed: true, maxAge: 9000000});
                 console.log(results['idNEO']);
-                res.status(200).send({idNEO: results['idNEO'], lang: results.lang});
-                return;
+                secur.isAdmin(results.idNEO,function(is){
+                  if(is){
+                    res.status(200).send({idNEO: results['idNEO'], lang: results.lang, admin: true});
+                    return;
+                  }else{
+                    res.status(200).send({idNEO: results['idNEO'], lang: results.lang, admin: false});
+                    return;
+                  }
+                });
             }
             else {
                 res.status(401).send('Another user already logged in');
                 return;
             }
+        }else{
+          res.status(401).send('Wrong email or password');
+          return;
         }
-        res.status(401).send('Wrong email or password');
-        return;
     });
 };
 
@@ -648,7 +657,13 @@ exports.changeProperty = function (req, res, next) {
             console.log(err);
             res.sendStatus(500);
         }else{
+          if(tmp.field === 'lang'){
+            var cook = new cookies(req, res, secur.cookKeys);
+            cook.set('LinkedEnibLang', tmp.value, {signed: true, maxAge: 9000000, overwrite: true});
             res.sendStatus(200);
+          }else{
+            res.sendStatus(200);
+          }
         }
     });
 };

@@ -98,13 +98,18 @@ exports.extractCookieData = function (req, res, next) {
 
     var cook = new cookies(req, res, keys);
     var idCookie = cook.get('LinkedEnibId');
+    var langCookie = cook.get('LinkedEnibiLang');
 
     if (idCookie) {
-
         req.id = parseInt(idCookie);
     }
     else {
         console.log('Cookies Errors');
+    }
+    if (langCookie) {
+      req.lang = langCookie;
+    }else{
+      req.lang = 'es';
     }
 
     return next();
