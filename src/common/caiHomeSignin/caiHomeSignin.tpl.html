@@ -1,24 +1,24 @@
 <div class="sign-container">
-	<h2>Bienvenido a !</h2>
+	<h2>{{translation.main['enter']}} Red-Social-Asociacion!</h2>
 
 	<div id="loginFailed" class="alert alert-danger" ng-show="loginFailed">Ups! Your username and/or password don't seem to be correct.</div>
 	<div class="sign-form">
-            <form id="signinform" novalidate role="form" ng-submit="loginn(person)">
+            <form id="signinform" novalidate role="form" ng-submit="login(person)">
                 <div class="sign-input-wrap">
                     <input ng-focus="loginFailed = false" type="email" ng-model="person.email" 
-                            class="sign-input" placeholder="E-mail" required autofocus>
+                            class="sign-input" placeholder="Email" required autofocus>
                 </div>
                 <div class="sign-input-wrap">
                     <input type="password" ng-model="person.password" class="sign-input" 
-                           placeholder="Password" required>
+								      placeholder="{{translation.forms['password']}}" required>
                 </div>
                 <div class="sign-input-wrap">
-                    <button class="sign-in-btn" form="signinform" type="submit">Sign in <span id="signinicon" class="fa fa-play"></span></button>
+			<button class="sign-in-btn" form="signinform" type="submit">{{translation.forms['signin']}}<span id="signinicon" class="fa fa-play"></span></button>
                 </div>
             </form>
 
             <div class="sign-input-wrap">
-                    <label class="forgot-signin">Recuperar contraseña</label>
+		    <label class="forgot-signin">{{translation.forms['recover']}} {{translation.forms['password']}}</label>
             </div>
 	</div>
 	<!--div>

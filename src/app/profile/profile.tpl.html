@@ -4,15 +4,15 @@
         	<img ng-src="{{image}}" class="profilePic" ng-click="changeProfilePic()"/>
         </div>
 		<div ng-show="itsme" class="profile-nav-bar">
-			<a class="profile-bar-link" ng-repeat="profileNavItem in profileNavItems" ng-class='{"nav-active": profileNavItem.name===profileTab}' ng-click="click(profileNavItem)">{{profileNavItem.name}}</a>
+			<a class="profile-bar-link" ng-repeat="profileNavItem in profileNavItems" ng-class='{"nav-active": profileNavItem.name===profileTab}' ng-click="click(profileNavItem)">{{translation.profile[profileNavItem.name]}}</a>
         </div>
     </div> 
 
-	<div class="profile-data" ng-class='{"hidden": profileTab!="Perfil"}'>    
+	<div class="profile-data" ng-class='{"hidden": profileTab!="profile"}'>    
 		<table class="profile-data-table">
 			<tr class="profile-element" ng-repeat="field in fields">
 				<td><i class="fa {{field.icon}} fa-fw"></i></td>
-				<td class="profile-label">{{field.label}}</td>
+				<td class="profile-label">{{translation.forms[field.label]}}</td>
 				<td id="{{field.name}}" class="profile-input">
 					<span>{{field.model}}</span>
 				</td>
@@ -20,18 +20,18 @@
 		</table>
 
 		<div class="sign-btns-container" ng-show="itsme">
-			<button id="editprofilebtn" class="profile-btn sign-up-btn" ng-click="editProfile()">Edit Profile <span class="fa fa-pencil"></span></button>
-			<button id="updateSubmit" class="profile-btn sign-up-btn" ng-click="updateProfile()" disabled>Update <span id="signinicon" class="fa fa-refresh"></span></button>
+			<button id="editprofilebtn" class="profile-btn sign-up-btn" ng-click="editProfile()">{{translation.profile['editprofile']}}<span class="fa fa-pencil"></span></button>
+			<button id="updateSubmit" class="profile-btn sign-up-btn" ng-click="updateProfile()" disabled>{{translation.profile['update']}}<span id="signinicon" class="fa fa-refresh"></span></button>
 		</div>
 		<input id="imginput" type="file" name="image" ng-show="false">
 	</div>
 
-	<div class="profile-data" ng-show="profileTab === 'Contactos'">
+	<div class="profile-data" ng-show="profileTab === 'contacts'">
 		<accordion close-others="true" class="contacts-data">
-			<accordion-group heading="My Contacts">
+		<accordion-group heading="{{translation.profile['myctcts']}}">
 				<div class="input-group" id="filterBar">
 					<input type="hidden" name="search_param" value="all" id="search_param">         
-					<input ng-blur="applyFilter=false" ng-keyup="filter()" type="text" class="form-control" id="search_text" placeholder="Search..." ng-show="applyFilter">
+					<input ng-blur="applyFilter=false" ng-keyup="filter()" type="text" class="form-control" id="search_text" placeholder="{{translation.profile['search']}}..." ng-show="applyFilter">
 					<span class="input-group-btn">
 						<button class="btn btn-default" type="button" ng-click="applyFilter = !applyFilter" ng-show="applyFilter"><span class="fa fa-search"></span></button>
 					</span>
@@ -42,34 +42,34 @@
 				
 				<contact-field person="person" ng-repeat="person in filtered"></contact-field>
 			</accordion-group>
-			<accordion-group heading="Contact Demands">
+			<accordion-group heading="{{translation.profile['demands']}}">
 				<contact-field person="person" ng-repeat="person in demandedFriends"></contact-field>
 			</accordion-group>
-			<accordion-group heading="Contact Requests">
+			<accordion-group heading="{{translation.profile['requests']}}">
 				<contact-field person="person" ng-repeat="person in requestedFriends"></contact-field>
 			</accordion-group>
-			<accordion-group heading="Some Suggestions...">
+			<accordion-group heading="{{translation.profile['suggestions']}}">
 				<contact-field person="person" ng-repeat="person in suggestedFriends"></contact-field>
 			</accordion-group>
 		</accordion>
 	</div>
 
-	<div class="profile-data" ng-class='{"hidden": profileTab!="Cambiar Contraseña"}'>
+	<div class="profile-data" ng-class='{"hidden": profileTab!="chpass"}'>
 		
 		<div class="sign-form">
 			<form id="changePwdForm" novalidate role="form" ng-submit="changePass(personPass)">
 				<div class="sign-input-wrap">
 					<input 	id="oldPass" type="password" ng-model="personPass.password" name="oldPass"
-							class="sign-input" placeholder="Antigua contraseña" required autofocus>
+									 class="sign-input" placeholder="{{translation.profile['oldpass']}}" required autofocus>
 				</div>
 				<div class="sign-input-wrap">
 					<input 	id="newPass" type="password" ng-model="personPass.new" class="sign-input" 
-							placeholder="Nueva contraseña" required name="newPass">
+								    placeholder="{{translation.profile['newpass']}}" required name="newPass">
 				</div>
 			</form>
 			<div class="sign-input-wrap">
 				<button id="changePwdBtn" class="sign-up-btn" form="changePwdForm" type="submit">
-					Cambiar contraseña
+					{{translation.profile['chpass']}}
 				 <span class="fa fa-refresh"></span>
 				</button>
 			</div>

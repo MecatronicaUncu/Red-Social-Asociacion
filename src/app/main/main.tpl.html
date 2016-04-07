@@ -1,16 +1,16 @@
 <div > 
     <div ng-show="!session.isLoggedIn()">
         <div class="sign-btns-container">
-            <button class="sign-up-btn" ng-click="hideSignUp = !hideSignUp;hideSignIn = true">Registrarse<span class="fa fa-eject"></span></button>
-            <button class="sign-in-btn" ng-click="hideSignIn = !hideSignIn;hideSignUp = true">Ingresar<span class="fa fa-play"></span></button>
+		<button class="sign-up-btn" ng-click="hideSignUp = !hideSignUp;hideSignIn = true">{{translation.forms['signup']}}<span class="fa fa-eject"></span></button>
+		<button class="sign-in-btn" ng-click="hideSignIn = !hideSignIn;hideSignUp = true">{{translation.forms['signin']}}<span class="fa fa-play"></span></button>
     	</div>
 
         <div collapse="hideSignUp" class="sign-collapse">
-            <cai-home-signup cai-fields="fields" cai-submit="signup()"></cai-home-signup>
+            <cai-home-signup></cai-home-signup>
         </div>
 
         <div collapse="hideSignIn" class="sign-collapse">
-            <cai-home-signin cai-login-failed="loginFailed" person="person" cai-submit="login(person)"></cai-home-signin>
+            <cai-home-signin></cai-home-signin>
         </div>
 
     </div>

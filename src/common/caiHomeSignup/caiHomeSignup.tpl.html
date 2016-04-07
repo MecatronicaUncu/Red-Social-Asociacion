@@ -1,22 +1,22 @@
 <div class="sign-container">	
-    <h2>Registrese en !</h2>
+	<h2>{{translation.main['regin']}} Red-Social-Asociacion!</h2>
     <div class="sign-form">
         <form id="signUpForm" ng-submit="signup()" data-parsley-validate>
             <div class="sign-input-wrap">
-                <input type="text" ng-model="fields.firstName" name="firstName" placeholder="Nombre" class="sign-input" required>
+		    <input type="text" ng-model="fields.firstName" name="firstName" placeholder="{{translation.forms['firstName']}}" class="sign-input" required>
             </div>
             <div class="sign-input-wrap">
-                <input type="text" ng-model="fields.lastName" name="lastName" placeholder="Apellido" class="sign-input" required>
+		    <input type="text" ng-model="fields.lastName" name="lastName" placeholder="{{translation.forms['lastName']}}" class="sign-input" required>
             </div>
             <div class="sign-input-wrap">
               <input type="email" ng-model="fields.email" name="email" id="email" placeholder="Email" class="sign-input"
               	data-parsley-trigger="change" required>
             </div>
             <div class="sign-input-wrap">
-                <input type="password" ng-model="fields.password" name="password" id="password" placeholder="Contraseña" class="sign-input" required>
+		    <input type="password" ng-model="fields.password" name="password" id="password" placeholder="{{translation.forms['password']}}" class="sign-input" required>
             </div>
             <div class="sign-input-wrap">
-                <button  type="submit" form="signUpForm" class="sign-up-btn">Registrarse</button>
+		    <button  type="submit" form="signUpForm" class="sign-up-btn">{{translation.forms['signup']}}</button>
             </div>
         </form>
     </div>

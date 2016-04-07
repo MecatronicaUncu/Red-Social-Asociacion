@@ -26,6 +26,7 @@
         $scope.results = [];
 
         $scope.users = users;
+        $scope.translation = session.getTranslation();
 
         $scope.search = function(){
             var text = $('#search_text').val();
@@ -60,5 +61,10 @@
                     console.log("verify");
             });
         };
+
+		$scope.$on('gotTranslation',function(){
+			$scope.translation = session.getTranslation();
+		});
+
       });
 })();

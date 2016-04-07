@@ -1,5 +1,5 @@
 {
-  "ar": {
+  "es": {
     "forms": {
       "name": "Nombre",
       "address": "Domicilio",
@@ -8,11 +8,11 @@
       "lastName": "Apellido",
       "profession": "Profesión",
       "code": "Código",
-      "country": "País"
-    },
-    "params": {
-      "memberAs": "Participa como",
-      "code": "Código"
+      "country": "País",
+      "password": "Contraseña",
+      "recover": "Recuperar",
+      "signin": "Ingresar",
+      "signup": "Registrarse"
     },
     "labels": {
       "UNIVERSITY": "Universidad",
@@ -22,9 +22,6 @@
       "VICERRECTOR": "Vice Rector",
       "PROFESSOR": "Profesor",
       "DIRECTOR": "Director",
-      "RECTORATE": "Rectorado",
-      "ASAMBLEA_UNIVERSITARIA": "Asamblea Universitaria",
-      "CONSEJO_SUPERIOR": "Consejo Superior",
       "DECANO": "Decano",
       "PROFESOR_JTP": "Jefe de Trabajos Prácticos",
       "PROFESOR_ADJUNTO": "Profesor Adjunto",
@@ -37,16 +34,30 @@
       "EXAMEN_FINAL": "Examen Final",
       "CLASE": "Clase",
       "PRIVATE": "Privada",
-      "NOT_SPECIFIED": "Sin Descripción",
-      "NORMAL_SCHOOL": "Escuela Normal"
+      "NOT_SPECIFIED": "Sin Descripción"
     },
     "navBar": {
       "home": "Inicio",
       "search": "Buscar",
       "profile": "Perfil",
       "admin": "Gestiones",
-      "aboutus": "Creadores",
-      "edt": "Horarios"
+      "edt": "Calendario"
+    },
+    "profile":{
+      "editprofile": "Editar perfil",
+      "update": "Actualizar",
+      "search": "Buscar",
+      "oldpass": "Contraseña actual",
+      "newpass": "Contraseña nueva",
+      "chpass": "Cambiar contraseña",
+      "profile": "Perfil",
+      "contacts": "Contactos",
+      "signout": "Cerrar sesión",
+      "deluser": "Eliminar usuario",
+      "myctcts": "Mis contactos",
+      "demands": "Solicitudes pedidas",
+      "requests": "Solicitudes recibidas",
+      "suggestions": "Sugerencias"
     },
     "edt": {
       "luMin": "Lu",
@@ -62,18 +73,160 @@
       "ju": "Jueves",
       "vi": "Viernes",
       "sa": "Sábado",
-      "do": "Domingo"
+      "do": "Domingo",
+      "bookmarks": "Favoritos",
+      "entertosearch": "<Enter> para buscar",
+      "week": "Semana",
+      "asocto": "Asociado a",
+      "day": "Día",
+      "period": "Periodo",
+      "acttype": "Tipo de actividad",
+      "desc": "Descripción",
+      "date": "Fecha",
+      "schedule": "Horario",
+      "from": "Desde",
+      "to": "Hasta",
+      "days": "Días",
+      "repeat": "Repetir"
+    },
+    "search": {
+      "search": "Buscar"
     },
     "admin": {
       "choose": "Elegir aquí",
       "create": "Crear",
       "define": "Definir",
-      "in": "en",
-      "of": "de",
-      "as": "como",
       "rels": "Personal",
       "parts": "Organismos",
-      "add": "Agregar"
+      "add": "Agregar",
+      "start": "Inicio",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "search": "Buscar"
+    },
+    "main": {
+      "regin": "Registrarse en",
+      "enter": "Ingresar a"
+    },
+    "conn": {
+      "in": "en",
+      "of": "de",
+      "as": "como"
+    }
+  },
+  "en": {
+    "forms": {
+      "name": "Name",
+      "address": "Address",
+      "age": "Age",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "profession": "Profession",
+      "code": "Code",
+      "country": "Country",
+      "password": "Password",
+      "recover": "Recover",
+      "signin": "Sign in",
+      "signup": "Sign up"
+    },
+    "labels": {
+      "UNIVERSITY": "University",
+      "FACULTY": "Faculty",
+      "INSTITUT": "Institute",
+      "RECTOR": "Rector",
+      "VICERRECTOR": "Vice Rector",
+      "PROFESSOR": "Professor",
+      "DIRECTOR": "Director",
+      "DECANO": "Dean",
+      "PROFESOR_JTP": "Chief of Practical Applications",
+      "PROFESOR_ADJUNTO": "Adjunt Professor",
+      "PROFESOR_TITULAR": "Associate Professor",
+      "MEMBER": "Member",
+      "CARRERA_GRADO": "Graduate Program",
+      "MATERIA": "Subject",
+      "TP": "Practical Work",
+      "EXAMEN_PARCIAL": "Midterm Exam",
+      "EXAMEN_FINAL": "Final Exam",
+      "CLASE": "Lecture",
+      "PRIVATE": "Private",
+      "NOT_SPECIFIED": "Not Specified"
+    },
+    "navBar": {
+      "home": "Home",
+      "search": "Search",
+      "profile": "Profile",
+      "admin": "Admin",
+      "edt": "Calendar"
+    },
+    "profile":{
+      "editprofile": "Edit profile",
+      "update": "Update",
+      "search": "Search",
+      "oldpass": "Current password",
+      "newpass": "New password",
+      "chpass": "Change password",
+      "profile": "Profile",
+      "contacts": "Contacts",
+      "signout": "Sign Out",
+      "deluser": "Delete user",
+      "myctcts": "My contacts",
+      "demands": "Demanded requests",
+      "requests": "Received requests",
+      "suggestions": "Suggestions"
+    },
+    "edt": {
+      "luMin": "Mo",
+      "maMin": "Tu",
+      "miMin": "We",
+      "juMin": "Th",
+      "viMin": "Fr",
+      "saMin": "Sa",
+      "doMin": "Su",
+      "lu": "Monday",
+      "ma": "Tuesday",
+      "mi": "Wednesday",
+      "ju": "Thursday",
+      "vi": "Friday",
+      "sa": "Saturday",
+      "do": "Sunday",
+      "bookmarks": "Bookmarks",
+      "entertosearch": "<Enter> to search",
+      "week": "Week",
+      "asocto": "Related to",
+      "day": "Day",
+      "period": "Period",
+      "acttype": "Activity type",
+      "desc": "Description",
+      "date": "Date",
+      "schedule": "Schedule",
+      "from": "From",
+      "to": "To",
+      "days": "Days",
+      "repeat": "Repeat"
+    },
+    "search": {
+      "search": "Search"
+    },
+    "admin": {
+      "choose": "Pick",
+      "create": "Create",
+      "define": "Define",
+      "rels": "Staff",
+      "parts": "Organisms",
+      "add": "Add",
+      "start": "Start",
+      "save": "Save",
+      "cancel": "Cancel",
+      "search": "Search"
+    },
+    "main": {
+      "regin": "Register in",
+      "enter": "Enter"
+    },
+    "conn": {
+      "in": "in",
+      "of": "of",
+      "as": "as"
     }
   }
 }
