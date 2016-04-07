@@ -84,16 +84,6 @@
 						}
           }
 				};
-				var checkAdminCookie = function(){
-          $http({method:'GET', url:'/checkAdminCookie'})
-          .success(function(){
-              setAdmin(true);
-              $rootScope.$broadcast('gotAdmin');
-          })
-          .error(function(){
-              setAdmin(false);
-          });
-				};
 
 				/*
 				 * Pubilc API
@@ -114,9 +104,15 @@
             .success(function(data){
               if (data && data.idNEO){
                 log('in', data.idNEO, null);
-                checkAdminCookie();
               }else{
                 log('in', null, 'The server returned no ID');
+              }
+              if(data && data.admin){
+                setAdmin(true);
+                $rootScope.$broadcast('gotAdmin');
+              }
+              if(data && data.lang){
+                setLang(data.lang);
               }
             })
             .error(function(err){
@@ -127,10 +123,13 @@
             $http({method:'GET', url:'/checkCookie'})
             .success(function (data){
               log('in',data.idNEO);
-              checkAdminCookie();
+              if(data.admin){
+                setAdmin(true);
+                $rootScope.$broadcast('gotAdmin');
+              }
+              setLang(data.lang);
             })
             .error(function(){
-							//
             });
 					},
 					updateContacts: function(){
@@ -163,7 +162,6 @@
             $http({method:'GET', url:'/profile/'+api.getID()})
             .success(function (_profile){
 								setProfile(_profile);
-								setLang(_profile.lang);
                 return;
             })
             .error(function(){
