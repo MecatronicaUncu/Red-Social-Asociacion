@@ -22,7 +22,6 @@ git"
 MY_PATH="`dirname \"$0\"`"
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 
-NODEJS_VER=0.10
 NEO4J_VER=2.3.3
 
 TMP_DOWNLOAD_DIR=$MY_PATH/tmp_download_dir
