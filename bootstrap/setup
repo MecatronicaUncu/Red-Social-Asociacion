@@ -23,7 +23,7 @@ MY_PATH="`dirname \"$0\"`"
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 
 NODEJS_VER=0.10
-NEO4J_VER=2.3.0
+NEO4J_VER=2.3.3
 
 TMP_DOWNLOAD_DIR=$MY_PATH/tmp_download_dir
 NEO4J_FILE=$TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER-unix.tar.gz
