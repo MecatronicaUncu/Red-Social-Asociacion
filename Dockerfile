@@ -1,4 +1,4 @@
-FROM ubuntu:15.10
+FROM ubuntu:16.04
 
 # Expose required port
 EXPOSE 3000
@@ -14,7 +14,7 @@ RUN apt-get install -y nodejs
 RUN apt-get install -y npm
 RUN apt-get install -y ruby ruby-dev
 RUN apt-get install -y curl
-RUN apt-get install -y openjdk-7-jre-headless
+RUN apt-get install -y openjdk-8-jre-headless
 RUN apt-get install -y lsof
 
 # Install sudo

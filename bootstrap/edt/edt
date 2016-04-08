@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NEO4J_VER=2.3.0
+NEO4J_VER=2.3.3
 
 MY_PATH="`dirname \"$0\"`" 
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized

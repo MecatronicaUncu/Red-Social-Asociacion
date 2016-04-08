@@ -22,8 +22,7 @@ git"
 MY_PATH="`dirname \"$0\"`"
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 
-NODEJS_VER=0.10
-NEO4J_VER=2.3.0
+NEO4J_VER=2.3.3
 
 TMP_DOWNLOAD_DIR=$MY_PATH/tmp_download_dir
 NEO4J_FILE=$TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER-unix.tar.gz
@@ -75,10 +74,7 @@ if [ "$VERBOSE" = false ]; then
 fi
 
 echo -e $G_COL$CONS_DIV"\n\n **Setup script for Red-Social-Asociacion**\n
-Please note that the following dependencies are needed before
-runing this script:
- * nodejs v0.10
- * ruby\n
+Please install all the dependencies before running this script!!!\n
 Find instructions in https://github.com/MecatronicaUncu/Red-Social-Asociacion\n\n"$CONS_DIV$DEF_COL
 
 #----------------------------------------#
