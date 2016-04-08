@@ -38,11 +38,11 @@ This method is a little bit more complicated and requires the following
 dependencies.
 
 - git
-- nodejs (version 0.10)
-- npm
-- ruby and ruby-dev
+- nodejs (version > 4.2)
+- npm (version > 3.5)
+- ruby and ruby-dev (version > 2.3)
 - curl
-- A running jre (we have tested openjdk)
+- A running jre (we have tested openjdk 8)
 - lsof
 
 If you don't have nodejs installed, use Node Version Manager
