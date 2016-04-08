@@ -74,10 +74,7 @@ if [ "$VERBOSE" = false ]; then
 fi
 
 echo -e $G_COL$CONS_DIV"\n\n **Setup script for Red-Social-Asociacion**\n
-Please note that the following dependencies are needed before
-runing this script:
- * nodejs v0.10
- * ruby\n
+Please install all the dependencies before running this script!!!\n
 Find instructions in https://github.com/MecatronicaUncu/Red-Social-Asociacion\n\n"$CONS_DIV$DEF_COL
 
 #----------------------------------------#
