@@ -18,7 +18,7 @@ exports.getAdminNodes = function(idNEO, callback){
         'LABELS(nodes) AS label, parent.name AS parentName'
     ].join('\n');
 
-    db.query(query, null, function (err, results) {
+    db.cypher({query, null}, function (err, results) {
         if (err){
 			throw err;
             console.log("err get AdminNodes");
@@ -44,7 +44,7 @@ exports.getNodeRelTypes = function(memberof, callback){
     'RETURN partrel AS nodeData'
   ].join('\n');
 
-  db.query(query, null, function(err, results){
+  db.cypher({query, null}, function(err, results){
     if(err){
       throw err;
       return callback(err);
@@ -76,7 +76,7 @@ exports.getNodeRelFields = function(label, callback){
     'RETURN u.fields AS fields'
   ].join('\n');
 
-  db.query(query, null, function(err, results){
+  db.cypher({query, null}, function(err, results){
     if(err){
       throw err;
       return callback(err);
@@ -106,7 +106,7 @@ exports.newRel = function(relData,callback){
     
     console.log(query);
     
-    db.query(query, null, function (err, results) {
+    db.cypher({query, null}, function (err, results) {
         if (err){
             console.log(err);
             console.log('Err User newRel');
@@ -129,7 +129,7 @@ exports.newPart = function(data,callback){
         partData: data.partData
     };
     
-    db.query(query, params, function (err, results) {
+    db.cypher({query, params}, function (err, results) {
         if (err){
             console.log(err);
             console.log('Err User newPart');
@@ -148,7 +148,7 @@ exports.delNodeRel = function(data,callback){
     'DELETE r'
   ].join('\n');
 
-  db.query(query, null, function(err, results) {
+  db.cypher({query, null}, function(err, results) {
     if(err){
       console.log(err);
       return callback(err);
