@@ -199,6 +199,45 @@ openssl x509 -req -days 365 -in $BIN_DIR/../$domain.csr -signkey $BIN_DIR/../$do
 ./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J server\n"; exit 1; }
 
 #-----------------------------------------#
+# Extra configs in config.js
+loggerGreen "Additional configuration"
+loggerYellow "You are about to configure the SMTP email settings. If you do not want to configure this now, just press enter. Bear in mind that, if you decide not to configure now, you'll have to run this script again to have access to all of the capabilities of this software."
+
+printf $Y_COL"Enter the address of the smtp mail: "$DEF_COL
+read EMAILMAIL
+printf "\n"
+printf $Y_COL"Enter the name of the smtp host: "$DEF_COL
+read EMAILHOST
+printf "\n"
+printf $Y_COL"Enter the email address you want the receiver to read: "$DEF_COL
+read EMAILADD
+printf "\n"
+printf $Y_COL"Enter the name of the sender: "$DEF_COL
+read EMAILNAME
+printf "\n"
+printf $Y_COL"Enter the short-name of the sender: "$DEF_COL
+read EMAILSHORT
+printf "\n"
+stty -echo
+printf $Y_COL"Enter login password: "$DEF_COL
+read EMAILPASS
+printf "\n\n"
+stty echo
+
+sed -i "s/^var mailFrom =.*;$/var mailFrom = \'$EMAILSHORT <$EMAILADD>\';/" ../server/config/config.js
+sed -i "s/^var fromName =.*;$/var fromName = \'$EMAILNAME\';/" ../server/config/config.js
+sed -i "s/^var smtpUser =.*;$/var smtpUser = \'$EMAILMAIL\';/" ../server/config/config.js
+sed -i "s/^var smtpPass =.*;$/var smtpPass = \'$EMAILPASS\';/" ../server/config/config.js
+sed -i "s/^var smtpHost =.*;$/var smtpHost = \'$EMAILHOST\';/" ../server/config/config.js
+
+if [[ "$EMAILSHORT" == "" || "$EMAILADD" == "" || "$EMAILNAME" == "" || "$EMAILMAIL" == "" || "$EMAILPASS" == "" || "$EMAILHOST" == "" ]]
+then
+	sed -i "s/^var mailServedConfigured =.*;$/var mailServedConfigured = false;/" ../server/config/config.js
+else
+	sed -i "s/^var mailServedConfigured =.*;$/var mailServedConfigured = true;/" ../server/config/config.js
+fi
+
+#-----------------------------------------#
 # Done!
 loggerGreen "Config Ok!\n"
 
