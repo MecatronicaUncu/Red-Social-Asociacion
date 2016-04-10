@@ -4,7 +4,7 @@ node_js:
 before_install:
     - rvm install 2.1.5
     - ./bootstrap/setup
-    - ./bootstrap/config asoc LAN -nomailconfig
+    - ./bootstrap/config -p asoc -h LAN -nomail
     - ./bootstrap/testDataset/testDataset no-wait
     - ./bootstrap/edt/edt no-wait
 notifications:
