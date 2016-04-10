@@ -23,7 +23,7 @@ exports.getAdminNodes = function(idNEO, callback){
 			if (err){
 				return callback(err);
 			}else if(results.length === 0){
-				return callback('Unauthorized');
+				return callback(null,'Unauthorized');
 			}else{
 				results.forEach(function(res){
 					res.nodeData = res.nodeData._data.data;

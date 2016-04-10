@@ -18,14 +18,15 @@ exports.getAdminNodes = function (req, res, next) {
 
     Admin.getAdminNodes(req.id, function (err, adminnodes) {
         if (err) {
-			if (err == 'Unauthorized')
-				res.status(401).send(err);
-			else
-				res.status(500).send(err);
+			console.log(err);
+			res.status(500).send(err);
             return;
         }
         if (adminnodes) {
-            res.status(200).send({adminnodes: adminnodes});
+			if (adminnodes == 'Unauthorized')
+				res.status(401).send(err);
+			else
+				res.status(200).send({adminnodes: adminnodes});
             return;
         }
         res.status(403).send('No admin nodes'); // 403 forbidden
@@ -65,7 +66,11 @@ exports.getNodeRelFields = function(req, res, next){
 
 	Admin.getNodeRelFields(req.params.label, function(err, fields){
 		if(err){
-			res.status(500).send(err);
+			console.log(err);
+			if (err == 'More than one label matched!')
+				res.sendStatus(300);
+			else
+				res.status(500).send(err);
 			return;
 		}else{
 			res.status(200).send({fields: fields});
@@ -96,6 +101,7 @@ exports.newRel = function (req, res, next) {
     
     Admin.newRel(relData, function (err) {
         if (err) {
+			console.log(err);
             res.status(400).send(err);
             return;
         } else {
@@ -126,6 +132,7 @@ exports.newPart = function (req, res, next) {
 
     Admin.newPart(data, function (err, partID) {
         if (err) {
+			console.log(err);
             res.status(400).send(err);
             return;
         } else if (partID) {
@@ -161,6 +168,7 @@ exports.delNodeRel = function (req, res, next){
   
   Admin.delNodeRel(data, function(err){
     if(err){
+	  console.log(err);
       res.status(400).send(err);
       return;
     }else{
