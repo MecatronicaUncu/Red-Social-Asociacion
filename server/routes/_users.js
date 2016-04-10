@@ -21,17 +21,19 @@ var User = module.exports = function User(_node) {
 };
 
 Object.defineProperty(User.prototype, 'id', {
-    get: function () { return this._node._id; }
+    get: function () { return this._node._id;}
 });
 
 Object.defineProperty(User.prototype, 'name', {
     get: function () {
-        return this._node.properties['name'];
+        return this._node.data['name'];
     },
     set: function (name) {
-        this._node.properties['name'] = name;
+        this._node.data['name'] = name;
     }
 });
+
+// TODO : bloques try catch y printear a consola solo en los users.js y no en los _users.js
 
 /******************************************************************************/
 /*                          GET METHODS                                       */
@@ -45,24 +47,26 @@ User.getAsocs = function(idNEO, callback){
         'RETURN TYPE(r) as reltype, LABELS(i) AS label, ID(i) AS instID, i.name AS name'
     ].join('\n');
 
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-			throw err;
-            console.log("err get associations");
-            return callback(err);
-        }else{
-          results.forEach(function(res){
-            res.label = res.label[0];
-          });
+	try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}else{
+			  results.forEach(function(res){
+				res.label = res.label[0];
+			  });
 
-          results.push({label:"PRIVATE",instID:-1,name:"PRIVATE"});
-          if(results.length > 0){
-              return callback(null, results);
-          }else{
-              return callback('No Results');
-          }
-        }
-     });  
+			  results.push({label:"PRIVATE",instID:-1,name:"PRIVATE"});
+			  if(results.length > 0){
+				  return callback(null, results);
+			  }else{
+				  return callback(null, null);
+			  }
+			}
+		 });  
+	 }catch(err){
+		 return callback(err);
+	 }
 };
 
 User.getProfile = function(idNEO,public,callback){
@@ -72,30 +76,31 @@ User.getProfile = function(idNEO,public,callback){
         'RETURN u as USER'
     ].join('\n');
 
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-			throw err;
-            console.log("err get Profile");
-            return callback(err);
-        }else{
-            if(results.length > 0){
-                var profile = results[0].USER._data.properties;
-                if(public){
-                    privateFields.forEach(function(field){
-                       delete profile[field];
-                    });
-                }
-                delete profile.password;
-                delete profile.salt;
-                delete profile.c;
-                delete profile.lang;
-                console.log(profile);
-                return callback(null, profile);
-            }else{
-                return callback('No Results');
-            }
-        }
-     });  
+	try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}else{
+				if(results.length > 0){
+					var profile = results[0].USER._data.data;
+					if(public){
+						privateFields.forEach(function(field){
+						   delete profile[field];
+						});
+					}
+					delete profile.password;
+					delete profile.salt;
+					delete profile.c;
+					delete profile.lang;
+					return callback(null, profile);
+				}else{
+					return callback(null,null);
+				}
+			}
+		 });  
+	 }catch(err){
+		 return callback(err);
+	 }
     
 };
 
@@ -117,35 +122,37 @@ User.getNodeContents = function(idNEO, callback){
 //		'TYPE(r) AS reltype, inst.name AS instName'
     ].join('\n');
 
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-			throw err;
-            console.log("err get NodeContent");
-            return callback(err);
-        }else{
-        	var contents = {
-        		parts: [],
-        		rels: []
-        	};
-            results.forEach(function(res){
-                res.nodeData = res.nodeData._data.properties;
-                if(res.reltype === 'PARTOF'){
-                    res.label = res.label[0];
-                    contents.parts.push(res);
-                }else{
-                    if(res.nodeData.hasOwnProperty('password')){
-                        delete res.nodeData.password;
-                        delete res.nodeData.salt;
-                        delete res.nodeData.c;
-                        delete res.nodeData.active;
-                        res.label = res.label[0];
-                    }
-                    contents.rels.push(res);
-                }
-            });
-		   	return callback(null, contents);
-        }
-     });
+	try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}else{
+				var contents = {
+					parts: [],
+					rels: []
+				};
+				results.forEach(function(res){
+					res.nodeData = res.nodeData._data.data;
+					if(res.reltype === 'PARTOF'){
+						res.label = res.label[0];
+						contents.parts.push(res);
+					}else{
+						if(res.nodeData.hasOwnProperty('password')){
+							delete res.nodeData.password;
+							delete res.nodeData.salt;
+							delete res.nodeData.c;
+							delete res.nodeData.active;
+							res.label = res.label[0];
+						}
+						contents.rels.push(res);
+					}
+				});
+				return callback(null, contents);
+			}
+		 });
+	 }catch(err){
+		 return callback(err);
+	 }
 };
 
 User.getThey = function (callback) {
@@ -159,25 +166,27 @@ User.getThey = function (callback) {
         'LIMIT 50'
     ].join('\n');
 
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-	    throw err;
-            console.log("err get All");
-            return callback(err);
-        }
-        var users = [];
-        results.forEach(function(el){
-            var temp = el.user._data.properties;
-            if (temp.hasOwnProperty('password')){
-                delete temp['password'];
-                delete temp.salt;
-                delete temp.c;
-                temp['idNEO']=el.idNEO;
-                users.push(temp);
-            }
-        });
-        return callback(null, users);
-    });
+	try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}
+			var users = [];
+			results.forEach(function(el){
+				var temp = el.user._data.data;
+				if (temp.hasOwnProperty('password')){
+					delete temp['password'];
+					delete temp.salt;
+					delete temp.c;
+					temp['idNEO']=el.idNEO;
+					users.push(temp);
+				}
+			});
+			return callback(null, users);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.getContacts = function(id,callback){
@@ -201,61 +210,62 @@ User.getContacts = function(id,callback){
         'ORDER BY NODES.count DESC LIMIT 5'
     ].join('\n');
 
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-            throw err;
-            console.log("err profile");
-            return callback(err);
-        }
-        //var user = {};
-        var fri = [];
-        var req = [];
-        var dem = [];
-        var sug = [];
-        results.forEach(function(el){
-            /*
-            if (el.NODES.hasOwnProperty('user')){
-                delete el.NODES.user._data.properties['password'];
-                user = el.NODES.user._data.properties;
-                user['id'] =el.NODES.id;
-            }
-            else */if (el.NODES.hasOwnProperty('friend')){
-                delete el.NODES.friend._data.properties['password'];
-                delete el.NODES.friend._data.properties['salt'];
-                delete el.NODES.friend._data.properties['active'];
-                delete el.NODES.friend._data.properties['c'];
-                var tmp = {'data' : el.NODES.friend._data.properties, 'idNEO' : el.NODES.id};
-                fri.push(tmp);
-            }
-            else if (el.NODES.hasOwnProperty('requested')){
-                delete el.NODES.requested._data.properties['password'];
-                delete el.NODES.requested._data.properties['salt'];
-                delete el.NODES.requested._data.properties['active'];
-                delete el.NODES.requested._data.properties['c'];
-                var tmp = {'data' : el.NODES.requested._data.properties, 'idNEO' : el.NODES.id};
-                req.push(tmp);
-            }
-            else if (el.NODES.hasOwnProperty('demanded')){
-                delete el.NODES.demanded._data.properties['password'];
-                delete el.NODES.demanded._data.properties['salt'];
-                delete el.NODES.demanded._data.properties['active'];
-                delete el.NODES.demanded._data.properties['c'];
-                var tmp = {'data' : el.NODES.demanded._data.properties, 'idNEO' : el.NODES.id};
-                dem.push(tmp);
-            }
-            else{
-                delete el.NODES.suggested._data.properties['password'];
-                delete el.NODES.suggested._data.properties['salt'];
-                delete el.NODES.suggested._data.properties['active'];
-                delete el.NODES.suggested._data.properties['c'];
-                var tmp = {'data' : el.NODES.suggested._data.properties, 'idNEO' : el.NODES.id};
-                sug.push(tmp);
-            }
-        });
-        var temp = {/*'user' : user, */ 'friends' : fri, 'requested' : req, 'demanded' : dem, 'suggested' : sug};
-        return callback(null,temp);
-    });
-
+	try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}
+			//var user = {};
+			var fri = [];
+			var req = [];
+			var dem = [];
+			var sug = [];
+			results.forEach(function(el){
+				/*
+				if (el.NODES.hasOwnProperty('user')){
+					delete el.NODES.user._data.data['password'];
+					user = el.NODES.user._data.data;
+					user['id'] =el.NODES.id;
+				}
+				else */if (el.NODES.hasOwnProperty('friend')){
+					delete el.NODES.friend._data.data['password'];
+					delete el.NODES.friend._data.data['salt'];
+					delete el.NODES.friend._data.data['active'];
+					delete el.NODES.friend._data.data['c'];
+					var tmp = {'data' : el.NODES.friend._data.data, 'idNEO' : el.NODES.id};
+					fri.push(tmp);
+				}
+				else if (el.NODES.hasOwnProperty('requested')){
+					delete el.NODES.requested._data.data['password'];
+					delete el.NODES.requested._data.data['salt'];
+					delete el.NODES.requested._data.data['active'];
+					delete el.NODES.requested._data.data['c'];
+					var tmp = {'data' : el.NODES.requested._data.data, 'idNEO' : el.NODES.id};
+					req.push(tmp);
+				}
+				else if (el.NODES.hasOwnProperty('demanded')){
+					delete el.NODES.demanded._data.data['password'];
+					delete el.NODES.demanded._data.data['salt'];
+					delete el.NODES.demanded._data.data['active'];
+					delete el.NODES.demanded._data.data['c'];
+					var tmp = {'data' : el.NODES.demanded._data.data, 'idNEO' : el.NODES.id};
+					dem.push(tmp);
+				}
+				else{
+					delete el.NODES.suggested._data.data['password'];
+					delete el.NODES.suggested._data.data['salt'];
+					delete el.NODES.suggested._data.data['active'];
+					delete el.NODES.suggested._data.data['c'];
+					var tmp = {'data' : el.NODES.suggested._data.data, 'idNEO' : el.NODES.id};
+					sug.push(tmp);
+				}
+			});
+			var temp = {/*'user' : user, */ 'friends' : fri, 'requested' : req, 'demanded' : dem, 'suggested' : sug};
+			return callback(null,temp);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.getParam = function (id, field, callback) {
@@ -265,19 +275,22 @@ User.getParam = function (id, field, callback) {
         'RETURN user.'+ field + ' AS value'
     ].join('\n');
 
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-            console.log('err get Param');
-            return callback(err);
-        }
-        var value;
-        if (results.length>0){
-            if (results[0]['value']){
-                value = results[0]['value'];
-            }
-        }
-        return callback(null, value);
-    });
+	try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}
+			var value;
+			if (results.length>0){
+				if (results[0]['value']){
+					value = results[0]['value'];
+				}
+			}
+			return callback(null, value);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.getParamByEmail = function (email, field, callback) {
@@ -287,21 +300,23 @@ User.getParamByEmail = function (email, field, callback) {
         'RETURN user.'+ field + ' AS value, ID(user) AS id'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-            throw err;
-            console.log('err get Param');
-            return callback(err);
-        }
-//        var value;
-//        if (results.length>0){
-//            if (results[0]['value']){
-//                value = results[0]['value'];
-//            }
-//        }
-//        console.log(value);
-        return callback(null, results[0]['value'],results[0]['id']);
-    });
+    try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){		
+				return callback(err);
+			}
+	//        var value;
+	//        if (results.length>0){
+	//            if (results[0]['value']){
+	//                value = results[0]['value'];
+	//            }
+	//        }
+	//        console.log(value);
+			return callback(null, results[0]['value'],results[0]['id']);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.isFriend = function (id, friend, callback) {
@@ -311,20 +326,23 @@ User.isFriend = function (id, friend, callback) {
         'RETURN p'
     ].join('\n');
     
-    db.cypher({query:query, params:null},function(err,results){
-        if (err) {
-            console.log("err is friend");
-            return callback(err);
-        }
-        var back = [];
-        if (results[0].p._data.properties.hasOwnProperty('password')){
-            back.push(1);
-        }
-        else{
-            back.push(0);
-        }
-        return callback(null,back);
-    });
+    try{
+		db.cypher({query:query, params:null},function(err,results){
+			if (err) {
+				return callback(err);
+			}
+			var back = [];
+			if (results[0].p._data.data.hasOwnProperty('password')){
+				back.push(1);
+			}
+			else{
+				back.push(0);
+			}
+			return callback(null,back);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.getSubscriptions = function (idNEO, callback){
@@ -334,19 +352,22 @@ User.getSubscriptions = function (idNEO, callback){
         'RETURN distinct s, ID(s) AS idNEO'
     ].join('\n');
     
-    db.cypher({query:query, params:null},function(err,results){
-        if (err) {
-            console.log("err USER getSubscriptions");
-            return callback(err);
-        }        
-        var subsc = [];
-        results.forEach(function(el){
-            var temp = el.s._data.properties;
-            temp['idNEO']=el.idNEO;
-            subsc.push(temp);
-        });
-        return callback(null,subsc);
-    });
+    try{
+		db.cypher({query:query, params:null},function(err,results){
+			if (err) {
+				return callback(err);
+			}        
+			var subsc = [];
+			results.forEach(function(el){
+				var temp = el.s._data.data;
+				temp['idNEO']=el.idNEO;
+				subsc.push(temp);
+			});
+			return callback(null,subsc);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.search = function (what, term, usrId, callback) {
@@ -406,30 +427,32 @@ User.search = function (what, term, usrId, callback) {
         return callback('What not defined');
     }
     
-    db.cypher({query:query, params:null},function(err,results){
-        if (err) {
-            console.log("err USER search");
-            return callback(err);
-        }        
-        var nodes = [];
-        results.forEach(function(el){
-            var temp = el.n._data.properties;
-            if (temp.hasOwnProperty('password')){
-                //Si tiene password, tiene el resto...
-                delete temp.password;
-                delete temp.email;
-                delete temp.salt;
-                delete temp.c;
-                delete temp.active;
-            }
-            temp['idNEO']=el.idNEO;
-            temp['parentName']=el.parentName;
-            temp['gparentName']=el.gparentName;
-            nodes.push(temp);
-        });
-        return callback(null,nodes);
-    });
- 
+    try{
+		db.cypher({query:query, params:null},function(err,results){
+			if (err) {
+				return callback(err);
+			}        
+			var nodes = [];
+			results.forEach(function(el){
+				var temp = el.n._data.data;
+				if (temp.hasOwnProperty('password')){
+					//Si tiene password, tiene el resto...
+					delete temp.password;
+					delete temp.email;
+					delete temp.salt;
+					delete temp.c;
+					delete temp.active;
+				}
+				temp['idNEO']=el.idNEO;
+				temp['parentName']=el.parentName;
+				temp['gparentName']=el.gparentName;
+				nodes.push(temp);
+			});
+			return callback(null,nodes);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 /******************************************************************************/
@@ -448,15 +471,17 @@ User.unsubscribe = function(idNEO, instId, callback){
     'DELETE r'
     ].join('\n');
     
-    db.cypher({query:query, params:params}, function (err, results) {
-        if (err){
-            console.log(err);
-            console.log('Err User unsubscribe');
-            return callback(err);
-        }else{
-            return callback(null);
-        }
-    });    
+    try{
+		db.cypher({query:query, params:params}, function (err, results) {
+			if (err){
+				return callback(err);
+			}else{
+				return callback(null);
+			}
+		});    
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.subscribe = function(idNEO, instId, callback){
@@ -471,83 +496,88 @@ User.subscribe = function(idNEO, instId, callback){
     'MERGE (u)-[:SUBSCRIBED]->(i)'
     ].join('\n');
     
-    db.cypher({query:query, params:params}, function (err, results) {
-        if (err){
-            console.log(err);
-            console.log('Err User subscribe');
-            return callback(err);
-        }else{
-            return callback(null);
-        }
-    });    
+    try{
+		db.cypher({query:query, params:params}, function (err, results) {
+			if (err){
+				return callback(err);
+			}else{
+				return callback(null);
+			}
+		});    
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.updateProfile = function(idNEO, changes, callback){
     
-    var params = '';
-    for(var key in changes){
-        if(changes.hasOwnProperty(key))
-            params += ('u.'+key+'="'+changes[key]+'", ');
-    }
-    params = params.slice(0,-2);
+    try{
+		var params = '';
+		for(var key in changes){
+			if(changes.hasOwnProperty(key))
+				params += ('u.'+key+'="'+changes[key]+'", ');
+		}
+		params = params.slice(0,-2);
 
-    var query = [
-	'MATCH (u:User) WHERE ID(u)='+idNEO,
-    'SET '+params,
-	'RETURN u AS USER'
-    ].join('\n');
-
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-            throw err;
-            console.log("err USER updateProfile");
-            return callback(err);
-        }else{
-            var profile = results[0].USER._data.properties;
-            delete profile.password;
-            delete profile.salt;
-            delete profile.c;
-            console.log(profile);
-            return callback(null, profile);
-        }
-     });  
+		var query = [
+		'MATCH (u:User) WHERE ID(u)='+idNEO,
+		'SET '+params,
+		'RETURN u AS USER'
+		].join('\n');
+	
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}else{
+				var profile = results[0].USER._data.data;
+				delete profile.password;
+				delete profile.salt;
+				delete profile.c;
+				return callback(null, profile);
+			}
+		 });  
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.signup = function (nodeData, callback) {
-    /*
-     * Solo hacer MATCH con email, porque si las demás propiedades
-     * difieren, el server se clava. Las demás agregarlas en ON CREATE
-     */
-    var email = nodeData.email;
-    delete nodeData.email;
     
-    var params = '';
-    for(var key in nodeData){
-        if(nodeData.hasOwnProperty(key))
-            params += ('user.'+key+'="'+nodeData[key]+'", ');
-    }
-    // Saca el ultimo ", "
-    params = params.slice(0,-2);
+    try{
+		/*
+		 * Solo hacer MATCH con email, porque si las demás propiedades
+		 * difieren, el server se clava. Las demás agregarlas en ON CREATE
+		 */
+		var email = nodeData.email;
+		delete nodeData.email;
+		
+		var params = '';
+		for(var key in nodeData){
+			if(nodeData.hasOwnProperty(key))
+				params += ('user.'+key+'="'+nodeData[key]+'", ');
+		}
+		// Saca el ultimo ", "
+		params = params.slice(0,-2);
 
-    var query = [
-	'MERGE (user:User {email:"'+email+'"})',
-	'ON CREATE SET user.c=0, '+params+', user.active=0',
-	'ON MATCH SET user.c=1',
-	'RETURN ID(user) AS idNEO, user.c AS c'
-    ].join('\n');
+		var query = [
+		'MERGE (user:User {email:"'+email+'"})',
+		'ON CREATE SET user.c=0, '+params+', user.active=0',
+		'ON MATCH SET user.c=1',
+		'RETURN ID(user) AS idNEO, user.c AS c'
+		].join('\n');
 
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-            throw err;
-            console.log('err sign up');
-            return callback(err);
-        }
-        if (results[0].c == 1)
-                return callback(true);
-			
-        return callback(null, results[0].idNEO);
-    });
-
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}
+			if (results[0].c == 1)
+					return callback(null,null);
+				
+			return callback(null, results[0].idNEO);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.login = function (email, callback) {
@@ -561,18 +591,20 @@ User.login = function (email, callback) {
     var params = {
         email: email
     };
-	
-    db.cypher({query:query, params:params}, function (err, results) {
-        if (err) {
-            console.log('user log in error');
-            return callback(err);
-        }
-        if (results.length>0){
-            return callback(null, results[0]);
-        }
-        console.log('user log in error 2');
-        return callback(err);
-    });
+    
+	try{
+		db.cypher({query:query, params:params}, function (err, results) {
+			if (err) {
+				return callback(err);
+			}
+			if (results.length>0){
+				return callback(null, results[0]);
+			}
+			return callback(null,null);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.friend = function (userId, otherId, callback) {
@@ -583,13 +615,16 @@ User.friend = function (userId, otherId, callback) {
         'MERGE (user1)-[:FRIENDS]->(user2)'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err) {
-        if(err){
-            console.log("err friend sbdy");
-            return callback(err);
-        }
-        return callback(null);
-    });
+    try{
+		db.cypher({query:query, params:null}, function (err) {
+			if(err){
+				return callback(err);
+			}
+			return callback(null);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.activate = function(id,callback){
@@ -600,13 +635,16 @@ User.activate = function(id,callback){
         'SET u.active=1'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err) {
-        if(err){
-            console.log("err USER activate");
-            return callback(err);
-        }
-        return callback(null);
-    });
+    try{
+		db.cypher({query:query, params:null}, function (err) {
+			if(err){
+				return callback(err);
+			}
+			return callback(null);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.changeProperty = function (field,value,id,callback){
@@ -617,13 +655,16 @@ User.changeProperty = function (field,value,id,callback){
         'SET u.'+field+'="'+value+'"'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err) {
-        if(err){
-            console.log("err change prop");
-            return callback(err);
-        }
-        return callback(null);
-    });
+    try{
+		db.cypher({query:query, params:null}, function (err) {
+			if(err){
+				return callback(err);
+			}
+			return callback(null);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.changePassword = function (newP,newS,id,callback){
@@ -634,17 +675,20 @@ User.changePassword = function (newP,newS,id,callback){
         'SET u.password="' + newP + '", u.salt="' +newS + '"'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err, results) {
-        if(err){
-            console.log("err change prop");
-            return callback(err);
-        }else{
-        /*if (results[0].u._data.properties.hasOwnProperty('password')){
-            return callback(null);
-        }*/
-            return callback(null);
-        }
-    });
+    try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if(err){
+				return callback(err);
+			}else{
+			/*if (results[0].u._data.data.hasOwnProperty('password')){
+				return callback(null);
+			}*/
+				return callback(null);
+			}
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 /******************************************************************************/
@@ -660,14 +704,17 @@ User.deleteFriend = function (userId, otherId, callback) {
         'DELETE rel'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err) {
-        if(err){
-            console.log("err del friend");
-            return callback(err);
-        }else{
-            return callback(null);
-        }
-    });
+    try{
+		db.cypher({query:query, params:null}, function (err) {
+			if(err){
+				return callback(err);
+			}else{
+				return callback(null);
+			}
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 User.deleteUser = function (userId, callback) {
@@ -679,11 +726,14 @@ User.deleteUser = function (userId, callback) {
         'DELETE rel,user1'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err) {
-        if(err){
-            console.log("err del usr");
-            return callback(err);
-        }
-        return callback(null);
-    });
+    try{
+		db.cypher({query:query, params:null}, function (err) {
+			if(err){
+				return callback(err);
+			}
+			return callback(null);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };

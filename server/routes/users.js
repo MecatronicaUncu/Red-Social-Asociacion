@@ -40,56 +40,61 @@ var sendActivationEmail = function(email,hash,name,lastname,callback){
 		return callback(false);
 	}
 	
-	var templatesDir = path.resolve(path.join(__dirname, '../templates/email_activacion/'));
-	var emailTemplate = new EmailTemplate(templatesDir);
-	
-	// Prepare nodemailer transport object
-	var transport = nodemailer.createTransport({
-		service: config.smtpHost,
-		auth: {
-			user: config.smtpUser,
-			pass: config.smtpPass
-		}
-	});
-	
-	//URL encoding
-    var hashRep = hash.replace("+","%2B");
-	
-	// An example users object with formatted email function
-	var locals = {
-	  email: email,
-	  //hash: hash,
-	  link: config.domain+'/activate?email='+email+'&hash='+hashRep,
-	  name: name,
-	  lastname: lastname
-	};
-	
-	// Send a single email
-	emailTemplate.render(locals, function (err, results) {
-	  if (err) {
-		console.error("Error: "+ err);
-		return callback(false);
-	  }
+	try{
+		var templatesDir = path.resolve(path.join(__dirname, '../templates/email_activacion/'));
+		var emailTemplate = new EmailTemplate(templatesDir);
+		
+		// Prepare nodemailer transport object
+		var transport = nodemailer.createTransport({
+			service: config.smtpHost,
+			auth: {
+				user: config.smtpUser,
+				pass: config.smtpPass
+			}
+		});
+		
+		//URL encoding
+		var hashRep = hash.replace("+","%2B");
+		
+		// An example users object with formatted email function
+		var locals = {
+		  email: email,
+		  //hash: hash,
+		  link: config.domain+'/activate?email='+email+'&hash='+hashRep,
+		  name: name,
+		  lastname: lastname
+		};
+		
+		// Send a single email
+		emailTemplate.render(locals, function (err, results) {
+		  if (err) {
+			console.error("Error: "+ err);
+			return callback(false);
+		  }
 
-	  transport.sendMail({
-		from: config.mailFrom,
-		to: locals.email,
-		subject: 'Activacion',
-		html: results.html,
-		attachments: [{
-						filename: 'pubMECUNCU.jpg',
-						path: path.resolve(path.join(templatesDir, 'pubMECUNCU.jpg')),
-						cid: 'unique@gmail' //same cid value as in the html img src
-					}]
-	  }, function (err, responseStatus) {
-		if (err) {
-		  console.error("Error: " + err)
-		  return callback(false);
-		}
-		console.log(responseStatus.message);
-		return callback(true);
+		  transport.sendMail({
+			from: config.mailFrom,
+			to: locals.email,
+			subject: 'Activacion',
+			html: results.html,
+			attachments: [{
+							filename: 'pubMECUNCU.jpg',
+							path: path.resolve(path.join(templatesDir, 'pubMECUNCU.jpg')),
+							cid: 'unique@gmail' //same cid value as in the html img src
+						}]
+		  }, function (err, responseStatus) {
+			if (err) {
+			  console.error("Error: " + err)
+			  return callback(false);
+			}
+			console.log(responseStatus.message);
+			return callback(true);
+		  })
 	  })
-  })
+	}catch(err){
+		console.error("Error: " + err);
+		return callback(false);
+	}
 };
 
 /******************************************************************************/
@@ -100,7 +105,7 @@ exports.getTranslation = function(req,res,next){
     
     var lang = req.params.lang;
     if(!lang){
-        res.status(500).send('Error');
+        res.status(400).send('Error');
     }else if(translations.hasOwnProperty(lang)){
         res.status(200).send({translation: translations[lang]});
     }else{
@@ -118,10 +123,14 @@ exports.getAsocs = function (req, res, next) {
 
     User.getAsocs(req.id, function (err, asocs) {
         if (err) {
-            console.log(err);
-            res.status(500).send('Error');
+			console.log(err);
+            res.status(500).send(err);
             return;
         } else {
+			if (!asocs){
+				res.sendStatus(204);
+				return;
+			}
             console.log(asocs);
             res.status(200).send({asocs: asocs});
             return;
@@ -156,9 +165,13 @@ exports.getProfile = function (req, res, next) {
     User.getProfile(idNEO, public, function (err, profile) {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting profile');
+            res.status(500).send(err);
             return;
         } else {
+			if (!profile){
+				res.sendStatus(204);
+				return;
+			}
             console.log(profile);
             res.status(200).send(profile);
             return;
@@ -177,7 +190,8 @@ exports.getProfile = function (req, res, next) {
 exports.getThey = function (req, res, next) {
     User.getThey(function (err, users) {
         if (err) {
-            res.status(500).send('Error');
+			console.log(err);
+            res.status(500).send(err);
             return;
         }
         res.status(200).send({they: users});
@@ -204,7 +218,8 @@ exports.getContacts = function (req, res, next) {
     
     User.getContacts(req.id, function (err, contacts) {
         if (err) {
-            res.status(500).send('Error');
+			console.log(err);
+            res.status(500).send(err);
             return;
         }else {
             res.status(200).send(contacts);
@@ -227,6 +242,7 @@ exports.getNodeContents = function (req, res, next) {
 
     User.getNodeContents(nodeID, function (err, contents) {
         if (err) {
+			console.log(err);
             res.status(500).send('Error');
             return;
         }
@@ -235,7 +251,7 @@ exports.getNodeContents = function (req, res, next) {
             res.status(200).send(contents);
             return;
         }
-        res.status(500).send('Error');
+        res.sendStatus(204);
         return;
     });
 
@@ -251,6 +267,7 @@ exports.getNodeContents = function (req, res, next) {
 exports.getPicture = function (req, res, next) {
     User.getParam(req.params.id, 'url', function (err, value) {
         if (err) {
+			console.log(err);
             res.status(500).send('Error');
             return;
         }
@@ -259,7 +276,7 @@ exports.getPicture = function (req, res, next) {
             res.status(200).sendFile(targetPath);
             return;
         }
-        res.status(500).send('Error');
+        res.sendStatus(204);
         return;
     });
 };
@@ -288,6 +305,7 @@ exports.getPub = function (req, res, next) {
 exports.isFriend = function (req, res, next) {
     User.isFriend(req.id, req.params.id, function (err, users) {
         if (err) {
+			console.log(err);
             res.status(500).send('Error');
             return;
         }
@@ -308,7 +326,7 @@ exports.getSubscriptions = function (req, res, next){
     User.getSubscriptions(req.id, function(err, subsc){
         if(err){
             console.log(err);
-            res.status(500).send('ERROR');
+            res.status(500).send(err);
             return;
         }else{
             res.status(200).send(subsc);
@@ -349,6 +367,7 @@ exports.search = function (req, res, next) {
 
     User.search(req.query.what, req.query.term, req.id, function (err, results) {
         if (err) {
+			console.log(err);
             res.status(500).send('Error');
             return;
         }
@@ -379,22 +398,22 @@ exports.activate = function (req, res, next) {
     User.getParamByEmail(nodeData['email'], 'password',function (err, value,id) {
         if (err) {
             console.log(err);
-            res.status(401).send('Wrong email or password 1');
+            res.status(500).send(err);
             return;
         }
 
         if(value){}
-        else {res.status(401).send('aaa');
+        else {res.status(400).send('Something went wrong');
             return;}
 
         if (nodeData['hash'] !== value) {
-            res.status(401).send('Wrong email or password 2');
+            res.status(400).send('Something went wrong');
             return;
         };
         
-        User.activate(id, function (sdf){
-            if (sdf) {
-                res.status(401).send('Something went wrong');
+        User.activate(id, function (errAct){
+            if (errAct) {
+                res.status(401).send(errAct);
                 return;
             }
             res.status(200).send('<html><head><meta http-equiv="refresh" content="3;url='+config.domain+'" /></head><body><h1>Su cuenta ha sido activada. Redireccionando en 3 segundos...</h1></body></html>');
@@ -418,7 +437,7 @@ exports.unsubscribe = function(req, res, next){
     User.unsubscribe(req.id, req.body.instID, function(err){
         if(err){
             console.log(err);
-            res.status(500).send('ERROR');
+            res.status(500).send(err);
         }else{
             res.status(200).send('OK');
         }
@@ -437,7 +456,7 @@ exports.subscribe = function(req, res, next){
     User.subscribe(req.id, req.body.instID, function(err){
         if(err){
             console.log(err);
-            res.status(500).send('ERROR');
+            res.status(500).send(err);
         }else{
             res.status(200).send('OK');
         }
@@ -456,7 +475,8 @@ exports.updateProfile = function (req, res, next) {
 
     User.updateProfile(idNEO, changes, function (err, profile) {
         if (err) {
-            res.status(500).send('Error USERS changeProfile');
+			console.log(err);
+            res.status(500).send(err);
             return;
         } else {
             res.status(200).send(profile);
@@ -491,7 +511,8 @@ exports.signup = function (req, res, next) {
 
     User.signup(nodeData, function (err, idNEO) {
         if (err) {
-            res.status(400).send('email taken');
+			console.log(err);
+            res.status(500).send(err);
             return;
         } else if (idNEO) {
 			var ret = false;
@@ -499,7 +520,7 @@ exports.signup = function (req, res, next) {
 			res.status(200).send({idNEO: idNEO});
 			return;
         } else {
-            res.status(500).send('Database error');
+            res.status(403).send('Email taken');
             return;
         }
     });
@@ -524,13 +545,15 @@ exports.login = function (req, res, next) {
     User.login(nodeData['email'], function (err, results) {
 		
         if (err) {
-            res.status(401).send('Wrong email or password');
+			console.log(err);
+            res.status(500).send(err);
             return;
         }
-        
-        console.log(results['active']);
-        
-        if (results['active']!==1){
+        else if (!results){
+			res.status(401).send('Wrong email or password');
+            return;
+		}
+        else if (results['active']!==1){
             res.status(401).send('Email not activated')
             return;
         }
@@ -540,14 +563,13 @@ exports.login = function (req, res, next) {
         if (secPass['pass'] !== results['pass']) {
             res.status(401).send('Wrong email or password');
             return;
-        }
-        ;
+        };
+        
         if (results['idNEO']) {
             if (!secur.loggedIn(req, res)) {
                 var cook = new cookies(req, res, secur.cookKeys);
                 cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
                 cook.set('LinkedEnibLang', results.lang, {signed: true, maxAge: 9000000});
-                console.log(results['idNEO']);
                 secur.isAdmin(results.idNEO,function(is){
                   if(is){
                     res.status(200).send({idNEO: results['idNEO'], lang: results.lang, admin: true});
@@ -583,7 +605,8 @@ exports.friend = function (req, res, next) {
 
     User.friend(req.id, req.body['idFriend'], function (err) {
         if (err) {
-            res.status(500).send('Error');
+			console.log(err);
+            res.status(500).send(err);
             return;
         }
         res.status(200).send('friend');
@@ -600,37 +623,41 @@ exports.uploadPic = function (req, res, next) {
         res.status(401).send('Unauthorized');
         return;
     }
-    console.log (req);
-    console.log(req.file);
-    var tempPath = req.file.path;
-    var string = 'upload/img' + id + '.jpg';
-    var targetPath = path.resolve(path.join(__dirname, string));
-    var extension = path.extname(req.file.originalname).toLowerCase();
-    if (extension === '.jpeg' || extension === '.png' || extension === '.jpg' || extension === '.bmp') {
-        fs.rename(tempPath, targetPath, function (err) {
-            if (err) {
-                res.status(500).send('Error');
-                return;
-            }
-            User.changeProperty('url', string, id, function (err) {
-                if (err) {
-                    res.status(500).send('Error');
-                    return;
-                }
-            });
-            res.redirect(200, 'http://localhost:9000/#/profile');
-            return;
-        });
-    } else {
-        fs.unlink(tempPath, function (err) {
-            if (err) {
-                res.status(500).send('Error');
-                return;
-            }
-            res.redirect(400, 'http://localhost:9000/#/profile');
-            return;
-        });
-    }
+    try{
+		var tempPath = req.file.path;
+		var string = 'upload/img' + id + '.jpg';
+		var targetPath = path.resolve(path.join(__dirname, string));
+		var extension = path.extname(req.file.originalname).toLowerCase();
+		if (extension === '.jpeg' || extension === '.png' || extension === '.jpg' || extension === '.bmp') {
+			fs.rename(tempPath, targetPath, function (err) {
+				if (err) {
+					res.status(500).send(err);
+					return;
+				}
+				User.changeProperty('url', string, id, function (err) {
+					if (err) {
+						res.status(500).send(err);
+						return;
+					}
+				});
+				res.redirect(200, 'http://localhost:9000/#/profile');
+				return;
+			});
+		} else {
+			fs.unlink(tempPath, function (err) {
+				if (err) {
+					res.status(500).send(err);
+					return;
+				}
+				res.redirect(400, 'http://localhost:9000/#/profile');
+				return;
+			});
+		}
+	}catch(err){
+		console.log(err);
+		res.status(500).send(err);
+		return;
+	}
 };
 
 /**
@@ -655,7 +682,7 @@ exports.changeProperty = function (req, res, next) {
     User.changeProperty(tmp.field, tmp.value, req.id, function(err){
         if(err){
             console.log(err);
-            res.sendStatus(500);
+            res.sendStatus(500).send(err);
         }else{
           if(tmp.field === 'lang'){
             var cook = new cookies(req, res, secur.cookKeys);
@@ -674,7 +701,8 @@ exports.changePassword = function (req, res, next) {
 
     User.changePassword(pswdNew['pass'], pswdNew['salt'], req.body['id'], function (err) {
         if (err) {
-            res.status(500).send('Error');
+			console.log(err);
+            res.status(500).send(err);
             return;
         }
         res.status(200).send('OK');
@@ -700,7 +728,8 @@ exports.deleteFriend = function (req, res, next) {
     
     User.deleteFriend(req.id, req.body.idFriend, function (err) {
         if (err) {
-            res.status(500).send('Error');
+			console.log(err);
+            res.status(500).send(err);
             return;
         }else{
             res.status(200).send('OK');
@@ -719,9 +748,11 @@ exports.deleteUser = function (req, res, next) {
     }
     User.deleteUser(req.params.id, function (err) {
         if (err) {
-            res.status(500).send('Error');
+			console.log(err);
+            res.status(500).send(err);
             return;
         }
+        res.sendStatus(200);
         return;
     });
 };

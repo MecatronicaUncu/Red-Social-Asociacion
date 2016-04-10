@@ -17,20 +17,22 @@ exports.getTimes = function(timeData, callback){
         'RETURN a AS time, ID(a) AS idNEO'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err, res) {
-        if (err){
-			throw err;
-            console.log("err get Profile");
-            return callback(err);
-        }else{
-            var times = [];
-            res.forEach(function(time){
-                time.time._data.data['idNEO']=time.idNEO;
-                times.push(time.time._data.data);
-            });
-            return callback(null, times);
-        }
-     });  
+    try{
+		db.cypher({query:query, params:null}, function (err, res) {
+			if (err){
+				return callback(err);
+			}else{
+				var times = [];
+				res.forEach(function(time){
+					time.time._data.data['idNEO']=time.idNEO;
+					times.push(time.time._data.data);
+				});
+				return callback(null, times);
+			}
+		 });  
+	}catch(err){
+		return callback(err);
+	}
 };
 
 exports.getActivityTypes = function(parent, callback){
@@ -42,19 +44,22 @@ exports.getActivityTypes = function(parent, callback){
     'RETURN a AS activityType, ID(a) AS idNEO'
   ].join('\n');
 
-  db.cypher({query:query, params:null}, function(err, res) {
-    if(err){
-      throw err;
-      return callback(err);
-    } else {
-      var activityTypes = [];
-      res.forEach(function(type){
-        type.activityType._data.data['idNEO']=type.idNEO;
-        activityTypes.push(type.activityType._data.data);
-      });
-      return callback(null, activityTypes);
-    }
-  });
+	try{
+	  db.cypher({query:query, params:null}, function(err, res) {
+		if(err){
+		  return callback(err);
+		} else {
+		  var activityTypes = [];
+		  res.forEach(function(type){
+			type.activityType._data.data['idNEO']=type.idNEO;
+			activityTypes.push(type.activityType._data.data);
+		  });
+		  return callback(null, activityTypes);
+		}
+	  });
+	}catch(err)
+		return callback(err);
+	}
 };
 
 exports.newActivity = function(acts, callback){
@@ -62,53 +67,53 @@ exports.newActivity = function(acts, callback){
     var ids = [];
     var query = '';
     
-    acts.forEach(function(act){
-        var params = '';
-        for(var key in act){
-            if(act.hasOwnProperty(key)){
-                if(typeof act[key] == "number")
-                    params += (key+':'+act[key]+', ');
-                else
-                    params += (key+':"'+act[key]+'", ');
-            }
-        }
-        //Borra el ultimo ', ' no deseado.
-        params = params.slice(0,-2);    
+    try{
+		acts.forEach(function(act){
+			var params = '';
+			for(var key in act){
+				if(act.hasOwnProperty(key)){
+					if(typeof act[key] == "number")
+						params += (key+':'+act[key]+', ');
+					else
+						params += (key+':"'+act[key]+'", ');
+				}
+			}
+			//Borra el ultimo ', ' no deseado.
+			params = params.slice(0,-2);    
 
-        query = query.concat(
-            ['MERGE (a:ACTIVITY {'+params+'})',
-            'RETURN ID(a) AS idNEO',
-            'UNION',
-            ''
-            ].join('\n'));
-    });
+			query = query.concat(
+				['MERGE (a:ACTIVITY {'+params+'})',
+				'RETURN ID(a) AS idNEO',
+				'UNION',
+				''
+				].join('\n'));
+		});
+		
+		//REMOVES LAST UNION\n
+		query = query.slice(0,-6);
     
-    //REMOVES LAST UNION\n
-    query = query.slice(0,-6);
-    
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-            console.log(err);
-            console.log("err USER newActivity");
-            return callback(true);
-        }else{
-            results.forEach(function(el){
-                ids.push(el.idNEO);
-            });
-            query = [
-                'MATCH (a:ACTIVITY) WHERE ID(a) IN ['+ids+']',
-                'SET a.group='+ids[0]
-            ].join('\n');
-            
-            db.cypher({query:query, params:null}, function (err, results) {
-                if (err){
-                    console.log(err);
-                    console.log("err USER newActivity");
-                    return callback(true);
-                }else{
-                    return callback(false,ids);
-                }
-            });  
-        }
-    });    
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(true);
+			}else{
+				results.forEach(function(el){
+					ids.push(el.idNEO);
+				});
+				query = [
+					'MATCH (a:ACTIVITY) WHERE ID(a) IN ['+ids+']',
+					'SET a.group='+ids[0]
+				].join('\n');
+				
+				db.cypher({query:query, params:null}, function (err, results) {
+					if (err){
+						return callback(true);
+					}else{
+						return callback(false,ids);
+					}
+				});  
+			}
+		});    
+	}catch(err)
+		return callback(err);
+	}
 };

@@ -18,21 +18,23 @@ exports.getAdminNodes = function(idNEO, callback){
         'LABELS(nodes) AS label, parent.name AS parentName'
     ].join('\n');
 
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-			throw err;
-            console.log("err get AdminNodes");
-            return callback(err);
-        }else if(results.length === 0){
-            return callback('Unauthorized');
-        }else{
-            results.forEach(function(res){
-                res.nodeData = res.nodeData._data.data;
-                res.label = res.label[0];
-            });
-            return callback(null, results);
-        }
-     });        	
+	try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}else if(results.length === 0){
+				return callback('Unauthorized');
+			}else{
+				results.forEach(function(res){
+					res.nodeData = res.nodeData._data.data;
+					res.label = res.label[0];
+				});
+				return callback(null, results);
+			}
+		 });        	
+	}catch(err){
+		return callback(err);
+	}
 };
 
 exports.getNodeRelTypes = function(memberof, callback){
@@ -44,28 +46,29 @@ exports.getNodeRelTypes = function(memberof, callback){
     'RETURN partrel AS nodeData'
   ].join('\n');
 
-  db.cypher({query:query, params:null}, function(err, results){
-    if(err){
-      throw err;
-      return callback(err);
-    }else{
-      var parts = [];
-      var rels = [];
-      
-      results.forEach(function(res){
-        res = res.nodeData._data.data;
-        if(res.type === 'User'){
-          //Handle relationships
-          rels.push(res);
-        } else {
-          //Handle parts
-          parts.push(res);
-        }
-      });
-
-      return callback(null,parts,rels);
-    }
-  });
+	try{
+		db.cypher({query:query, params:null}, function(err, results){
+			if(err){
+				return callback(err);
+			}else{
+				var parts = [];
+				var rels = [];
+				results.forEach(function(res){
+					res = res.nodeData._data.data;
+					if(res.type === 'User'){
+						//Handle relationships
+						rels.push(res);
+					} else {
+						//Handle parts
+						parts.push(res);
+					}
+				});
+				return callback(null,parts,rels);
+			}
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 exports.getNodeRelFields = function(label, callback){
@@ -76,19 +79,22 @@ exports.getNodeRelFields = function(label, callback){
     'RETURN u.fields AS fields'
   ].join('\n');
 
-  db.cypher({query:query, params:null}, function(err, results){
-    if(err){
-      throw err;
-      return callback(err);
-    }else{
-      if(results.length != 1){
-        return callback('More than one label matched!');
-      }
-      else {
-        return callback(null, results[0].fields);
-      }
-    }
-  });
+	try{
+		db.cypher({query:query, params:null}, function(err, results){
+			if(err){
+				return callback(err);
+			}else{
+				if(results.length != 1){
+					return callback('More than one label matched!');
+				}
+				else {
+					return callback(null, results[0].fields);
+				}
+			}
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 exports.newRel = function(relData,callback){
@@ -104,17 +110,18 @@ exports.newRel = function(relData,callback){
     'MERGE (u)-[:ADMINS]->(i)'
     ].join('\n');
     
-    console.log(query);
     
-    db.cypher({query:query, params:null}, function (err, results) {
-        if (err){
-            console.log(err);
-            console.log('Err User newRel');
-            return callback(err);
-        }else{
-            return callback(null);
-        }
-    });    
+    try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if (err){
+				return callback(err);
+			}else{
+				return callback(null);
+			}
+		});    
+	}catch(err){
+		return callback(err);
+	}
 };
 
 exports.newPart = function(data,callback){
@@ -129,15 +136,16 @@ exports.newPart = function(data,callback){
         partData: data.partData
     };
     
-    db.cypher({query:query, params:params}, function (err, results) {
-        if (err){
-            console.log(err);
-            console.log('Err User newPart');
-            return callback(err);
-        }
-		//console.log('Part: ',results[0]);
-        return callback(null,results[0].idNEO);
-    });
+    try{
+		db.cypher({query:query, params:params}, function (err, results) {
+			if (err){
+				return callback(err);
+			}
+			return callback(null,results[0].idNEO);
+		});
+	}catch(err){
+		return callback(err);
+	}
 };
 
 exports.delNodeRel = function(data,callback){
@@ -148,12 +156,15 @@ exports.delNodeRel = function(data,callback){
     'DELETE r'
   ].join('\n');
 
-  db.cypher({query:query, params:null}, function(err, results) {
-    if(err){
-      console.log(err);
-      return callback(err);
-    }else{
-      return callback(null);
-    }
-  });
+	try{
+	  db.cypher({query:query, params:null}, function(err, results) {
+		if(err){
+		  return callback(err);
+		}else{
+		  return callback(null);
+		}
+	  });
+	}catch(err){
+		return callback(err);
+	}
 };

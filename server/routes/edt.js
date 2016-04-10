@@ -74,60 +74,66 @@ exports.getTimesIcal = function(req, res, next){
     Edt.getTimes(timeData, function (err, times) {
         if (err) {
             console.log(err);
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         } else {
-            console.log(times);
-            var cal = new VCalendar({
-                organization: 'TimesApp',
-                title: timeData.whatName
-            });
-            var tmpDate,tmpHMin,startDate,endDate;
-            times.forEach(function(time){
-                tmpDate = YWDarrToDob([time.year,time.week,time.day])
-                tmpHMin = getminutes(time.from);
-                startDate = new Date(   tmpDate.getFullYear(), 
-                                        tmpDate.getMonth(),
-                                        tmpDate.getDate(),
-                                        tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
-                tmpHMin = getminutes(time.to);                        
-                endDate = new Date(     tmpDate.getFullYear(), 
-                                        tmpDate.getMonth(),
-                                        tmpDate.getDate(),
-                                        tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
-                                        
-                var vevent = new VEvent({
-                    stampDate: 0,
-                    startDate: startDate,
-                    endDate: endDate,
-                    summary: time.type,
-                    description: time.desc,
-                    //location: "Test Location",
-                    uid: time.idNEO
-                });
+			try{
+				console.log(times);
+				var cal = new VCalendar({
+					organization: 'TimesApp',
+					title: timeData.whatName
+				});
+				var tmpDate,tmpHMin,startDate,endDate;
+				times.forEach(function(time){
+					tmpDate = YWDarrToDob([time.year,time.week,time.day])
+					tmpHMin = getminutes(time.from);
+					startDate = new Date(   tmpDate.getFullYear(), 
+											tmpDate.getMonth(),
+											tmpDate.getDate(),
+											tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
+					tmpHMin = getminutes(time.to);                        
+					endDate = new Date(     tmpDate.getFullYear(), 
+											tmpDate.getMonth(),
+											tmpDate.getDate(),
+											tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
+											
+					var vevent = new VEvent({
+						stampDate: 0,
+						startDate: startDate,
+						endDate: endDate,
+						summary: time.type,
+						description: time.desc,
+						//location: "Test Location",
+						uid: time.idNEO
+					});
 
-                cal.add(vevent);
-            });
+					cal.add(vevent);
+				});
 
-            console.log(cal.toString());
+				console.log(cal.toString());
 
-            fs.writeFile("/tmp/ical.ics", cal.toString(), function(err) {
-                if(err) {
-                    return console.log(err);
-                    res.sendStatus(500);
-                }else{
-                    var stat = fs.statSync('/tmp/ical.ics');
-                    res.writeHead(200, {
-                          'Content-Type': 'text/calendar', 
-                          'Content-Length': stat.size,
-                          'Content-disposition' : 'attachment; filename="calendar.ics"'
-                    });
-                    var stream = fs.createReadStream( '/tmp/ical.ics', { bufferSize: 64 * 1024 });
-                    //res.attachment('/tmp/ical.ics');
-                    stream.pipe(res);
-        //            res.download('/tmp/ical.ics','calendar.ics');
-                }
-            }); 
+				fs.writeFile("/tmp/ical.ics", cal.toString(), function(err) {
+					if(err) {
+						console.log(err);
+						res.status(500).send(err);
+						return;
+					}else{
+						var stat = fs.statSync('/tmp/ical.ics');
+						res.writeHead(200, {
+							  'Content-Type': 'text/calendar', 
+							  'Content-Length': stat.size,
+							  'Content-disposition' : 'attachment; filename="calendar.ics"'
+						});
+						var stream = fs.createReadStream( '/tmp/ical.ics', { bufferSize: 64 * 1024 });
+						//res.attachment('/tmp/ical.ics');
+						stream.pipe(res);
+						//res.download('/tmp/ical.ics','calendar.ics');
+					}
+				}); 
+			}catch(err){
+				console.log(err);
+				res.status(500).send(err);
+			}
         }
     });
 };
@@ -144,7 +150,7 @@ exports.getTimes = function(req, res, next){
     Edt.getTimes(timeData, function (err, times) {
         if (err) {
             console.log(err);
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         } else {
             console.log(times);
@@ -167,7 +173,7 @@ exports.getActivityTypes = function (req, res, next) {
   Edt.getActivityTypes(req.query.parent, function (err, activityTypes) {
     if (err) {
       console.log(err);
-      res.status(500).send('Error');
+      res.status(500).send(err);
       return;
     } else {
       console.log(activityTypes);
@@ -182,7 +188,8 @@ exports.newActivity = function (req, res, next) {
 
     Edt.newActivity(acts, function (err, result) {
         if (err) {
-            res.status(500).send('Error Creating Activities');
+			console.log(err);
+            res.status(500).send(err);
             return;
         } else {
             res.status(200).send('OK');

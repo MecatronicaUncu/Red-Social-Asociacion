@@ -15,17 +15,18 @@ exports.isAdmin = function(id, callback){
         'WHERE ID(a)='+id,
         'RETURN ID(a)'].join('\n');
     
-    db.cypher({query:query, params:null}, function(err, results) {
-        if(err){
-            throw err;
-            console.log('err isAdmin');
-            return callback(false);
-        }
-        if(results.length>0)
-            return callback(true);
-        else
-            return callback(false);
-    });
+    try{
+		db.cypher({query:query, params:null}, function(err, results) {
+			if(err)
+				return callback(err);
+			if(results.length>0)
+				return callback(null,true);
+			else
+				return callback(null,false);
+		});
+	}catch(err)
+		return callback(err);
+	}
 };
 
 exports.verifyPassword = function (id,callback){
@@ -36,12 +37,15 @@ exports.verifyPassword = function (id,callback){
         'RETURN u.password AS pass, u.salt AS salt'
     ].join('\n');
     
-    db.cypher({query:query, params:null}, function (err, results) {
-        if(err){
-            console.log("err change prop");
-            return callback(err);
-        }
-        return callback(null, results[0]);
-    });
+    try{
+		db.cypher({query:query, params:null}, function (err, results) {
+			if(err){
+				return callback(err);
+			}
+			return callback(null, results[0]);
+		});
+	}catch(err)
+		return callback(err);
+	}
 };
 

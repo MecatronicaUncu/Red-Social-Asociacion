@@ -18,58 +18,60 @@ exports.getAdminNodes = function (req, res, next) {
 
     Admin.getAdminNodes(req.id, function (err, adminnodes) {
         if (err) {
-            res.status(500).send('Error');
+			if (err == 'Unauthorized')
+				res.status(401).send(err);
+			else
+				res.status(500).send(err);
             return;
         }
         if (adminnodes) {
             res.status(200).send({adminnodes: adminnodes});
             return;
         }
-        res.status(500).send('Error');
+        res.status(403).send('No admin nodes'); // 403 forbidden
         return;
     });
 };
 
 exports.getNodeRelTypes = function(req, res, next){
 
-  if(!req.id){
-    res.status(401).send('Unauthorized');
-    return;
-  } else if(!req.query.memberof || req.query.memberof == ''){
-    res.status(400).send('Missing MemberOf');
-    return;
-  }
+	if(!req.id){
+		res.status(401).send('Unauthorized');
+		return;
+	} else if(!req.query.memberof || req.query.memberof == ''){
+		res.status(400).send('Missing MemberOf');
+		return;
+	}
 
-  Admin.getNodeRelTypes(req.query.memberof, function(err, nodeTypes, relTypes){
-    if(err || !nodeTypes || !relTypes){
-      res.status(500).send('Error getting Node Rel Types');
-      return;
-    } else{
-      res.status(200).send({nodetypes: nodeTypes, reltypes: relTypes});
-    }
-  });
+	Admin.getNodeRelTypes(req.query.memberof, function(err, nodeTypes, relTypes){
+		if(err || !nodeTypes || !relTypes){
+			res.status(500).send('Error getting Node Rel Types');
+			return;
+		} else{
+			res.status(200).send({nodetypes: nodeTypes, reltypes: relTypes});
+		}
+	});
 };
 
 exports.getNodeRelFields = function(req, res, next){
 
-  if(!req.id){
-    res.status(401).send('Unauthorized');
-    return;
-  } else if(!req.params.label){
-    res.status(400).send('Missing Label');
-    return;
-  }
+	if(!req.id){
+		res.status(401).send('Unauthorized');
+		return;
+	} else if(!req.params.label){
+		res.status(400).send('Missing Label');
+		return;
+	}
 
-  Admin.getNodeRelFields(req.params.label, function(err, fields){
-    if(err){
-      res.status(500).send('Error getting fields');
-      return;
-    }else{
-      console.log(fields);
-      res.status(200).send({fields: fields});
-      return;
-    }
-  });
+	Admin.getNodeRelFields(req.params.label, function(err, fields){
+		if(err){
+			res.status(500).send(err);
+			return;
+		}else{
+			res.status(200).send({fields: fields});
+			return;
+		}
+	});
 };
 
 /**
@@ -91,10 +93,10 @@ exports.newRel = function (req, res, next) {
         res.status(400).send('Missing Relationship Details');
         return;
     }
-    console.log(relData);
+    
     Admin.newRel(relData, function (err) {
         if (err) {
-            res.status(400).send('Error Creating Rel');
+            res.status(400).send(err);
             return;
         } else {
             res.status(200).send('OK');
@@ -124,7 +126,7 @@ exports.newPart = function (req, res, next) {
 
     Admin.newPart(data, function (err, partID) {
         if (err) {
-            res.status(400).send('Error Creating Node');
+            res.status(400).send(err);
             return;
         } else if (partID) {
             res.status(200).send({idNEO: partID});
@@ -156,10 +158,10 @@ exports.delNodeRel = function (req, res, next){
     res.status(400).send('Missing relationship type');
     return;
   }
-  console.log(data);
+  
   Admin.delNodeRel(data, function(err){
     if(err){
-      res.status(400).send('Error deleting node or rel');
+      res.status(400).send(err);
       return;
     }else{
       res.status(200).send('Deleted node or rel');

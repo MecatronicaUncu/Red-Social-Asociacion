@@ -4,6 +4,8 @@ var crypto = require('crypto');
 var keygrip = require('keygrip');
 var keys = keygrip(["Andres", "Franco"]);
 
+// TODO : verify all methods, and security issues with cookies
+
 /******************************************************************************/
 /*                          COOKIES & SECURITY                                */
 /******************************************************************************/
@@ -75,8 +77,10 @@ exports.loggedIn = loggedIn;
  */
 var isAdmin = function (id, next) {
 
-    Secur.isAdmin(id, function (is) {
-        if (is)
+    Secur.isAdmin(id, function (err,is) {
+		if (err)
+			return next(false);
+        else if (is)
             return next(true);
         else
             return next(false);
@@ -86,6 +90,7 @@ exports.isAdmin = isAdmin;
 
 /*
  * Method to extract cookies
+ * TODO : verificar esta función
  */
 /**
  * Extracts the cookies from the HTTP request header
@@ -119,7 +124,7 @@ exports.verifyPassword = function (req, res, next) {
 
     Secur.verifyPassword(req.body['id'], function (err, results) {
         if (err) {
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         }else{
             var tmp = hash(req.body['password'], results['salt']);
