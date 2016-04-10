@@ -17,7 +17,7 @@ exports.getTimes = function(timeData, callback){
         'RETURN a AS time, ID(a) AS idNEO'
     ].join('\n');
     
-    db.cypher({query, null}, function (err, res) {
+    db.cypher({query:query, params:null}, function (err, res) {
         if (err){
 			throw err;
             console.log("err get Profile");
@@ -42,7 +42,7 @@ exports.getActivityTypes = function(parent, callback){
     'RETURN a AS activityType, ID(a) AS idNEO'
   ].join('\n');
 
-  db.cypher({query, null}, function(err, res) {
+  db.cypher({query:query, params:null}, function(err, res) {
     if(err){
       throw err;
       return callback(err);
@@ -86,7 +86,7 @@ exports.newActivity = function(acts, callback){
     //REMOVES LAST UNION\n
     query = query.slice(0,-6);
     
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
             console.log(err);
             console.log("err USER newActivity");
@@ -100,7 +100,7 @@ exports.newActivity = function(acts, callback){
                 'SET a.group='+ids[0]
             ].join('\n');
             
-            db.cypher({query, null}, function (err, results) {
+            db.cypher({query:query, params:null}, function (err, results) {
                 if (err){
                     console.log(err);
                     console.log("err USER newActivity");

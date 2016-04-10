@@ -45,7 +45,7 @@ User.getAsocs = function(idNEO, callback){
         'RETURN TYPE(r) as reltype, LABELS(i) AS label, ID(i) AS instID, i.name AS name'
     ].join('\n');
 
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
 			throw err;
             console.log("err get associations");
@@ -72,7 +72,7 @@ User.getProfile = function(idNEO,public,callback){
         'RETURN u as USER'
     ].join('\n');
 
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
 			throw err;
             console.log("err get Profile");
@@ -117,7 +117,7 @@ User.getNodeContents = function(idNEO, callback){
 //		'TYPE(r) AS reltype, inst.name AS instName'
     ].join('\n');
 
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
 			throw err;
             console.log("err get NodeContent");
@@ -159,7 +159,7 @@ User.getThey = function (callback) {
         'LIMIT 50'
     ].join('\n');
 
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
 	    throw err;
             console.log("err get All");
@@ -201,7 +201,7 @@ User.getContacts = function(id,callback){
         'ORDER BY NODES.count DESC LIMIT 5'
     ].join('\n');
 
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
             throw err;
             console.log("err profile");
@@ -265,7 +265,7 @@ User.getParam = function (id, field, callback) {
         'RETURN user.'+ field + ' AS value'
     ].join('\n');
 
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
             console.log('err get Param');
             return callback(err);
@@ -287,7 +287,7 @@ User.getParamByEmail = function (email, field, callback) {
         'RETURN user.'+ field + ' AS value, ID(user) AS id'
     ].join('\n');
     
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
             throw err;
             console.log('err get Param');
@@ -311,7 +311,7 @@ User.isFriend = function (id, friend, callback) {
         'RETURN p'
     ].join('\n');
     
-    db.cypher({query, null},function(err,results){
+    db.cypher({query:query, params:null},function(err,results){
         if (err) {
             console.log("err is friend");
             return callback(err);
@@ -334,7 +334,7 @@ User.getSubscriptions = function (idNEO, callback){
         'RETURN distinct s, ID(s) AS idNEO'
     ].join('\n');
     
-    db.cypher({query, null},function(err,results){
+    db.cypher({query:query, params:null},function(err,results){
         if (err) {
             console.log("err USER getSubscriptions");
             return callback(err);
@@ -406,7 +406,7 @@ User.search = function (what, term, usrId, callback) {
         return callback('What not defined');
     }
     
-    db.cypher({query, null},function(err,results){
+    db.cypher({query:query, params:null},function(err,results){
         if (err) {
             console.log("err USER search");
             return callback(err);
@@ -448,7 +448,7 @@ User.unsubscribe = function(idNEO, instId, callback){
     'DELETE r'
     ].join('\n');
     
-    db.cypher({query, params}, function (err, results) {
+    db.cypher({query:query, params:params}, function (err, results) {
         if (err){
             console.log(err);
             console.log('Err User unsubscribe');
@@ -471,7 +471,7 @@ User.subscribe = function(idNEO, instId, callback){
     'MERGE (u)-[:SUBSCRIBED]->(i)'
     ].join('\n');
     
-    db.cypher({query, params}, function (err, results) {
+    db.cypher({query:query, params:params}, function (err, results) {
         if (err){
             console.log(err);
             console.log('Err User subscribe');
@@ -497,7 +497,7 @@ User.updateProfile = function(idNEO, changes, callback){
 	'RETURN u AS USER'
     ].join('\n');
 
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
             throw err;
             console.log("err USER updateProfile");
@@ -536,7 +536,7 @@ User.signup = function (nodeData, callback) {
 	'RETURN ID(user) AS idNEO, user.c AS c'
     ].join('\n');
 
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if (err){
             throw err;
             console.log('err sign up');
@@ -562,7 +562,7 @@ User.login = function (email, callback) {
         email: email
     };
 	
-    db.cypher({query, params}, function (err, results) {
+    db.cypher({query:query, params:params}, function (err, results) {
         if (err) {
             console.log('user log in error');
             return callback(err);
@@ -583,7 +583,7 @@ User.friend = function (userId, otherId, callback) {
         'MERGE (user1)-[:FRIENDS]->(user2)'
     ].join('\n');
     
-    db.cypher({query, null}, function (err) {
+    db.cypher({query:query, params:null}, function (err) {
         if(err){
             console.log("err friend sbdy");
             return callback(err);
@@ -600,7 +600,7 @@ User.activate = function(id,callback){
         'SET u.active=1'
     ].join('\n');
     
-    db.cypher({query, null}, function (err) {
+    db.cypher({query:query, params:null}, function (err) {
         if(err){
             console.log("err USER activate");
             return callback(err);
@@ -617,7 +617,7 @@ User.changeProperty = function (field,value,id,callback){
         'SET u.'+field+'="'+value+'"'
     ].join('\n');
     
-    db.cypher({query, null}, function (err) {
+    db.cypher({query:query, params:null}, function (err) {
         if(err){
             console.log("err change prop");
             return callback(err);
@@ -634,7 +634,7 @@ User.changePassword = function (newP,newS,id,callback){
         'SET u.password="' + newP + '", u.salt="' +newS + '"'
     ].join('\n');
     
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if(err){
             console.log("err change prop");
             return callback(err);
@@ -660,7 +660,7 @@ User.deleteFriend = function (userId, otherId, callback) {
         'DELETE rel'
     ].join('\n');
     
-    db.cypher({query, null}, function (err) {
+    db.cypher({query:query, params:null}, function (err) {
         if(err){
             console.log("err del friend");
             return callback(err);
@@ -679,7 +679,7 @@ User.deleteUser = function (userId, callback) {
         'DELETE rel,user1'
     ].join('\n');
     
-    db.cypher({query, null}, function (err) {
+    db.cypher({query:query, params:null}, function (err) {
         if(err){
             console.log("err del usr");
             return callback(err);

@@ -15,7 +15,7 @@ exports.isAdmin = function(id, callback){
         'WHERE ID(a)='+id,
         'RETURN ID(a)'].join('\n');
     
-    db.cypher({query, null}, function(err, results) {
+    db.cypher({query:query, params:null}, function(err, results) {
         if(err){
             throw err;
             console.log('err isAdmin');
@@ -36,7 +36,7 @@ exports.verifyPassword = function (id,callback){
         'RETURN u.password AS pass, u.salt AS salt'
     ].join('\n');
     
-    db.cypher({query, null}, function (err, results) {
+    db.cypher({query:query, params:null}, function (err, results) {
         if(err){
             console.log("err change prop");
             return callback(err);
