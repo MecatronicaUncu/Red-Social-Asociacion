@@ -28,7 +28,7 @@ TMP_DOWNLOAD_DIR=$MY_PATH/tmp_download_dir
 NEO4J_FILE=$TMP_DOWNLOAD_DIR/neo4j-community-$NEO4J_VER-unix.tar.gz
 
 if [ "$VERBOSE" = false ]; then
-  LOG_FILE=$MY_PATH/setup.log
+  LOG_FILE=$MY_PATH/bootstrap.log
 fi
 
 BIN_DIR=../server/bin
