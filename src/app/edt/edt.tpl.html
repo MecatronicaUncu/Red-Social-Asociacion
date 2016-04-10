@@ -130,24 +130,9 @@
                     </div>
                     <div class="sign-input-wrap">
                         <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['desc']}}:</span>
                             <input type="text" class="sign-input newActBtn" 
                                    ng-model="newAct.periods[periodIndex].desc"
-                                   placeholder="...">
-                        </div>
-                    </div>
-                    <div class="sign-input-wrap" ng-show="daySelected(periodIndex)">
-                        <div class="dropdown newActSelect">
-				<span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['repeat']}}:</span>
-                            <button class="edtSearchBtn newActBtn dropdown-toggle" data-toggle="dropdown" type="button">
-                                {{actRepeats[newAct.periods[periodIndex].repeat]}}
-                            </button>
-                            <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
-                                <li role="presentation" ng-repeat="(key, repeat) in actRepeats">
-                                    <a role="menuitem" tabindex="-1" 
-                                       ng-click="newActSelectRepeat(key, periodIndex)">{{repeat}}</a>
-                                </li>
-                            </ul>
+                                   placeholder="{{translation.edt['desc']}}">
                         </div>
                     </div>
 
@@ -157,18 +142,18 @@
                             <input id="newActFrom{{periodIndex}}" type="text" 
                                    placeholder="{{translation.edt['from']}}"
                                    class="sign-input" data-parsley-ui-enabled="false" 
-                                   ng-model="dummy[periodIndex]"
-                                   ng-change="newActWhen(dummy[periodIndex], periodIndex)"
+                                   ng-model="dummyWhenFrom[periodIndex]"
+                                   ng-change="newActWhenFrom(dummyWhenFrom[periodIndex], periodIndex)"
                                    ng-required="daySelected(periodIndex)">
                         </div>
-                        <div class="dropdown newActSelect" ng-show="period.repeat != 'n' && period.repeat != 'nw'">
+                        <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['date']}}:</span>
                             <input id="newActTo{{periodIndex}}" type="text"
                                    placeholder="{{translation.edt['to']}}" 
                                    class="sign-input" data-parsley-ui-enabled="false" 
-                                   ng-model="dummy2[periodIndex]"
-                                   ng-change="newActRepeatTo(dummy2[periodIndex], periodIndex)"
-                                   ng-required="period.repeat != 'n'">
+                                   ng-model="dummyWhenTo[periodIndex]"
+                                   ng-change="newActWhenTo(dummyWhenTo[periodIndex], periodIndex)"
+                                   ng-required="true">
                         </div>
                     </div>
 
@@ -176,11 +161,9 @@
                         <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['schedule']}} ({{translation.edt[period.days[dayIndex].day + Min]}}):</span>
                         <div class="sign-input-wrap" ng-repeat="(timeIndex, time) in day.times">
                             <div class="dropdown newActSelect">
-                    <!--span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['from']}}:</span-->
 				    <input type="text" ng-model="time.from" placeholder="{{translation.edt['from']}}" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'from')" data-parsley-ui-enabled="false" ng-required="newActDays[periodIndex][dayIndex]===true">
                             </div>
                             <div class="dropdown newActSelect">
-                                <!--span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['to']}}:</span-->
 				<input type="text" ng-model="time.to" placeholder="{{translation.edt['to']}}" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$"
                                        ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'to')" data-parsley-ui-enabled="false"
                                        ng-required="newActDays[periodIndex][dayIndex]===true">

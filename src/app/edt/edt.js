@@ -21,8 +21,8 @@
 
         $scope.partSearchResults = [];
         //Required. If not present produce errors.
-        $scope.dummy = [];
-        $scope.dummy2 = [];
+        $scope.dummyWhenFrom = [];
+        $scope.dummyWhenTo = [];
         $scope.whatIdToSearch = 0;
         $scope.whoIdToSearch = 0;
         
@@ -104,7 +104,6 @@
                     {day: 'ma', times: [{}]}, {day: 'mi', times: [{}]}, {day: 'ju', times: [{}]},
                     {day: 'vi', times: [{}]}, {day: 'sa', times: [{}]}, {day: 'do', times: [{}]}];
                 $scope.newActDays.push([false, false, false, false, false, false, false]);
-                $scope.newAct.periods[periodIndex].repeat = 'n';
                 $scope.newAct.periods[periodIndex].type = ($scope.actTypes.length > 0) ? $scope.actTypes[0].label : 'NOT_SPECIFIED';
                 //TODO: Se puede hacer mas elegante esto?
                 $timeout(function () {
@@ -319,16 +318,6 @@
 
             $scope.edtGetTimes();
 
-        };
-
-        /**
-         * Posibles opciones para la repetición de actividades al momento de crearlas
-         * @type {Array}
-         */
-        $scope.actRepeats = {pw: 'Cada semana',
-            nw: 'Semana próxima',
-            w2: 'Cada dos semanas',
-            n: 'Nunca'
         };
 
         /**
@@ -633,7 +622,7 @@
          * 
          * @param  {String} strDate Fecha con formato: dd/mm/yyyy
          */
-        $scope.newActRepeatTo = function (strDate, periodIndex) {
+        $scope.newActWhenTo = function (strDate, periodIndex) {
             var date = strDate.split('/');
             var day = date[0];
             // month - 1 porque en formato ISO el mes es de 0 a 11
@@ -644,18 +633,6 @@
             date = $scope.DobToYWDarr(date);
 
             $scope.newAct.periods[periodIndex].to = {year: date[0], week: date[1], day: date[2]};
-        };
-
-        /**
-         * Ejecutada al seleccionar un elemento del menú desplegable de los posibles
-         * casos de repetición. Se carga el valor actual en el objeto newAct y se
-         * autocompletan los campos afectados, i.e la fecha de fin.
-         * 
-         * @param  {Object} repeat Objeto que guarda los strings que definen la
-         * repetición.
-         */
-        $scope.newActSelectRepeat = function (repeat, periodIndex) {
-            $scope.newAct.periods[periodIndex].repeat = repeat;
         };
 
         /**
@@ -721,7 +698,7 @@
          * 
          * @param  {String} strDate Fecha en formato: dd/mm/yyyy
          */
-        $scope.newActWhen = function (strDate, periodIndex) {
+        $scope.newActWhenFrom = function (strDate, periodIndex) {
             console.log(strDate, periodIndex);
             var date = strDate.split('/');
             var day = date[0];
@@ -757,14 +734,6 @@
                 var wstep = 1;
                 var wto = period.to.week;
                 var wfrom = period.from.week;
-                if (period.repeat === 'nw') {
-                    wto = period.from.week + 1;
-                } else if (period.repeat === 'n') {
-                    wto = wfrom;
-                }
-                if (period.repeat === 'w2') {
-                    wstep = 2;
-                }
                 if (wto < wfrom) {
                     //Pasamos de año
                     //Sumamos las que nos pasamos
@@ -967,15 +936,8 @@
     //                return idx;
     //            },
                 beforeShowDay: function (date) {
-                    var rep = $scope.newAct.periods[periodIndex].repeat;
-                    var ref = $scope.newAct.periods[periodIndex].from;
                     date = $scope.DobToYWDarr(date);
-                    if (rep === 'w2') {
-                        // Cada dos semanas
-                        return [((date[1] - ref.week) % 2 === 0) && $scope.newActDays[periodIndex][date[2] - 1]];
-                    } else {
-                        return [$scope.newActDays[periodIndex][date[2] - 1]];
-                    }
+                    return [$scope.newActDays[periodIndex][date[2] - 1]];
                 }
             });
         };
