@@ -6,7 +6,7 @@ MY_PATH="`dirname \"$0\"`"
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 LOG_FILE=$MY_PATH/edt.log
 
-SRV_DIR=../../server
+SRV_DIR=../../../server
 BIN_DIR=$SRV_DIR/bin
 NEO_DIR=$SRV_DIR/bin/neo4j-community-$NEO4J_VER
 

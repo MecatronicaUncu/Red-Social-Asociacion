@@ -159,14 +159,14 @@ done
 curl -H "Content-Type: application/json" -X POST -d "{\"password\":\"$PASSWORD\"}" -u neo4j:neo4j http://localhost:4550/user/neo4j/password >/dev/null 2>&1 || { loggerRed "Could not change server password. Are you sure your Neo4J server is up and running?\n"; exit 1; }
 
 # Set Neo4J user and password in testDataset/{usersRel.js, regUsers.js}
-sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/usersRel.js
-sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./testDataset/regUsers.js
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./Datasets/userBase/usersRel.js
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./Datasets/userBase/regUsers.js
 
 # Set Neo4J user and password in routes
 sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ../server/config/config.js
 
 # Set Neo4J user and password in edt/regEdtNodes.js
-sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./edt/regEdtNodes.js
+sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD@localhost:4550'/" ./Datasets/edt/regEdtNodes.js
 
 #-----------------------------------------#
 # Set host location in config.js
