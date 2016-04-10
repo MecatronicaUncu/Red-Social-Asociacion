@@ -21,8 +21,8 @@
 
         $scope.partSearchResults = [];
         //Required. If not present produce errors.
-        $scope.dummy = [];
-        $scope.dummy2 = [];
+        $scope.dummyWhenFrom = [];
+        $scope.dummyWhenTo = [];
         $scope.whatIdToSearch = 0;
         $scope.whoIdToSearch = 0;
         
@@ -39,8 +39,6 @@
             whatId: -1,
             timezone: new Date().getTimezoneOffset()
         };
-        
-        $scope.dayOrPeriod = 'PERIOD';
 
         $scope.actAsocs = [];
 
@@ -58,13 +56,6 @@
 
             return selected;
         };
-
-    //    $scope.onlyThisDay = function (periodIndex, idx) {
-    //        $scope.newActDays[periodIndex].forEach(function (el, index) {
-    //            $scope.newActDays[periodIndex][index] = false;
-    //        });
-    //        $scope.newActDays[periodIndex][idx] = true;
-    //    };
 
         //necesita llamada a getAssociations
         $scope.selectAsoc = function (asoc) {
@@ -106,7 +97,6 @@
                     {day: 'ma', times: [{}]}, {day: 'mi', times: [{}]}, {day: 'ju', times: [{}]},
                     {day: 'vi', times: [{}]}, {day: 'sa', times: [{}]}, {day: 'do', times: [{}]}];
                 $scope.newActDays.push([false, false, false, false, false, false, false]);
-                $scope.newAct.periods[periodIndex].repeat = 'n';
                 $scope.newAct.periods[periodIndex].type = ($scope.actTypes.length > 0) ? $scope.actTypes[0].label : 'NOT_SPECIFIED';
                 //TODO: Se puede hacer mas elegante esto?
                 $timeout(function () {
@@ -170,11 +160,6 @@
             });
         };
 
-        /*****************************************************************/
-        /*****************************************************************/
-        /*****************************************************************/
-        /*****************************************************************/
-
         /**
          * Para que las franjas horarias se adapten automáticamente.
          */
@@ -184,9 +169,6 @@
                 $scope.replot();
             }
         });
-
-        $scope.test = function () {
-        };
 
         /** @type {Boolean} Decide si se muestra el EDT o el form de nueva actividad */
         $scope.newActCollapse = true;
@@ -291,21 +273,6 @@
         };
 
         /**
-         * Realiza el pedido de los tipos de elementos a los que se les puede
-         * consultar horarios, y los guarda en $scope.items
-         *
-         $scope.edtAllTypes = function(){
-         
-         edt.getAllTypes(function(err,data){
-         if(err){
-         console.log(err);
-         } else {
-         $scope.items.data = data;
-         }
-         });
-         };*/
-
-        /**
          * Reestablece las variables usadas en la consulta de horarios. Y se vuelven
          * a pedir los tipos de elementos, porque se comparte el array de consulta.
          * Probablemente sería bueno usar arrays distintos para no volver a realizar
@@ -321,16 +288,6 @@
 
             $scope.edtGetTimes();
 
-        };
-
-        /**
-         * Posibles opciones para la repetición de actividades al momento de crearlas
-         * @type {Array}
-         */
-        $scope.actRepeats = {pw: 'Cada semana',
-            nw: 'Semana próxima',
-            w2: 'Cada dos semanas',
-            n: 'Nunca'
         };
 
         /**
@@ -369,7 +326,7 @@
             }];
 
         /**
-         * Variable deprecated, para testing antes de que los horarios se pidan a la base de datos.
+         * Guarda el array de activides que devuelve el server para ser ploteados.
          * @type {Array}
          */
         $scope.times = [];
@@ -383,7 +340,6 @@
          */
         $scope.blockHTML = function (timejson) {
 
-            //w = Math.ceil(w);	
             var info = ['<div style="padding-left: 3px; height: 100%">',
                 '<div style="height: 20%">' + session.getTranslation().labels[timejson.type].substr(0, 15) + '</div>',
                 '<div style="height: 20%">' + timejson.from + ' - ' + timejson.to + '</div>',
@@ -392,15 +348,6 @@
                 '<div style="height: 20%">' + timejson.whoName + '</div>',
                 '<div style="height: 20%">' + timejson.desc + '</div>',
                 '</div>'].join('\n');
-            /*			
-             if(ttip){
-             return [	'<core-tooltip show="false"; position="'+pos+'">',
-             '<div style="height: '+h+'px; width: '+w+'px;"><core-icon icon="list"></core-icon></div>',
-             '<div tip style="height: '+htip+'px">'+info+'</div>',
-             '</core-tooltip>'].join('\n');
-             } else {
-             return info;
-             }*/
             return info;
         };
 
@@ -448,11 +395,10 @@
          */
         $scope.timeplot = function (alltimes, config) {
 
-            console.log(alltimes);
             if(alltimes.length === 0){
                 return;
             }
-            
+
             var divwidth;
             var divheight;
 
@@ -483,33 +429,15 @@
                     localIndex++;
                 }
                 
-                console.log(id);
-                //var times = el.times;
-                //	Transform times
-                //times.forEach(function(el){
                 el.mti = $scope.getminutes(el.from);
                 el.mtf = $scope.getminutes(el.to);
-                //});
-
-                //times.sort(function(a, b){
-                //	return a.mti - b.mti;
-                //});
-
-                var pos, htip;
 
                 if ($scope.suffix == 'H') {
-                    pos = 'right center';
-                    //htip = h - 10;
-
-                    if ((el.mti - start) > (tt / 2)) {
-                        pos = 'left center';
-                        //htip = h - 10;
-                    }
 
                     var x = ((el.mti - start) / tt) * divwidth;
                     var w = ((el.mtf - el.mti) / tt) * divwidth;
                     $scope.divs[$scope.divIndex] = document.createElement('div');
-                    $scope.divs[$scope.divIndex].id = 'ttip-' + id + $scope.divIndex;
+                    $scope.divs[$scope.divIndex].id = 'act-' + id + $scope.divIndex;
                     $scope.divs[$scope.divIndex].title = "";
                     $($scope.divs[$scope.divIndex]).css('position', 'absolute');
                     $($scope.divs[$scope.divIndex]).css('left', x);
@@ -519,27 +447,11 @@
                     if (w >= 85) {
                         $($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
                         $scope.divs[$scope.divIndex].className += ' edt-block-info';
-                    } else {
-                        $scope.divs[$scope.divIndex].className += ' edt-ttip';
-                        $($scope.divs[$scope.divIndex]).tooltip({
-                            position: {
-                                at: pos,
-                                collision: 'none'
-                            },
-                            content: $scope.blockHTML(el)
-                        });
                     }
                     document.getElementById(id).appendChild($scope.divs[$scope.divIndex]);
                     $scope.divIndex++;
                     //TODO: new row if superposition found
                 } else {
-                    pos = 'center bottom';
-                    htip = 50;
-
-                    if ((el.mti - start) > (tt / 2)) {
-                        pos = 'center top';
-                        htip = 50;
-                    }
 
                     var top = 0;
                     var hcum = 0;
@@ -547,7 +459,7 @@
                     var h = ((el.mtf - el.mti) / tt) * divheight;
                     top = y - hcum;
                     $scope.divs[$scope.divIndex] = document.createElement('div');
-                    $scope.divs[$scope.divIndex].id = 'ttip-' + id + $scope.divIndex;
+                    $scope.divs[$scope.divIndex].id = 'act-' + id + $scope.divIndex;
                     $($scope.divs[$scope.divIndex]).css('position', 'relative');
                     if (localIndex === 0) {
                         $($scope.divs[$scope.divIndex]).css('top', top + 'px');
@@ -558,24 +470,11 @@
                     if (h >= 70) {
                         $($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
                         $scope.divs[$scope.divIndex].className += ' edt-block-info';
-                    } else {
-                        $scope.divs[$scope.divIndex].className += ' edt-ttip';
-                        $($scope.divs[$scope.divIndex]).tooltip({
-                            position: {
-                                at: pos,
-                                collision: 'none'
-                            },
-                            content: $scope.blockHTML(el)
-                        });
                     }
                     document.getElementById(id).appendChild($scope.divs[$scope.divIndex]);
                     $scope.divIndex++;
                     hcum += h;
                     //TODO: new row if superposition found
-
-                    $('.edt-ttip').off("mouseover").click(function () {
-                        $(this).tooltip('open');
-                    }).off("mouseout");
                 }
             });
         };
@@ -635,7 +534,7 @@
          * 
          * @param  {String} strDate Fecha con formato: dd/mm/yyyy
          */
-        $scope.newActRepeatTo = function (strDate, periodIndex) {
+        $scope.newActWhenTo = function (strDate, periodIndex) {
             var date = strDate.split('/');
             var day = date[0];
             // month - 1 porque en formato ISO el mes es de 0 a 11
@@ -646,18 +545,6 @@
             date = $scope.DobToYWDarr(date);
 
             $scope.newAct.periods[periodIndex].to = {year: date[0], week: date[1], day: date[2]};
-        };
-
-        /**
-         * Ejecutada al seleccionar un elemento del menú desplegable de los posibles
-         * casos de repetición. Se carga el valor actual en el objeto newAct y se
-         * autocompletan los campos afectados, i.e la fecha de fin.
-         * 
-         * @param  {Object} repeat Objeto que guarda los strings que definen la
-         * repetición.
-         */
-        $scope.newActSelectRepeat = function (repeat, periodIndex) {
-            $scope.newAct.periods[periodIndex].repeat = repeat;
         };
 
         /**
@@ -723,22 +610,18 @@
          * 
          * @param  {String} strDate Fecha en formato: dd/mm/yyyy
          */
-        $scope.newActWhen = function (strDate, periodIndex) {
+        $scope.newActWhenFrom = function (strDate, periodIndex) {
             console.log(strDate, periodIndex);
             var date = strDate.split('/');
-            var day = date[0];
+            var day = date[0] - 0;
             // month - 1 porque en formato ISO el mes es de 0 a 11
             var month = date[1] - 1;
-            var year = date[2];
+            var year = date[2] - 0;
 
             date = new Date(year, month, day);
-            $('#newActTo' + $scope.dayOrPeriod + periodIndex).datepicker("option", "minDate", date);
+            $('#newActTo' + periodIndex).datepicker("option", "minDate", date);
             date = $scope.DobToYWDarr(date);
-            
-            // Evita la necesidad de checkboxes para un sólo día
-            $scope.newActDays[periodIndex] = [false,false,false,false,false,false,false];
-            $scope.newActDays[periodIndex][date[2]-1] = true;
-            
+
             $scope.newAct.periods[periodIndex].from = {year: date[0], week: date[1], day: date[2]};
 
         };
@@ -748,7 +631,7 @@
          * 
          */
         $scope.newActivity = function () {
-            
+
             var actsToCreate = [];
             var error = false;
             if ($scope.newAct.periods.length === 0){
@@ -759,14 +642,6 @@
                 var wstep = 1;
                 var wto = period.to.week;
                 var wfrom = period.from.week;
-                if (period.repeat === 'nw') {
-                    wto = period.from.week + 1;
-                } else if (period.repeat === 'n') {
-                    wto = wfrom;
-                }
-                if (period.repeat === 'w2') {
-                    wstep = 2;
-                }
                 if (wto < wfrom) {
                     //Pasamos de año
                     //Sumamos las que nos pasamos
@@ -881,42 +756,6 @@
             return false;
         };
 
-        /**
-         * Al completar dos campos de tres de los horarios de la actividad, autocompleta el tercero
-         * @param  {String} el Nombre del campo correspondiente al JSON de hora del objeto newAct.
-         *
-         $scope.calcTime = function(el){
-         
-         if($scope.correctTime(el)){
-         
-         if($('#newActStart').parsley().isValid() && $('#newActDur').parsley().isValid(true)){
-         var start = $scope.getminutes($scope.newAct.ti);
-         var dur = $scope.getminutes($scope.newAct.dur);
-         var end = start+dur;
-         end = $scope.minutes2Str(end);
-         $scope.newAct.tf = end;
-         
-         if($scope.checkTimes()){$scope.newAct.tf = '';}
-         } else if($('#newActStart').parsley().isValid() && $('#newActEnd').parsley().isValid()){
-         var start = $scope.getminutes($('#newActStart').val());
-         var end = $scope.getminutes($('#newActEnd').val());
-         var dur = end-start;
-         dur = $scope.minutes2Str(dur);
-         $scope.newAct.dur = dur;
-         
-         if($scope.checkTimes()){$scope.newAct.dur = '';}
-         } else if($('#newActDur').parsley().isValid(true) && $('#newActEnd').parsley().isValid()){
-         var dur = $scope.getminutes($('#newActDur').val());
-         var end = $scope.getminutes($('#newActEnd').val());
-         var start = end-dur;
-         start = $scope.minutes2Str(start);
-         $scope.newAct.ti = start;
-         
-         if($scope.checkTimes()){$scope.newAct.ti = '';}
-         }
-         }
-         };*/
-
         $scope.clearAct = function () {
             $scope.newAct.periods = [];
             $scope.newAct.whatId = $scope.actAsocs[0].instID;
@@ -945,39 +784,28 @@
              * Configuración del calendario de fecha de inicio.
              * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
              */
-            $('#newActFrom' + $scope.dayOrPeriod + periodIndex).datepicker({minDate: 0,
+            $('#newActFrom' + periodIndex).datepicker({minDate: 0,
                 showWeek: true,
                 dateFormat: 'dd/mm/yy',
                 defaultDate: 0,
-                firstDay: 1
+                firstDay: 1,
+                beforeShowDay: function (date) {
+                    date = $scope.DobToYWDarr(date);
+                    return [$scope.newActDays[periodIndex][date[2] - 1]];
+                }
             });
-
-            //$('#newActFrom' + $scope.dayOrPeriod + periodIndex).datepicker('setDate', new Date());
-            //$scope.newActWhen($('#newActFrom' + $scope.dayOrPeriod + periodIndex).val(), periodIndex);
 
             /**
              * Configuración del calendario de fecha de cierre.
              * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
              */
-            $('#newActTo' + $scope.dayOrPeriod + periodIndex).datepicker({showWeek: true,
+            $('#newActTo' + periodIndex).datepicker({showWeek: true,
                 dateFormat: 'dd/mm/yy',
                 firstDay: 1,
                 minDate: 0,
-    //            function(){
-    //                var idx = 0;
-    //                $scope.newActDays[periodIndex].some(function(day,ind){idx=ind;return day;});
-    //                return idx;
-    //            },
                 beforeShowDay: function (date) {
-                    var rep = $scope.newAct.periods[periodIndex].repeat;
-                    var ref = $scope.newAct.periods[periodIndex].from;
                     date = $scope.DobToYWDarr(date);
-                    if (rep === 'w2') {
-                        // Cada dos semanas
-                        return [((date[1] - ref.week) % 2 === 0) && $scope.newActDays[periodIndex][date[2] - 1]];
-                    } else {
-                        return [$scope.newActDays[periodIndex][date[2] - 1]];
-                    }
+                    return [$scope.newActDays[periodIndex][date[2] - 1]];
                 }
             });
         };
