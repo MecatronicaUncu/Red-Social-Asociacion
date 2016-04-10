@@ -39,8 +39,6 @@
             whatId: -1,
             timezone: new Date().getTimezoneOffset()
         };
-        
-        $scope.dayOrPeriod = 'PERIOD';
 
         $scope.actAsocs = [];
 
@@ -732,7 +730,7 @@
             var year = date[2];
 
             date = new Date(year, month, day);
-            $('#newActTo' + $scope.dayOrPeriod + periodIndex).datepicker("option", "minDate", date);
+            $('#newActTo' + periodIndex).datepicker("option", "minDate", date);
             date = $scope.DobToYWDarr(date);
             
             // Evita la necesidad de checkboxes para un sólo día
@@ -945,21 +943,21 @@
              * Configuración del calendario de fecha de inicio.
              * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
              */
-            $('#newActFrom' + $scope.dayOrPeriod + periodIndex).datepicker({minDate: 0,
+            $('#newActFrom' + periodIndex).datepicker({minDate: 0,
                 showWeek: true,
                 dateFormat: 'dd/mm/yy',
                 defaultDate: 0,
                 firstDay: 1
             });
 
-            //$('#newActFrom' + $scope.dayOrPeriod + periodIndex).datepicker('setDate', new Date());
-            //$scope.newActWhen($('#newActFrom' + $scope.dayOrPeriod + periodIndex).val(), periodIndex);
+            //$('#newActFrom' + periodIndex).datepicker('setDate', new Date());
+            //$scope.newActWhen($('#newActFrom' + periodIndex).val(), periodIndex);
 
             /**
              * Configuración del calendario de fecha de cierre.
              * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
              */
-            $('#newActTo' + $scope.dayOrPeriod + periodIndex).datepicker({showWeek: true,
+            $('#newActTo' + periodIndex).datepicker({showWeek: true,
                 dateFormat: 'dd/mm/yy',
                 firstDay: 1,
                 minDate: 0,
