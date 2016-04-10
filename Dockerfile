@@ -44,16 +44,16 @@ RUN git clone https://github.com/mecatronicauncu/Red-Social-Asociacion.git
 RUN cd Red-Social-Asociacion && git checkout develop
 
 # Install scripts in social network
-RUN cd Red-Social-Asociacion && ./bootstrap/setup -v
+RUN cd Red-Social-Asociacion && ./script/bootstrap -v
 
 # Config for lan use
-RUN cd Red-Social-Asociacion && ./bootstrap/config -h LAN -nomail
+RUN cd Red-Social-Asociacion && ./script/config -h LAN -nomail
 
 # Setup some users
-RUN cd Red-Social-Asociacion && ./bootstrap/testDataset/testDataset no-wait
+RUN cd Red-Social-Asociacion && ./script/Datasets/userBase/userBase no-wait
 
 # Setup some nodes for the EDT
-RUN cd Red-Social-Asociacion && ./bootstrap/edt/edt no-wait
+RUN cd Red-Social-Asociacion && ./script/Datasets/edt/edt no-wait
 
 # Entry point command: build and run tests on project, then launch
 # server
