@@ -47,7 +47,7 @@ RUN cd Red-Social-Asociacion && git checkout develop
 RUN cd Red-Social-Asociacion && ./script/bootstrap -v
 
 # Config for lan use
-RUN cd Red-Social-Asociacion && ./script/config -h LAN -nomail
+RUN cd Red-Social-Asociacion && ./script/config -p asoc -h LAN -nomail
 
 # Setup some users
 RUN cd Red-Social-Asociacion && ./script/Datasets/userBase/userBase no-wait
