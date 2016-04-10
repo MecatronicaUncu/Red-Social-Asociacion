@@ -54,6 +54,51 @@ cd "$MY_PATH"
 echo "" > $LOG_FILE
 
 #-----------------------------------------#
+# Parsing commandline options
+HOST_TYPE=""
+SITE=""
+PASSWORD=""
+NOMAIL=1
+if [[ $# -ne 0 ]]
+then
+	while [[ $# > 0 ]]
+	do
+		key="$1"
+		case $key in
+		-nomail)
+			NOMAIL=0
+			;;
+		-h|--hosttype)
+			shift
+			HOST_TYPE="$1"
+			if [[ "$HOST_TYPE" != "NET" ]] && [[ "$HOST_TYPE" != "LAN" ]]
+			then
+				loggerRed "Unrecognized host type. Use either LAN or NET"
+				exit 1
+			fi
+			;;
+		-p|--password)
+			shift
+			PASSWORD="$1"
+			;;
+		-s|--site)
+			shift
+			SITE="$1"
+			;;
+		--help)
+			printf "Red-Social-Asociacion configuration script\n\n-nomail\t\tSkip mail configuration steps\n-h|-hosttype\tEither LAN or NET\n-p|--password\tNeo4j server password\n-s|--site\tWhen using host type NET, domain name of the site\n\n"
+			exit 1
+			;;
+		*)
+			loggerRed "There were some unrecognized options. Type config --help for mor information"
+			exit 1
+			;;
+		esac
+		shift
+	done
+fi
+
+#-----------------------------------------#
 # Configure Neo4J Server
 
 STATUS=`./$NEO4J_DIR/bin/neo4j status`
@@ -79,16 +124,6 @@ then
 	./$BIN_DIR/neoRun >/dev/null 2>&1 || { loggerRed "Error starting Neo4J Server!\n"; exit 1; }
 fi
 
-if [[ $# -eq 2 ]] && [[ "$2" = "NET" ]]
-then
-    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
-    exit 1
-elif [[ $# -gt 3 ]]
-then
-    echo -e $R_COL"Please give all arguments:\n\n- password\n- HOST_TYPE (LAN,NET)\n- SITE (if NET, e.g: mecatronicauncu.org)\n"$DEF_COL
-    exit 1
-fi
-
 #-----------------------------------------#
 # Create Dummy node:
 # Requires a running server of Neo4J!
@@ -103,15 +138,13 @@ loggerGreen "Creating email uniqueness constraint...\n"
 #-----------------------------------------#
 # Set new Neo4J server password
 loggerGreen "Setting the Neo4J server password..."
-if [[ $# -eq 0 ]]
+if [[ -z "$PASSWORD" ]]
 then
     stty -echo
     printf $Y_COL"Enter your password: "$DEF_COL
     read PASSWORD
     printf "\n\n"
     stty echo
-else
-    PASSWORD="$1"
 fi
 
 while [[ "$PASSWORD" == "neo4j" ]]
@@ -137,7 +170,7 @@ sed -i "s/^\(.*\)'http.*:\/\/neo4j:.*@localhost:.*'$/\1'http:\/\/neo4j:$PASSWORD
 
 #-----------------------------------------#
 # Set host location in config.js
-if [[ $# -eq 0 ]]
+if [[ -z "$HOST_TYPE" ]]
 then
     hosts=("Local network" "The Internet")
     PS3="From where will Red-Social-Asociacion will be accessed? "
@@ -151,14 +184,17 @@ then
         esac
     done
 else
-    HOST_TYPE="$2"
     if [[ "$HOST_TYPE" = "LAN" ]]
     then
         sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$(hostname -i | sed -e 's/[[:blank:]]//'):3000\";/" ../server/config/config.js
     elif [[ "$HOST_TYPE" = "NET" ]]
     then
-        SITE="$3"
-	sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$SITE\";/" ../server/config/config.js
+		if [[ -z "$SITE" ]]
+		then
+			loggerYellow"Please enter your website: "
+			read SITE
+        fi
+		sed -i "s/^var domain=.*;$/var domain=\"https:\/\/$SITE\";/" ../server/config/config.js
     fi
 fi
 
@@ -197,6 +233,51 @@ openssl x509 -req -days 365 -in $BIN_DIR/../$domain.csr -signkey $BIN_DIR/../$do
 #-----------------------------------------#
 # Stop Neo4J
 ./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J server\n"; exit 1; }
+
+#-----------------------------------------#
+# Extra configs in config.js
+
+if [[ $NOMAIL -eq 1 ]]
+then
+	loggerGreen "Additional configuration"
+	printf $Y_COL"You are about to configure the SMTP email settings. If you don't want to configure this now, you can modify the appropriate values in server/config/config.js. Bear in mind that, if you decide not to configure now, you'll have to run this script again to have access to all of the capabilities of this software."$DEF_COL
+
+	printf $Y_COL"Enter the address of the smtp mail: "$DEF_COL
+	read EMAILMAIL
+	printf "\n"
+	printf $Y_COL"Enter the name of the smtp host: "$DEF_COL
+	read EMAILHOST
+	printf "\n"
+	printf $Y_COL"Enter the email address you want the receiver to read: "$DEF_COL
+	read EMAILADD
+	printf "\n"
+	printf $Y_COL"Enter the name of the sender: "$DEF_COL
+	read EMAILNAME
+	printf "\n"
+	printf $Y_COL"Enter the short-name of the sender: "$DEF_COL
+	read EMAILSHORT
+	printf "\n"
+	stty -echo
+	printf $Y_COL"Enter login password: "$DEF_COL
+	read EMAILPASS
+	printf "\n\n"
+	stty echo
+
+	sed -i "s/^var mailFrom =.*;$/var mailFrom = \'$EMAILSHORT <$EMAILADD>\';/" ../server/config/config.js
+	sed -i "s/^var fromName =.*;$/var fromName = \'$EMAILNAME\';/" ../server/config/config.js
+	sed -i "s/^var smtpUser =.*;$/var smtpUser = \'$EMAILMAIL\';/" ../server/config/config.js
+	sed -i "s/^var smtpPass =.*;$/var smtpPass = \'$EMAILPASS\';/" ../server/config/config.js
+	sed -i "s/^var smtpHost =.*;$/var smtpHost = \'$EMAILHOST\';/" ../server/config/config.js
+
+	if [[ "$EMAILSHORT" == "" ]] || [[ "$EMAILADD" == "" ]] || [[ "$EMAILNAME" == "" ]] || [[ "$EMAILMAIL" == "" ]] || [[ "$EMAILPASS" == "" ]] || [[ "$EMAILHOST" == "" ]]
+	then
+		sed -i "s/^var mailServedConfigured =.*;$/var mailServedConfigured = false;/" ../server/config/config.js
+	else
+		sed -i "s/^var mailServedConfigured =.*;$/var mailServedConfigured = true;/" ../server/config/config.js
+	fi
+else
+	sed -i "s/^var mailServedConfigured =.*;$/var mailServedConfigured = false;/" ../server/config/config.js
+fi
 
 #-----------------------------------------#
 # Done!

@@ -47,7 +47,7 @@ RUN cd Red-Social-Asociacion && git checkout develop
 RUN cd Red-Social-Asociacion && ./bootstrap/setup -v
 
 # Config for lan use
-RUN cd Red-Social-Asociacion && ./bootstrap/config LAN
+RUN cd Red-Social-Asociacion && ./bootstrap/config -h LAN -nomail
 
 # Setup some users
 RUN cd Red-Social-Asociacion && ./bootstrap/testDataset/testDataset no-wait
