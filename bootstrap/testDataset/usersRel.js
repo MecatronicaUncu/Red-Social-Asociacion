@@ -16,7 +16,7 @@ var friend = function (userId, otherId) {
         'MERGE (user1)-[:FRIENDS]->(user2)'
     ].join('\n');
 
-    db.query(query, null, function (err) {
+    db.cypher({query:query, params:null}, function (err) {
         if(err){
             console.log("err friend sbdy");
             return 1;

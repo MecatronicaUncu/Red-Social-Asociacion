@@ -24,7 +24,7 @@ csv
 	'RETURN ID(user) AS idNEO, user.c AS c'
 	].join('\n');
 
-	db.query(query, null, function (err, results) {
+	db.cypher({query:query, params:null}, function (err, results) {
 	    if (err){
 	        throw err;
 	        console.log('Error creating test dataset');
