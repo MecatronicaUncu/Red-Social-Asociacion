@@ -57,13 +57,6 @@
             return selected;
         };
 
-    //    $scope.onlyThisDay = function (periodIndex, idx) {
-    //        $scope.newActDays[periodIndex].forEach(function (el, index) {
-    //            $scope.newActDays[periodIndex][index] = false;
-    //        });
-    //        $scope.newActDays[periodIndex][idx] = true;
-    //    };
-
         //necesita llamada a getAssociations
         $scope.selectAsoc = function (asoc) {
           console.log(asoc);
@@ -167,11 +160,6 @@
             });
         };
 
-        /*****************************************************************/
-        /*****************************************************************/
-        /*****************************************************************/
-        /*****************************************************************/
-
         /**
          * Para que las franjas horarias se adapten automáticamente.
          */
@@ -181,9 +169,6 @@
                 $scope.replot();
             }
         });
-
-        $scope.test = function () {
-        };
 
         /** @type {Boolean} Decide si se muestra el EDT o el form de nueva actividad */
         $scope.newActCollapse = true;
@@ -288,21 +273,6 @@
         };
 
         /**
-         * Realiza el pedido de los tipos de elementos a los que se les puede
-         * consultar horarios, y los guarda en $scope.items
-         *
-         $scope.edtAllTypes = function(){
-         
-         edt.getAllTypes(function(err,data){
-         if(err){
-         console.log(err);
-         } else {
-         $scope.items.data = data;
-         }
-         });
-         };*/
-
-        /**
          * Reestablece las variables usadas en la consulta de horarios. Y se vuelven
          * a pedir los tipos de elementos, porque se comparte el array de consulta.
          * Probablemente sería bueno usar arrays distintos para no volver a realizar
@@ -356,7 +326,7 @@
             }];
 
         /**
-         * Variable deprecated, para testing antes de que los horarios se pidan a la base de datos.
+         * Guarda el array de activides que devuelve el server para ser ploteados.
          * @type {Array}
          */
         $scope.times = [];
@@ -370,7 +340,6 @@
          */
         $scope.blockHTML = function (timejson) {
 
-            //w = Math.ceil(w);	
             var info = ['<div style="padding-left: 3px; height: 100%">',
                 '<div style="height: 20%">' + session.getTranslation().labels[timejson.type].substr(0, 15) + '</div>',
                 '<div style="height: 20%">' + timejson.from + ' - ' + timejson.to + '</div>',
@@ -379,15 +348,6 @@
                 '<div style="height: 20%">' + timejson.whoName + '</div>',
                 '<div style="height: 20%">' + timejson.desc + '</div>',
                 '</div>'].join('\n');
-            /*			
-             if(ttip){
-             return [	'<core-tooltip show="false"; position="'+pos+'">',
-             '<div style="height: '+h+'px; width: '+w+'px;"><core-icon icon="list"></core-icon></div>',
-             '<div tip style="height: '+htip+'px">'+info+'</div>',
-             '</core-tooltip>'].join('\n');
-             } else {
-             return info;
-             }*/
             return info;
         };
 
@@ -435,11 +395,10 @@
          */
         $scope.timeplot = function (alltimes, config) {
 
-            console.log(alltimes);
             if(alltimes.length === 0){
                 return;
             }
-            
+
             var divwidth;
             var divheight;
 
@@ -470,33 +429,15 @@
                     localIndex++;
                 }
                 
-                console.log(id);
-                //var times = el.times;
-                //	Transform times
-                //times.forEach(function(el){
                 el.mti = $scope.getminutes(el.from);
                 el.mtf = $scope.getminutes(el.to);
-                //});
-
-                //times.sort(function(a, b){
-                //	return a.mti - b.mti;
-                //});
-
-                var pos, htip;
 
                 if ($scope.suffix == 'H') {
-                    pos = 'right center';
-                    //htip = h - 10;
-
-                    if ((el.mti - start) > (tt / 2)) {
-                        pos = 'left center';
-                        //htip = h - 10;
-                    }
 
                     var x = ((el.mti - start) / tt) * divwidth;
                     var w = ((el.mtf - el.mti) / tt) * divwidth;
                     $scope.divs[$scope.divIndex] = document.createElement('div');
-                    $scope.divs[$scope.divIndex].id = 'ttip-' + id + $scope.divIndex;
+                    $scope.divs[$scope.divIndex].id = 'act-' + id + $scope.divIndex;
                     $scope.divs[$scope.divIndex].title = "";
                     $($scope.divs[$scope.divIndex]).css('position', 'absolute');
                     $($scope.divs[$scope.divIndex]).css('left', x);
@@ -506,27 +447,11 @@
                     if (w >= 85) {
                         $($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
                         $scope.divs[$scope.divIndex].className += ' edt-block-info';
-                    } else {
-                        $scope.divs[$scope.divIndex].className += ' edt-ttip';
-                        $($scope.divs[$scope.divIndex]).tooltip({
-                            position: {
-                                at: pos,
-                                collision: 'none'
-                            },
-                            content: $scope.blockHTML(el)
-                        });
                     }
                     document.getElementById(id).appendChild($scope.divs[$scope.divIndex]);
                     $scope.divIndex++;
                     //TODO: new row if superposition found
                 } else {
-                    pos = 'center bottom';
-                    htip = 50;
-
-                    if ((el.mti - start) > (tt / 2)) {
-                        pos = 'center top';
-                        htip = 50;
-                    }
 
                     var top = 0;
                     var hcum = 0;
@@ -534,7 +459,7 @@
                     var h = ((el.mtf - el.mti) / tt) * divheight;
                     top = y - hcum;
                     $scope.divs[$scope.divIndex] = document.createElement('div');
-                    $scope.divs[$scope.divIndex].id = 'ttip-' + id + $scope.divIndex;
+                    $scope.divs[$scope.divIndex].id = 'act-' + id + $scope.divIndex;
                     $($scope.divs[$scope.divIndex]).css('position', 'relative');
                     if (localIndex === 0) {
                         $($scope.divs[$scope.divIndex]).css('top', top + 'px');
@@ -545,24 +470,11 @@
                     if (h >= 70) {
                         $($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
                         $scope.divs[$scope.divIndex].className += ' edt-block-info';
-                    } else {
-                        $scope.divs[$scope.divIndex].className += ' edt-ttip';
-                        $($scope.divs[$scope.divIndex]).tooltip({
-                            position: {
-                                at: pos,
-                                collision: 'none'
-                            },
-                            content: $scope.blockHTML(el)
-                        });
                     }
                     document.getElementById(id).appendChild($scope.divs[$scope.divIndex]);
                     $scope.divIndex++;
                     hcum += h;
                     //TODO: new row if superposition found
-
-                    $('.edt-ttip').off("mouseover").click(function () {
-                        $(this).tooltip('open');
-                    }).off("mouseout");
                 }
             });
         };
@@ -701,19 +613,15 @@
         $scope.newActWhenFrom = function (strDate, periodIndex) {
             console.log(strDate, periodIndex);
             var date = strDate.split('/');
-            var day = date[0];
+            var day = date[0] - 0;
             // month - 1 porque en formato ISO el mes es de 0 a 11
             var month = date[1] - 1;
-            var year = date[2];
+            var year = date[2] - 0;
 
             date = new Date(year, month, day);
             $('#newActTo' + periodIndex).datepicker("option", "minDate", date);
             date = $scope.DobToYWDarr(date);
-            
-            // Evita la necesidad de checkboxes para un sólo día
-            $scope.newActDays[periodIndex] = [false,false,false,false,false,false,false];
-            $scope.newActDays[periodIndex][date[2]-1] = true;
-            
+
             $scope.newAct.periods[periodIndex].from = {year: date[0], week: date[1], day: date[2]};
 
         };
@@ -723,7 +631,7 @@
          * 
          */
         $scope.newActivity = function () {
-            
+
             var actsToCreate = [];
             var error = false;
             if ($scope.newAct.periods.length === 0){
@@ -848,42 +756,6 @@
             return false;
         };
 
-        /**
-         * Al completar dos campos de tres de los horarios de la actividad, autocompleta el tercero
-         * @param  {String} el Nombre del campo correspondiente al JSON de hora del objeto newAct.
-         *
-         $scope.calcTime = function(el){
-         
-         if($scope.correctTime(el)){
-         
-         if($('#newActStart').parsley().isValid() && $('#newActDur').parsley().isValid(true)){
-         var start = $scope.getminutes($scope.newAct.ti);
-         var dur = $scope.getminutes($scope.newAct.dur);
-         var end = start+dur;
-         end = $scope.minutes2Str(end);
-         $scope.newAct.tf = end;
-         
-         if($scope.checkTimes()){$scope.newAct.tf = '';}
-         } else if($('#newActStart').parsley().isValid() && $('#newActEnd').parsley().isValid()){
-         var start = $scope.getminutes($('#newActStart').val());
-         var end = $scope.getminutes($('#newActEnd').val());
-         var dur = end-start;
-         dur = $scope.minutes2Str(dur);
-         $scope.newAct.dur = dur;
-         
-         if($scope.checkTimes()){$scope.newAct.dur = '';}
-         } else if($('#newActDur').parsley().isValid(true) && $('#newActEnd').parsley().isValid()){
-         var dur = $scope.getminutes($('#newActDur').val());
-         var end = $scope.getminutes($('#newActEnd').val());
-         var start = end-dur;
-         start = $scope.minutes2Str(start);
-         $scope.newAct.ti = start;
-         
-         if($scope.checkTimes()){$scope.newAct.ti = '';}
-         }
-         }
-         };*/
-
         $scope.clearAct = function () {
             $scope.newAct.periods = [];
             $scope.newAct.whatId = $scope.actAsocs[0].instID;
@@ -916,11 +788,12 @@
                 showWeek: true,
                 dateFormat: 'dd/mm/yy',
                 defaultDate: 0,
-                firstDay: 1
+                firstDay: 1,
+                beforeShowDay: function (date) {
+                    date = $scope.DobToYWDarr(date);
+                    return [$scope.newActDays[periodIndex][date[2] - 1]];
+                }
             });
-
-            //$('#newActFrom' + periodIndex).datepicker('setDate', new Date());
-            //$scope.newActWhen($('#newActFrom' + periodIndex).val(), periodIndex);
 
             /**
              * Configuración del calendario de fecha de cierre.
@@ -930,11 +803,6 @@
                 dateFormat: 'dd/mm/yy',
                 firstDay: 1,
                 minDate: 0,
-    //            function(){
-    //                var idx = 0;
-    //                $scope.newActDays[periodIndex].some(function(day,ind){idx=ind;return day;});
-    //                return idx;
-    //            },
                 beforeShowDay: function (date) {
                     date = $scope.DobToYWDarr(date);
                     return [$scope.newActDays[periodIndex][date[2] - 1]];
