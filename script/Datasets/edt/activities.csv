@@ -1,0 +1,57 @@
+to,desc,whoName,from,type,whatName,timezone,year,day,group,week
+12h30,"",C. Northrop,08h30,CLASE,Informática,180,2016,3,91,15
+12h30,"",C. Northrop,08h30,CLASE,Informática,180,2016,3,91,16
+12h30,"",C. Northrop,08h30,CLASE,Informática,180,2016,3,91,17
+12h30,"",C. Northrop,08h30,CLASE,Informática,180,2016,3,91,18
+12h30,"",C. Northrop,08h30,CLASE,Informática,180,2016,3,91,19
+12h30,"",C. Northrop,08h30,CLASE,Informática,180,2016,3,91,20
+12h30,"",C. Northrop,08h30,CLASE,Informática,180,2016,3,91,21
+12h30,"",C. Northrop,08h30,CLASE,Informática,180,2016,3,91,22
+11h00,Parcial 1,C. Northrop,08h00,EXAMEN_PARCIAL,Informática,180,2016,3,100,17
+11h00,Parcial 2,C. Northrop,08h00,EXAMEN_PARCIAL,Informática,180,2016,3,101,21
+11h00,Parcial 3,C. Northrop,08h00,EXAMEN_PARCIAL,Informática,180,2016,3,102,23
+20h00,Primer Llamado,C. Northrop,15h00,EXAMEN_FINAL,Informática,180,2016,3,103,27
+18h00,Segundo Llamado,C. Northrop,13h00,EXAMEN_FINAL,Informática,180,2016,3,104,30
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,15
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,15
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,16
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,16
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,17
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,17
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,18
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,18
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,19
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,19
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,20
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,20
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,21
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,21
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,22
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,22
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,23
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,23
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,24
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,24
+11h30,"",O. Bagnell,08h00,CLASE,Análisis Matemático I,180,2016,2,105,25
+19h30,"",O. Bagnell,15h00,CLASE,Análisis Matemático I,180,2016,5,105,25
+10h00,Parcial 1,O. Bagnell,08h00,EXAMEN_PARCIAL,Análisis Matemático I,180,2016,2,127,18
+10h00,Parcial 2,O. Bagnell,08h00,EXAMEN_PARCIAL,Análisis Matemático I,180,2016,2,128,21
+10h00,Parcial 3,O. Bagnell,08h00,EXAMEN_PARCIAL,Análisis Matemático I,180,2016,2,129,25
+12h30,Primer Llamado,O. Bagnell,08h00,EXAMEN_FINAL,Análisis Matemático I,180,2016,2,130,27
+20h00,Segundo Llamado,O. Bagnell,15h00,EXAMEN_FINAL,Análisis Matemático I,180,2016,5,131,30
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,15
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,16
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,17
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,18
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,19
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,20
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,21
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,22
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,23
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,24
+18h00,"",T. Ly,14h00,CLASE,Producmática,180,2016,5,132,25
+11h00,Parcial 1,T. Ly,09h00,EXAMEN_PARCIAL,Producmática,180,2016,5,143,18
+11h00,Parcial 2,T. Ly,09h00,EXAMEN_PARCIAL,Producmática,180,2016,5,144,21
+11h00,Parcial 3,T. Ly,09h00,EXAMEN_PARCIAL,Producmática,180,2016,5,145,24
+19h00,Primer Llamado,T. Ly,13h00,EXAMEN_FINAL,Producmática,180,2016,5,146,27
+19h00,Segundo Llamado,T. Ly,14h00,EXAMEN_FINAL,Producmática,180,2016,5,147,30
