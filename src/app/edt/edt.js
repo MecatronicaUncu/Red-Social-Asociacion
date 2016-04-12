@@ -90,8 +90,8 @@
             if (periodIndex === -1) {
                 $scope.newAct.periods.push({});
                 periodIndex = $scope.newAct.periods.length - 1;
-                $scope.newAct.periods[periodIndex].from = {};
-                $scope.newAct.periods[periodIndex].to = {};
+                $scope.newAct.periods[periodIndex].from = null;
+                $scope.newAct.periods[periodIndex].to = null;
                 $scope.newAct.periods[periodIndex].desc = '';
                 $scope.newAct.periods[periodIndex].days = [{day: 'lu', times: [{}]},
                     {day: 'ma', times: [{}]}, {day: 'mi', times: [{}]}, {day: 'ju', times: [{}]},
@@ -251,7 +251,10 @@
         $scope.setDates = function (w) {
 
             // No importa el Day Of Week en week, porque al iterar se sobreescribe
-            var week = (w ? [(new Date()).getFullYear(), w, 0] : $scope.DobToYWDarr(new Date()));
+          if(!w){
+            return;
+          }
+          var week = [(new Date()).getFullYear(), w, 0];
 
             $scope.searchWeek = week[1];
 
@@ -280,7 +283,7 @@
          */
         $scope.clearSearch = function () {
             
-            $scope.setDates();
+            $scope.setDates($scope.thisWeek);
             $scope.newActCollapse = true;
 
             $scope.whoIdToSearch = session.getID();
@@ -623,6 +626,10 @@
             date = $scope.DobToYWDarr(date);
 
             $scope.newAct.periods[periodIndex].from = {year: date[0], week: date[1], day: date[2]};
+            if($scope.newAct.periods[periodIndex].to === null){
+              $scope.dummyWhenTo[periodIndex] = strDate;
+              $scope.newAct.periods[periodIndex].to = {year: date[0], week: date[1], day: date[2]};
+            }
 
         };
 
@@ -634,6 +641,7 @@
 
             var actsToCreate = [];
             var error = false;
+            var minweek = $scope.weeksInYear();
             if ($scope.newAct.periods.length === 0){
                 return;
             }
@@ -642,6 +650,9 @@
                 var wstep = 1;
                 var wto = period.to.week;
                 var wfrom = period.from.week;
+                if(wfrom < minweek){
+                  minweek = wfrom;
+                }
                 if (wto < wfrom) {
                     //Pasamos de año
                     //Sumamos las que nos pasamos
@@ -699,6 +710,8 @@
                     if (err) {
                         console.log(err);
                     } else {
+                      $scope.newActCollapse = true;
+                      $scope.setDates(minweek);
                         $scope.clearAct();
                     }
                 });
@@ -810,6 +823,26 @@
             });
         };
 
+        /**
+         * today guarda la fecha de hoy para usos posteriores y referencia
+         * @type {YWDarr}
+         */
+        var ajd = new Date();
+        var d = ajd.getDate();
+        var m = ajd.getMonth();
+        var y = ajd.getFullYear();
+        // Debe ser Mes/Dia/Año
+        $scope.today = ((parseInt(m) + 1) < 10 ? '0' : '') + (parseInt(m) + 1) + '/' + (d < 10 ? '0' : '') + d + '/' + y;
+        $scope.today = $scope.DobToYWDarr($scope.today);
+
+        /**
+        * thisWeek guarda la referencia de la semana actual para usos posteriores
+        * @type {Integer}
+        */
+        $scope.thisDay = $scope.today[2];
+        $scope.thisWeek = $scope.today[1];
+        $scope.thisYear = $scope.today[0];
+
         $scope.$on('login', function () {
             $scope.newAct.whoId = session.getID();
             if($stateParams.id){
@@ -866,7 +899,7 @@
          * en ParentCtrl.js porque sino, cada vez que tocamos 'EDT' vuelve a cargar esto!
          */
         $scope.$on('$viewContentLoaded', function () {
-            $scope.setDates();
+            $scope.setDates($scope.thisWeek);
             $scope.newActCollapse = true;
 
             /* Como los ids de la tabla del EDT se generan dinámicamente en un ng-repeat,
@@ -894,28 +927,6 @@
                 for (i = 1; i <= wn; i++) {
                     $scope.weeks.push(i);
                 }
-
-                /**
-                 * today guarda la fecha de hoy para usos posteriores y referencia
-                 * @type {YWDarr}
-                 */
-                var ajd = new Date();
-                var d = ajd.getDate();
-                var m = ajd.getMonth();
-                var y = ajd.getFullYear();
-                // Debe ser Mes/Dia/Año
-                $scope.today = ((parseInt(m) + 1) < 10 ? '0' : '') + (parseInt(m) + 1) + '/' + (d < 10 ? '0' : '') + d + '/' + y;
-                console.log($scope.today);
-                $scope.today = $scope.DobToYWDarr($scope.today);
-
-                /**
-                 * thisWeek guarda la referencia de la semana actual para usos posteriores
-                 * @type {Integer}
-                 */
-                console.log($scope.today);
-                $scope.thisDay = $scope.today[2];
-                $scope.thisWeek = $scope.today[1];
-                $scope.thisYear = $scope.today[0];
 
                 /**
                  * Mostramos el calendario
