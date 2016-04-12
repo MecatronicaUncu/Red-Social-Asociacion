@@ -8,6 +8,7 @@ MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 BIN_DIR=../server/bin
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 NEO4J_SERVER_CONF_FILE=$NEO4J_DIR/conf/neo4j-server.properties
+NEO4J_CONF_FILE=$NEO4J_DIR/conf/neo4j.properties
 LOG_FILE=$MY_PATH/config.log
 
 CONS_DIV="#####################################"
@@ -113,6 +114,7 @@ sed -i "s/bms.security.auth_enabled=.*/bms.security.auth_enabled=true/" $NEO4J_S
 sed -i "s/org.neo4j.server.webserver.port=.*/org.neo4j.server.webserver.port=4550/" $NEO4J_SERVER_CONF_FILE
 sed -i "s/org.neo4j.server.webserver.https.enabled=.*/org.neo4j.server.webserver.https.enabled=false/" $NEO4J_SERVER_CONF_FILE
 sed -i "s/org.neo4j.server.webserver.https.port=.*/org.neo4j.server.webserver.https.port=4551/" $NEO4J_SERVER_CONF_FILE
+sed -i "s/dbms.security.load_csv_file_url_root=.*/dbms.security.load_csv_file_url_root=..\/..\/..\/script\/Datasets/" $NEO4J_CONF_FILE
 
 #-----------------------------------------#
 # Start Neo4J server
