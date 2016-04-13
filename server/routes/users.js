@@ -17,6 +17,9 @@ var translations;
 
 var transFile = path.resolve(path.join(__dirname, '../config/translations.json'));
     
+/**
+ * TODO : Comment on functionality. Conviene hacer throw err???
+ */
 fs.readFile(transFile, 'utf-8', function (err, t) {
     if (err){
         throw err;
@@ -101,6 +104,9 @@ var sendActivationEmail = function(email,hash,name,lastname,callback){
 /*                          GET METHODS                                       */
 /******************************************************************************/
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getTranslation = function(req,res,next){
     
     var lang = req.params.lang;
@@ -109,11 +115,14 @@ exports.getTranslation = function(req,res,next){
     }else if(translations.hasOwnProperty(lang)){
         res.status(200).send({translation: translations[lang]});
     }else{
-        res.status(404).send('translation for:'+lang+'not found');
+        res.status(404).send('translation for: '+lang+' not found');
     }
 
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getAsocs = function (req, res, next) {
 
     if (!req.id) {
@@ -123,7 +132,6 @@ exports.getAsocs = function (req, res, next) {
 
     User.getAsocs(req.id, function (err, asocs) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         } else {
@@ -131,7 +139,6 @@ exports.getAsocs = function (req, res, next) {
 				res.sendStatus(204);
 				return;
 			}
-            console.log(asocs);
             res.status(200).send({asocs: asocs});
             return;
         }
@@ -139,12 +146,7 @@ exports.getAsocs = function (req, res, next) {
 };
 
 /**
- * Sends a random sample of users/organisms using this website.
- * @param {Object} req: The HTTP request's headers
- * @param {Object} res: The HTTP request's response headers
- * @param {Fcuntion} next: Function that executes next
- * @returns {void} Nothing, but sens in the HTTP response the users as an 
- * Object.
+ * TODO : Comment on functionality
  */
 exports.getProfile = function (req, res, next) {
 
@@ -164,7 +166,6 @@ exports.getProfile = function (req, res, next) {
 
     User.getProfile(idNEO, public, function (err, profile) {
         if (err) {
-            console.log(err);
             res.status(500).send(err);
             return;
         } else {
@@ -172,7 +173,6 @@ exports.getProfile = function (req, res, next) {
 				res.sendStatus(204);
 				return;
 			}
-            console.log(profile);
             res.status(200).send(profile);
             return;
         }
@@ -184,13 +184,12 @@ exports.getProfile = function (req, res, next) {
  * @param {Object} req: The HTTP request's headers
  * @param {Object} res: The HTTP request's response headers
  * @param {Fcuntion} next: Function that executes next
- * @returns {void} Nothing, but sens in the HTTP response the users as an 
+ * @returns {void} Nothing, but sends in the HTTP response the users as an 
  * Object.
  */
 exports.getThey = function (req, res, next) {
     User.getThey(function (err, users) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         }
@@ -209,16 +208,13 @@ exports.getThey = function (req, res, next) {
  */
 exports.getContacts = function (req, res, next) {
     
-    if(req.id){
-        ;
-    }else{
+    if(!req.id){
         res.status(401).send('Unauthorized');
         return;
     }
     
     User.getContacts(req.id, function (err, contacts) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         }else {
@@ -242,8 +238,7 @@ exports.getNodeContents = function (req, res, next) {
 
     User.getNodeContents(nodeID, function (err, contents) {
         if (err) {
-			console.log(err);
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         }
         if (contents) {
@@ -267,8 +262,7 @@ exports.getNodeContents = function (req, res, next) {
 exports.getPicture = function (req, res, next) {
     User.getParam(req.params.id, 'url', function (err, value) {
         if (err) {
-			console.log(err);
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         }
         if (value) {
@@ -296,17 +290,12 @@ exports.getPub = function (req, res, next) {
 };
 
 /**
- * 
- * @param {type} req
- * @param {type} res
- * @param {type} next
- * @returns {undefined}
+ * TODO : Comment on functionality
  */
 exports.isFriend = function (req, res, next) {
     User.isFriend(req.id, req.params.id, function (err, users) {
         if (err) {
-			console.log(err);
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         }
         res.status(200).send({users: users[0]});
@@ -314,18 +303,18 @@ exports.isFriend = function (req, res, next) {
     });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getSubscriptions = function (req, res, next){
     
-    if (req.id) {
-        ;
-    } else {
+    if (!req.id){
         res.status(401).send('Unauthorized');
         return;
     }
     
     User.getSubscriptions(req.id, function(err, subsc){
         if(err){
-            console.log(err);
             res.status(500).send(err);
             return;
         }else{
@@ -359,16 +348,19 @@ exports.search = function (req, res, next) {
 //    if (req.query.hasOwnProperty('par'))
 //        temp.parent = req.query['par'];
 
-    if(req.id){
-        ;
-    }else{
+    if(!req.id){
         req.id = 0;
     }
+    
+    var what = req.query.what;
+    if (what !== 'Parts' && what !== 'Users'){
+        res.status(400).send('what not defined');
+		return;
+    }
 
-    User.search(req.query.what, req.query.term, req.id, function (err, results) {
+    User.search(what, req.query.term, req.id, function (err, results) {
         if (err) {
-			console.log(err);
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         }
         res.status(200).send(results);
@@ -397,14 +389,14 @@ exports.activate = function (req, res, next) {
 
     User.getParamByEmail(nodeData['email'], 'password',function (err, value,id) {
         if (err) {
-            console.log(err);
             res.status(500).send(err);
             return;
         }
 
-        if(value){}
-        else {res.status(400).send('Something went wrong');
-            return;}
+        if(!value){
+			res.status(400).send('Something went wrong');
+            return;
+        }
 
         if (nodeData['hash'] !== value) {
             res.status(400).send('Something went wrong');
@@ -425,18 +417,19 @@ exports.activate = function (req, res, next) {
 /******************************************************************************/
 /*                          POST METHODS                                      */
 /******************************************************************************/
+
+/**
+ * TODO : Comment on functionality
+ */
 exports.unsubscribe = function(req, res, next){
     
-    if (req.id && req.body.instID){
-        ;
-    }else{
+    if (!req.id || !req.body.instID){
         res.status(401).send('Unauthorized');
         return;
     }
     
     User.unsubscribe(req.id, req.body.instID, function(err){
         if(err){
-            console.log(err);
             res.status(500).send(err);
         }else{
             res.status(200).send('OK');
@@ -444,18 +437,18 @@ exports.unsubscribe = function(req, res, next){
     });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.subscribe = function(req, res, next){
     
-    if (req.id && req.body.instID){
-        ;
-    }else{
+    if (!req.id || !req.body.instID){
         res.status(401).send('Unauthorized');
         return;
     }
     
     User.subscribe(req.id, req.body.instID, function(err){
         if(err){
-            console.log(err);
             res.status(500).send(err);
         }else{
             res.status(200).send('OK');
@@ -463,6 +456,9 @@ exports.subscribe = function(req, res, next){
     });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.updateProfile = function (req, res, next) {
 
     if (!secur.sameUser(req.body.id, req, res)) {
@@ -475,7 +471,6 @@ exports.updateProfile = function (req, res, next) {
 
     User.updateProfile(idNEO, changes, function (err, profile) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         } else {
@@ -486,7 +481,7 @@ exports.updateProfile = function (req, res, next) {
 };
 
 /**
- * POST /signup -> SIGN UP
+ * TODO : Comment on functionality
  */
 exports.signup = function (req, res, next) {
     var nodeData = req.body;
@@ -511,7 +506,6 @@ exports.signup = function (req, res, next) {
 
     User.signup(nodeData, function (err, idNEO) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         } else if (idNEO) {
@@ -528,7 +522,7 @@ exports.signup = function (req, res, next) {
 };
 
 /**
- * POST /login -> LOG IN
+ * TODO : Comment on functionality
  */
 exports.login = function (req, res, next) {
 
@@ -545,7 +539,6 @@ exports.login = function (req, res, next) {
     User.login(nodeData['email'], function (err, results) {
 		
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         }
@@ -592,20 +585,17 @@ exports.login = function (req, res, next) {
 };
 
 /**
- * POST /friend -> FRIEND SOMEBODY
+ * TODO : Comment on functionality
  */
 exports.friend = function (req, res, next) {
     
-    if (req.id && req.body.idFriend && (req.body.idFriend != req.id)) {
-        ;
-    }else{
+    if (!req.id || !req.body.idFriend || !(req.body.idFriend != req.id)) {
         res.status(401).send('Unauthorized');
         return;
     }
 
     User.friend(req.id, req.body['idFriend'], function (err) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         }
@@ -615,7 +605,7 @@ exports.friend = function (req, res, next) {
 };
 
 /**
- * POST /profilepic/:id -> UPLOAD PICTURE
+ * TODO : Comment on functionality
  */
 exports.uploadPic = function (req, res, next) {
     var id = req.params.id;
@@ -654,14 +644,13 @@ exports.uploadPic = function (req, res, next) {
 			});
 		}
 	}catch(err){
-		console.log(err);
 		res.status(500).send(err);
 		return;
 	}
 };
 
 /**
- * POST /change -> CHANGE PROPERTY
+ * TODO : Comment on functionality
  */
 exports.changeProperty = function (req, res, next) {
     var tmp = req.body;
@@ -671,17 +660,13 @@ exports.changeProperty = function (req, res, next) {
         return;
     }
 
-    if(req.id && tmp.field && tmp.value)
-        ;
-    else
-    {
+    if(!req.id || !tmp.field || !tmp.value){
         res.sendStatus(401);
         return;
     }
     
     User.changeProperty(tmp.field, tmp.value, req.id, function(err){
         if(err){
-            console.log(err);
             res.sendStatus(500).send(err);
         }else{
           if(tmp.field === 'lang'){
@@ -701,7 +686,6 @@ exports.changePassword = function (req, res, next) {
 
     User.changePassword(pswdNew['pass'], pswdNew['salt'], req.body['id'], function (err) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         }
@@ -715,20 +699,17 @@ exports.changePassword = function (req, res, next) {
 /******************************************************************************/
 
 /**
- * DELETE /delFriend -> DELETE FRIENDSHIP
+ * TODO : Comment on functionality
  */
 exports.deleteFriend = function (req, res, next) {
     
-    if (req.id && req.body.idFriend && (req.body.idFriend != req.id)) {
-        ;
-    }else{
+    if (!req.id || !req.body.idFriend || !(req.body.idFriend != req.id)) {
         res.status(401).send('Unauthorized');
         return;
     }
     
     User.deleteFriend(req.id, req.body.idFriend, function (err) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         }else{
@@ -748,7 +729,6 @@ exports.deleteUser = function (req, res, next) {
     }
     User.deleteUser(req.params.id, function (err) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         }

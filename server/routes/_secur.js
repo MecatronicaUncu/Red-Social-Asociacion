@@ -24,7 +24,7 @@ exports.isAdmin = function(id, callback){
 			else
 				return callback(null,false);
 		});
-	}catch(err)
+	}catch(err){
 		return callback(err);
 	}
 };
@@ -44,7 +44,7 @@ exports.verifyPassword = function (id,callback){
 			}
 			return callback(null, results[0]);
 		});
-	}catch(err)
+	}catch(err){
 		return callback(err);
 	}
 };

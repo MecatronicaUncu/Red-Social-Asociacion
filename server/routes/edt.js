@@ -33,6 +33,9 @@ exports.getPlaces = function(req, res, next){
   res.status(501).send('Not Implemented');
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getEdtConfig = function(req, res, next){
     
     //TODO: Configuracion personal del usuario
@@ -41,7 +44,6 @@ exports.getEdtConfig = function(req, res, next){
     
     fs.readFile(configFile, 'utf-8', function (err, config) {
         if (err){
-            console.log(err);
             res.sendStatus(500);
         }
         else{
@@ -51,12 +53,14 @@ exports.getEdtConfig = function(req, res, next){
     });  
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getTimesIcal = function(req, res, next){
     
-    if( req.query.whatId && req.query.whoId && 
-        req.query.week && req.query.year && req.query.whatName)
-        ;
-    else{
+    if( !req.query.whatId || !req.query.whoId || 
+        !req.query.week || !req.query.year || !req.query.whatName)
+    {
         res.status(401).send('Missing information');
         return;
     }
@@ -73,12 +77,10 @@ exports.getTimesIcal = function(req, res, next){
       
     Edt.getTimes(timeData, function (err, times) {
         if (err) {
-            console.log(err);
             res.status(500).send(err);
             return;
         } else {
 			try{
-				console.log(times);
 				var cal = new VCalendar({
 					organization: 'TimesApp',
 					title: timeData.whatName
@@ -110,11 +112,9 @@ exports.getTimesIcal = function(req, res, next){
 					cal.add(vevent);
 				});
 
-				console.log(cal.toString());
 
 				fs.writeFile("/tmp/ical.ics", cal.toString(), function(err) {
 					if(err) {
-						console.log(err);
 						res.status(500).send(err);
 						return;
 					}else{
@@ -131,13 +131,15 @@ exports.getTimesIcal = function(req, res, next){
 					}
 				}); 
 			}catch(err){
-				console.log(err);
 				res.status(500).send(err);
 			}
         }
     });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getTimes = function(req, res, next){
   
     var timeData = {
@@ -149,17 +151,18 @@ exports.getTimes = function(req, res, next){
       
     Edt.getTimes(timeData, function (err, times) {
         if (err) {
-            console.log(err);
             res.status(500).send(err);
             return;
         } else {
-            console.log(times);
             res.status(200).send({times: times});
             return;
         }
     });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getActivityTypes = function (req, res, next) {
 
   if (!req.id) {
@@ -172,23 +175,23 @@ exports.getActivityTypes = function (req, res, next) {
 
   Edt.getActivityTypes(req.query.parent, function (err, activityTypes) {
     if (err) {
-      console.log(err);
       res.status(500).send(err);
       return;
     } else {
-      console.log(activityTypes);
       res.status(200).send({activityTypes: activityTypes});
       return;
     }
   });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.newActivity = function (req, res, next) {
     var acts = req.body.activities;
 
     Edt.newActivity(acts, function (err, result) {
         if (err) {
-			console.log(err);
             res.status(500).send(err);
             return;
         } else {

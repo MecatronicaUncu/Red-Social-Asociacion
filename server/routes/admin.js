@@ -1,6 +1,7 @@
 var Admin = require('./_admin.js');
 
 /**
+ * TODO : Comment on functionality
  * Sends the ADMIN's parts.
  * @param {Object} req: The HTTP request's headers
  * @param {Object} res: The HTTP request's response headers
@@ -9,9 +10,7 @@ var Admin = require('./_admin.js');
  */
 exports.getAdminNodes = function (req, res, next) {
 
-    if (req.id) {
-        ;
-    } else {
+    if (!req.id) {
         res.status(401).send('Unauthorized');
         return;
     }
@@ -34,6 +33,9 @@ exports.getAdminNodes = function (req, res, next) {
     });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getNodeRelTypes = function(req, res, next){
 
 	if(!req.id){
@@ -54,6 +56,9 @@ exports.getNodeRelTypes = function(req, res, next){
 	});
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getNodeRelFields = function(req, res, next){
 
 	if(!req.id){
@@ -66,9 +71,8 @@ exports.getNodeRelFields = function(req, res, next){
 
 	Admin.getNodeRelFields(req.params.label, function(err, fields){
 		if(err){
-			console.log(err);
 			if (err == 'More than one label matched!')
-				res.sendStatus(300);
+				res.status(300).send(err);
 			else
 				res.status(500).send(err);
 			return;
@@ -80,7 +84,7 @@ exports.getNodeRelFields = function(req, res, next){
 };
 
 /**
- * POST /newrel
+ * TODO : Comment on functionality
  */
 exports.newRel = function (req, res, next) {
     var relData = req.body;
@@ -88,12 +92,12 @@ exports.newRel = function (req, res, next) {
         res.status(400).send('Missing Organism');
         return;
     }
-
+    
     if (!relData.hasOwnProperty('usrID')) {
         res.status(400).send('Missing User');
         return;
     }
-
+    
     if (!relData.hasOwnProperty('relType')) {
         res.status(400).send('Missing Relationship Details');
         return;
@@ -101,17 +105,16 @@ exports.newRel = function (req, res, next) {
     
     Admin.newRel(relData, function (err) {
         if (err) {
-			console.log(err);
-            res.status(400).send(err);
+            res.status(500).send(err);
             return;
         } else {
-            res.status(200).send('OK');
+            res.sendStatus(200);
         }
     });
 };
 
 /**
- * POST /newpart
+ * TODO : Comment on functionality
  */
 exports.newPart = function (req, res, next) {
     var data = req.body;
@@ -132,8 +135,7 @@ exports.newPart = function (req, res, next) {
 
     Admin.newPart(data, function (err, partID) {
         if (err) {
-			console.log(err);
-            res.status(400).send(err);
+            res.status(500).send(err);
             return;
         } else if (partID) {
             res.status(200).send({idNEO: partID});
@@ -146,7 +148,7 @@ exports.newPart = function (req, res, next) {
 };
 
 /**
- * POST /delnoderel
+ * TODO : Comment on functionality
  */
 exports.delNodeRel = function (req, res, next){
 
@@ -168,8 +170,7 @@ exports.delNodeRel = function (req, res, next){
   
   Admin.delNodeRel(data, function(err){
     if(err){
-	  console.log(err);
-      res.status(400).send(err);
+      res.status(500).send(err);
       return;
     }else{
       res.status(200).send('Deleted node or rel');

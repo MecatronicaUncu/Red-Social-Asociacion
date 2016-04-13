@@ -88,11 +88,8 @@ var isAdmin = function (id, next) {
 };
 exports.isAdmin = isAdmin;
 
-/*
- * Method to extract cookies
- * TODO : verificar esta función
- */
 /**
+ * TODO : verificar esta función
  * Extracts the cookies from the HTTP request header
  * @param {Object} req: The HTTP request's headers
  * @param {Object} res: The HTTP request's response headers
@@ -120,6 +117,9 @@ exports.extractCookieData = function (req, res, next) {
     return next();
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.verifyPassword = function (req, res, next) {
 
     Secur.verifyPassword(req.body['id'], function (err, results) {

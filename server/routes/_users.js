@@ -305,14 +305,18 @@ User.getParamByEmail = function (email, field, callback) {
 			if (err){		
 				return callback(err);
 			}
-	//        var value;
-	//        if (results.length>0){
-	//            if (results[0]['value']){
-	//                value = results[0]['value'];
-	//            }
-	//        }
-	//        console.log(value);
-			return callback(null, results[0]['value'],results[0]['id']);
+	        var value = "";
+	        var id = "";
+	        if (results.length>0){
+	            if (results[0]['value']){
+	                value = results[0]['value'];
+	            }
+	            if (results[0]['id']){
+	                id = results[0]['id'];
+	            }
+	        }
+			
+			return callback(null,value,id);
 		});
 	}catch(err){
 		return callback(err);
@@ -423,8 +427,6 @@ User.search = function (what, term, usrId, callback) {
         query = partQuery;
     }else if (what==='Users'){
         query = userQuery;
-    }else{
-        return callback('What not defined');
     }
     
     try{
@@ -677,14 +679,10 @@ User.changePassword = function (newP,newS,id,callback){
     
     try{
 		db.cypher({query:query, params:null}, function (err, results) {
-			if(err){
+			if(err)
 				return callback(err);
-			}else{
-			/*if (results[0].u._data.data.hasOwnProperty('password')){
+			else
 				return callback(null);
-			}*/
-				return callback(null);
-			}
 		});
 	}catch(err){
 		return callback(err);

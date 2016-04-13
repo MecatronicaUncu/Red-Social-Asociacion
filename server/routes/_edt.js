@@ -57,7 +57,7 @@ exports.getActivityTypes = function(parent, callback){
 		  return callback(null, activityTypes);
 		}
 	  });
-	}catch(err)
+	}catch(err){
 		return callback(err);
 	}
 };
@@ -113,7 +113,7 @@ exports.newActivity = function(acts, callback){
 				});  
 			}
 		});    
-	}catch(err)
+	}catch(err){
 		return callback(err);
 	}
 };
