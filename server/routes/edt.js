@@ -33,6 +33,9 @@ exports.getPlaces = function(req, res, next){
   res.status(501).send('Not Implemented');
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getEdtConfig = function(req, res, next){
     
     //TODO: Configuracion personal del usuario
@@ -41,22 +44,22 @@ exports.getEdtConfig = function(req, res, next){
     
     fs.readFile(configFile, 'utf-8', function (err, config) {
         if (err){
-            console.log(err);
             res.sendStatus(500);
         }
         else{
-            console.log(config);
             res.status(200).send({config: JSON.parse(config)});
         }
     });  
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getTimesIcal = function(req, res, next){
     
-    if( req.query.whatId && req.query.whoId && 
-        req.query.week && req.query.year && req.query.whatName)
-        ;
-    else{
+    if( !req.query.whatId || !req.query.whoId || 
+        !req.query.week || !req.query.year || !req.query.whatName)
+    {
         res.status(401).send('Missing information');
         return;
     }
@@ -73,65 +76,69 @@ exports.getTimesIcal = function(req, res, next){
       
     Edt.getTimes(timeData, function (err, times) {
         if (err) {
-            console.log(err);
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         } else {
-            console.log(times);
-            var cal = new VCalendar({
-                organization: 'TimesApp',
-                title: timeData.whatName
-            });
-            var tmpDate,tmpHMin,startDate,endDate;
-            times.forEach(function(time){
-                tmpDate = YWDarrToDob([time.year,time.week,time.day])
-                tmpHMin = getminutes(time.from);
-                startDate = new Date(   tmpDate.getFullYear(), 
-                                        tmpDate.getMonth(),
-                                        tmpDate.getDate(),
-                                        tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
-                tmpHMin = getminutes(time.to);                        
-                endDate = new Date(     tmpDate.getFullYear(), 
-                                        tmpDate.getMonth(),
-                                        tmpDate.getDate(),
-                                        tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
-                                        
-                var vevent = new VEvent({
-                    stampDate: 0,
-                    startDate: startDate,
-                    endDate: endDate,
-                    summary: time.type,
-                    description: time.desc,
-                    //location: "Test Location",
-                    uid: time.idNEO
-                });
+			try{
+				var cal = new VCalendar({
+					organization: 'TimesApp',
+					title: timeData.whatName
+				});
+				var tmpDate,tmpHMin,startDate,endDate;
+				times.forEach(function(time){
+					tmpDate = YWDarrToDob([time.year,time.week,time.day])
+					tmpHMin = getminutes(time.from);
+					startDate = new Date(   tmpDate.getFullYear(), 
+											tmpDate.getMonth(),
+											tmpDate.getDate(),
+											tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
+					tmpHMin = getminutes(time.to);                        
+					endDate = new Date(     tmpDate.getFullYear(), 
+											tmpDate.getMonth(),
+											tmpDate.getDate(),
+											tmpHMin[0]+Math.floor(time.timezone/60), tmpHMin[1]+time.timezone%60, 0);
+											
+					var vevent = new VEvent({
+						stampDate: 0,
+						startDate: startDate,
+						endDate: endDate,
+						summary: time.type,
+						description: time.desc,
+						//location: "Test Location",
+						uid: time.idNEO
+					});
 
-                cal.add(vevent);
-            });
+					cal.add(vevent);
+				});
 
-            console.log(cal.toString());
 
-            fs.writeFile("/tmp/ical.ics", cal.toString(), function(err) {
-                if(err) {
-                    return console.log(err);
-                    res.sendStatus(500);
-                }else{
-                    var stat = fs.statSync('/tmp/ical.ics');
-                    res.writeHead(200, {
-                          'Content-Type': 'text/calendar', 
-                          'Content-Length': stat.size,
-                          'Content-disposition' : 'attachment; filename="calendar.ics"'
-                    });
-                    var stream = fs.createReadStream( '/tmp/ical.ics', { bufferSize: 64 * 1024 });
-                    //res.attachment('/tmp/ical.ics');
-                    stream.pipe(res);
-        //            res.download('/tmp/ical.ics','calendar.ics');
-                }
-            }); 
+				fs.writeFile("/tmp/ical.ics", cal.toString(), function(err) {
+					if(err) {
+						res.status(500).send(err);
+						return;
+					}else{
+						var stat = fs.statSync('/tmp/ical.ics');
+						res.writeHead(200, {
+							  'Content-Type': 'text/calendar', 
+							  'Content-Length': stat.size,
+							  'Content-disposition' : 'attachment; filename="calendar.ics"'
+						});
+						var stream = fs.createReadStream( '/tmp/ical.ics', { bufferSize: 64 * 1024 });
+						//res.attachment('/tmp/ical.ics');
+						stream.pipe(res);
+						//res.download('/tmp/ical.ics','calendar.ics');
+					}
+				}); 
+			}catch(err){
+				res.status(500).send(err);
+			}
         }
     });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getTimes = function(req, res, next){
   
     var timeData = {
@@ -143,17 +150,18 @@ exports.getTimes = function(req, res, next){
       
     Edt.getTimes(timeData, function (err, times) {
         if (err) {
-            console.log(err);
-            res.status(500).send('Error');
+            res.status(500).send(err);
             return;
         } else {
-            console.log(times);
             res.status(200).send({times: times});
             return;
         }
     });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getActivityTypes = function (req, res, next) {
 
   if (!req.id) {
@@ -166,23 +174,24 @@ exports.getActivityTypes = function (req, res, next) {
 
   Edt.getActivityTypes(req.query.parent, function (err, activityTypes) {
     if (err) {
-      console.log(err);
-      res.status(500).send('Error');
+      res.status(500).send(err);
       return;
     } else {
-      console.log(activityTypes);
       res.status(200).send({activityTypes: activityTypes});
       return;
     }
   });
 };
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.newActivity = function (req, res, next) {
     var acts = req.body.activities;
 
     Edt.newActivity(acts, function (err, result) {
         if (err) {
-            res.status(500).send('Error Creating Activities');
+            res.status(500).send(err);
             return;
         } else {
             res.status(200).send('OK');

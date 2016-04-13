@@ -50,7 +50,7 @@ fs.readFile(nodesFile, 'utf-8', function (err, nf) {
         'return id(a) as idneo'
       ].join('\n');
 
-      db.query(query, null, function (err, results) {
+      db.cypher({query:query, params:null}, function (err, results) {
         if (err){
           throw err;
           console.log('error creating nodetypes');
@@ -142,12 +142,12 @@ fs.readFile(datasetFile, 'utf-8', function (err, nf) {
     query_inst += 'RETURN '+prevChar(charCode_inst);
     query_user += 'RETURN '+prevChar(charCode_user);
 
-    db.query(query_inst, null, function (err, results) {
+    db.cypher({query:query_inst, params:null}, function (err, results) {
       if (err){
         throw err;
         console.log('error creating edt dataset');
       }else{
-        db.query(query_user, null, function(err, results){
+        db.cypher({query:query_user, params:null}, function(err, results){
           if(err){
             throw err;
             console.log('Error creating edt dataset');
