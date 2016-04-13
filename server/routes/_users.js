@@ -33,8 +33,6 @@ Object.defineProperty(User.prototype, 'name', {
     }
 });
 
-// TODO : bloques try catch y printear a consola solo en los users.js y no en los _users.js
-
 /******************************************************************************/
 /*                          GET METHODS                                       */
 /******************************************************************************/
@@ -82,7 +80,7 @@ User.getProfile = function(idNEO,public,callback){
 				return callback(err);
 			}else{
 				if(results.length > 0){
-					var profile = results[0].USER._data.data;
+					var profile = results[0].USER.properties;
 					if(public){
 						privateFields.forEach(function(field){
 						   delete profile[field];
@@ -132,7 +130,7 @@ User.getNodeContents = function(idNEO, callback){
 					rels: []
 				};
 				results.forEach(function(res){
-					res.nodeData = res.nodeData._data.data;
+					res.nodeData = res.nodeData.properties;
 					if(res.reltype === 'PARTOF'){
 						res.label = res.label[0];
 						contents.parts.push(res);
@@ -173,7 +171,7 @@ User.getThey = function (callback) {
 			}
 			var users = [];
 			results.forEach(function(el){
-				var temp = el.user._data.data;
+				var temp = el.user.properties;
 				if (temp.hasOwnProperty('password')){
 					delete temp['password'];
 					delete temp.salt;
@@ -223,40 +221,40 @@ User.getContacts = function(id,callback){
 			results.forEach(function(el){
 				/*
 				if (el.NODES.hasOwnProperty('user')){
-					delete el.NODES.user._data.data['password'];
-					user = el.NODES.user._data.data;
+					delete el.NODES.user.properties['password'];
+					user = el.NODES.user.properties;
 					user['id'] =el.NODES.id;
 				}
 				else */if (el.NODES.hasOwnProperty('friend')){
-					delete el.NODES.friend._data.data['password'];
-					delete el.NODES.friend._data.data['salt'];
-					delete el.NODES.friend._data.data['active'];
-					delete el.NODES.friend._data.data['c'];
-					var tmp = {'data' : el.NODES.friend._data.data, 'idNEO' : el.NODES.id};
+					delete el.NODES.friend.properties['password'];
+					delete el.NODES.friend.properties['salt'];
+					delete el.NODES.friend.properties['active'];
+					delete el.NODES.friend.properties['c'];
+					var tmp = {'data' : el.NODES.friend.properties, 'idNEO' : el.NODES.id};
 					fri.push(tmp);
 				}
 				else if (el.NODES.hasOwnProperty('requested')){
-					delete el.NODES.requested._data.data['password'];
-					delete el.NODES.requested._data.data['salt'];
-					delete el.NODES.requested._data.data['active'];
-					delete el.NODES.requested._data.data['c'];
-					var tmp = {'data' : el.NODES.requested._data.data, 'idNEO' : el.NODES.id};
+					delete el.NODES.requested.properties['password'];
+					delete el.NODES.requested.properties['salt'];
+					delete el.NODES.requested.properties['active'];
+					delete el.NODES.requested.properties['c'];
+					var tmp = {'data' : el.NODES.requested.properties, 'idNEO' : el.NODES.id};
 					req.push(tmp);
 				}
 				else if (el.NODES.hasOwnProperty('demanded')){
-					delete el.NODES.demanded._data.data['password'];
-					delete el.NODES.demanded._data.data['salt'];
-					delete el.NODES.demanded._data.data['active'];
-					delete el.NODES.demanded._data.data['c'];
-					var tmp = {'data' : el.NODES.demanded._data.data, 'idNEO' : el.NODES.id};
+					delete el.NODES.demanded.properties['password'];
+					delete el.NODES.demanded.properties['salt'];
+					delete el.NODES.demanded.properties['active'];
+					delete el.NODES.demanded.properties['c'];
+					var tmp = {'data' : el.NODES.demanded.properties, 'idNEO' : el.NODES.id};
 					dem.push(tmp);
 				}
 				else{
-					delete el.NODES.suggested._data.data['password'];
-					delete el.NODES.suggested._data.data['salt'];
-					delete el.NODES.suggested._data.data['active'];
-					delete el.NODES.suggested._data.data['c'];
-					var tmp = {'data' : el.NODES.suggested._data.data, 'idNEO' : el.NODES.id};
+					delete el.NODES.suggested.properties['password'];
+					delete el.NODES.suggested.properties['salt'];
+					delete el.NODES.suggested.properties['active'];
+					delete el.NODES.suggested.properties['c'];
+					var tmp = {'data' : el.NODES.suggested.properties, 'idNEO' : el.NODES.id};
 					sug.push(tmp);
 				}
 			});
@@ -336,7 +334,7 @@ User.isFriend = function (id, friend, callback) {
 				return callback(err);
 			}
 			var back = [];
-			if (results[0].p._data.data.hasOwnProperty('password')){
+			if (results[0].p.properties.hasOwnProperty('password')){
 				back.push(1);
 			}
 			else{
@@ -363,7 +361,7 @@ User.getSubscriptions = function (idNEO, callback){
 			}        
 			var subsc = [];
 			results.forEach(function(el){
-				var temp = el.s._data.data;
+				var temp = el.s.properties;
 				temp['idNEO']=el.idNEO;
 				subsc.push(temp);
 			});
@@ -436,7 +434,7 @@ User.search = function (what, term, usrId, callback) {
 			}        
 			var nodes = [];
 			results.forEach(function(el){
-				var temp = el.n._data.data;
+				var temp = el.n.properties;
 				if (temp.hasOwnProperty('password')){
 					//Si tiene password, tiene el resto...
 					delete temp.password;
@@ -531,7 +529,7 @@ User.updateProfile = function(idNEO, changes, callback){
 			if (err){
 				return callback(err);
 			}else{
-				var profile = results[0].USER._data.data;
+				var profile = results[0].USER.properties;
 				delete profile.password;
 				delete profile.salt;
 				delete profile.c;

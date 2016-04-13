@@ -47,7 +47,6 @@ exports.getEdtConfig = function(req, res, next){
             res.sendStatus(500);
         }
         else{
-            console.log(config);
             res.status(200).send({config: JSON.parse(config)});
         }
     });  
