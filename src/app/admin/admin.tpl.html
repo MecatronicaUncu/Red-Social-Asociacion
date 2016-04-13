@@ -22,7 +22,7 @@
 
     <div id="adminNavBar">
         <button class="nodeSearchBtn nodeNavBtn" type="button"
-                ng-click="getAdminNodes()"> Inicio >
+		ng-click="getAdminNodes()"> {{translation.admin['start']}}>
         </button>
         <button class="nodeSearchBtn nodeNavBtn" type="button" ng-repeat="nodeNavLevel in nodeNavLevels"
                 ng-click="getNodeContent(nodeNavLevel, $index)">
@@ -34,7 +34,7 @@
 
         <div class="wrongNodeRel" class="alert alert-danger" hidden></div>
         <div class="input-group">       
-            <input type="text" ng-keyup="nodeSearch()" class="form-control" id="nodeSearchText" placeholder="Buscar...">
+		<input type="text" ng-keyup="nodeSearch()" class="form-control" id="nodeSearchText" placeholder="{{translation.admin['search']}}...">
             <span class="input-group-btn">
                 <button class="btn btn-default" type="button" ng-click="nodeSearch()"><span class="fa fa-search"></span></button>
             </span>
@@ -50,7 +50,7 @@
         </div>
 
         <span class="newRelLabel" ng-show="newRel.firstName">
-            {{translation.admin['define']}} {{newRel.firstName}} {{newRel.lastName}} {{translation.admin['as']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['of']}} {{nodeNavLevels[nodeNavLevels.length - 1].nodeData.name}} ?</span>
+            {{translation.admin['define']}} {{newRel.firstName}} {{newRel.lastName}} {{translation.conn['as']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.conn['of']}} {{nodeNavLevels[nodeNavLevels.length - 1].nodeData.name}} ?</span>
         <div class="dropdown newActSelect" ng-repeat="(paramIndex, param) in nodeRelToCreate.params" ng-show="newRel.firstName">
             <span class="edtSearchBtn newActBtn newActLbl">{{translation.params[param.label]}}:</span>
             <button class="edtSearchBtn newActBtn dropdown-toggle" type="button">
@@ -73,16 +73,16 @@
         <div class="wrongNodeRel" class="alert alert-danger" hidden></div>
 
         <span class="newNodeLabel">
-            {{translation.admin['create']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.admin['in']}} {{nodeNavLevels[nodeNavLevels.length - 1].nodeData.name}}</span>
+            {{translation.admin['create']}} {{translation.labels[nodeRelToCreate.label]}} {{translation.conn['in']}} {{nodeNavLevels[nodeNavLevels.length - 1].nodeData.name}}</span>
 
         <form id="newNodeForm" ng-submit="createNewPart()" data-parsley-validate>
             <div class="sign-input-wrap" ng-repeat="field in nodeFields">
                 <input type="text" ng-model="newNode[field]" placeholder="{{translation.forms[field]}}" class="sign-input" data-parsley-ui-enabled="false" required>
             </div>  
             <div class="sign-input-wrap">
-                <button  type="submit" form="newNodeForm" class="sign-up-btn">Guardar</button>
+		    <button  type="submit" form="newNodeForm" class="sign-up-btn">{{translation.admin['save']}}</button>
                 <button class="sign-up-btn" id="cancelNewNode" ng-click="cancelNewNodeRel()">
-                    Cancelar
+			{{translation.admin['cancel']}
                 </button>
             </div>
         </form>

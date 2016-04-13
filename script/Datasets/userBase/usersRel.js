@@ -1,9 +1,10 @@
 var csv = require("fast-csv");
 var neo4j = require('neo4j');
+var config = require('../../../server/config/config.js');
 var db = new neo4j.GraphDatabase(
     process.env['NEO4J_URL'] ||
     process.env['GRAPHENEDB_URL'] ||
-    'http://neo4j:neo@localhost:7474'
+    config.dbURL
 );
 
 var usersIDs = [];

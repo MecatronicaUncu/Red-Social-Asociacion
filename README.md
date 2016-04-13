@@ -38,11 +38,11 @@ This method is a little bit more complicated and requires the following
 dependencies.
 
 - git
-- nodejs (version 0.10)
-- npm
-- ruby and ruby-dev
+- nodejs (version > 4.2)
+- npm (version > 3.5)
+- ruby and ruby-dev (version > 2.3)
 - curl
-- A running jre (we have tested openjdk)
+- A running jre (we have tested openjdk 8)
 - lsof
 
 If you don't have nodejs installed, use Node Version Manager
@@ -56,12 +56,12 @@ Clone the repository and execute the install script.
 ```
 git clone https://github.com/MecatronicaUncu/Red-Social-Asociacion.git
 cd Red-Social-Asociacion
-./bootstrap/setup
+./script/bootstrap
 ```
 
 Afterwards, configure the server.
 ```
-./bootstrap/config
+./script/config
 ```
 
 **Note**: `config` script accepts the following parameters:
@@ -179,7 +179,7 @@ Most important:
 
 You may register fictitious users in the database, for test purposes.
 
-For instance, `bootstrap/testDataset/testDataset` will register 50 users
+For instance, `script/Datasets/userBase/userBase` will register 50 users
 in your database and add some relationships. After running it, you can
 check the user list with their login info inside
 `people_email_pass.csv`.
@@ -188,7 +188,7 @@ To clean your database, execute the following query in the Neo4J browser: ```MAT
 
 **Note**: The list of users IDs (saved in ```usersIDs.csv```) is not deterministic. Running the script twice will result in relationships not intended to be created. This will not have adverse effects, but it must be taken into consideration.
 
-**Note**: `testDataset` accepts one parameter: `no-wait`. This will assume your Neo4J server is running and continue the process without asking.
+**Note**: `userBase` accepts one parameter: `no-wait`. This will assume your Neo4J server is running and continue the process without asking.
 
 ## Contribute
 

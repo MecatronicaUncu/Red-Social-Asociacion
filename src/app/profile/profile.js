@@ -23,26 +23,27 @@
       }])
     .controller('ProfileCtrl', function ($scope,$http,$stateParams,session,formDataObject,$location) {
 
+        $scope.translation = session.getTranslation();
+
         $scope.image = '/usr/' + $stateParams.id + '/pic';
                 
         $scope.fields = [
-            {label:'Nombre', name:'firstName', model:'', icon:'fa-user'},
-            {label:'Apellido', name:'lastName', model:'', icon:'fa-user'},
-            {label:'Dirección', name:'address', model:'', icon:'fa-home'},
-            {label:'Número', name:'phone', model:'', icon: 'fa-phone'},
-            {label:'Edad', name:'age', model:'', icon: 'fa-calendar'},
-            {label:'Profesión', name:'profession', model:'', icon: 'fa-graduation-cap'}
+            {label:'firstName', name:'firstName', model:'', icon:'fa-user'},
+            {label:'lastName', name:'lastName', model:'', icon:'fa-user'},
+            {label:'address', name:'address', model:'', icon:'fa-home'},
+            {label:'age', name:'age', model:'', icon: 'fa-calendar'},
+            {label:'profession', name:'profession', model:'', icon: 'fa-graduation-cap'}
           ];
                 
         $scope.profileNavItems=[
-            {name:'Perfil'},
-            {name:'Contactos'},
-            {name:'Cambiar Contraseña'},
-            {name:'Cerrar Sesión'},
-            {name:'Eliminar Usuario'}
+            {name:'profile'},
+            {name:'contacts'},
+            {name:'chpass'},
+            {name:'signout'},
+            {name:'deluser'}
           ];
 
-        $scope.profileTab = 'Perfil';
+        $scope.profileTab = 'profile';
 
         $scope.filtered = [];
         $scope.friends = [];
@@ -150,15 +151,15 @@
         };
            
         $scope.click = function(clicked){
-            if(clicked.name==='Cerrar Sesión'){
+            if(clicked.name==='signout'){
 							session.logout();
 							return;
             }
-            else if(clicked.name==='Eliminar Usuario'){
+            else if(clicked.name==='deluser'){
                 $scope.deleteUser();
                 return;
             }
-            else if(clicked.name==='Contactos'){
+            else if(clicked.name==='contacts'){
                 //$scope.updateContacts();
             }
             $scope.profileTab = clicked.name;
@@ -222,17 +223,17 @@
             var path = '/change';
             $http({method:'POST',url:path, data:pass})
                 .success(function(){
-                    $scope.profileTab = 'Perfil';
+                    $scope.profileTab = 'profile';
                 });
         };
 
-        $scope.$on('gotContacts',function(contacts){
+        $scope.$on('gotContacts',function(e,contacts){
           if(contacts !== null){
             $scope.updateContacts();
           }
         });
 
-        $scope.$on('gotProfile',function(profile){
+        $scope.$on('gotProfile',function(e,profile){
 						if(profile !== null){
               $scope.fields.forEach(function(el){
                 el.model=profile[el.name];
@@ -244,16 +245,20 @@
             $scope.updateContacts();
         }
 
-        $scope.$on('login',function(err){
-          if(err !== null){
+        $scope.$on('login',function(e,err){
+          if(err === null){
             $scope.loadProfile();
           }
         });
         
-        $scope.$on('logout',function(err){
-          if(err !== null){
+        $scope.$on('logout',function(e,err){
+          if(err === null){
             $location.path('/');
           }
+        });
+
+        $scope.$on('gotTranslation',function(e){
+          $scope.translation = session.getTranslation();
         });
 
         $scope.loadProfile();

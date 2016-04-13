@@ -1,11 +1,11 @@
 language: node_js
 node_js:
-    - "stable"
+    - "4.2"
 before_install:
     - rvm install 2.1.5
-    - ./bootstrap/setup
-    - ./bootstrap/config asoc LAN
-    - ./bootstrap/testDataset/testDataset no-wait
-    - ./bootstrap/edt/edt no-wait
+    - ./script/bootstrap
+    - ./script/config -p asoc -h LAN -nomail
+    - ./script/Datasets/userBase/userBase no-wait
+    - ./script/Datasets/edt/edt no-wait
 notifications:
       email: false

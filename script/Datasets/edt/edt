@@ -1,14 +1,14 @@
 #!/bin/bash
 
-NEO4J_VER=2.3.0
+NEO4J_VER=2.3.3
 
 MY_PATH="`dirname \"$0\"`" 
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 LOG_FILE=$MY_PATH/edt.log
 
-SRV_DIR=../../server
+SRV_DIR=../../../server
 BIN_DIR=$SRV_DIR/bin
-NEO_DIR=$SRV_DIR/bin/neo4j-community-$NEO4J_VER
+NEO4J_DIR=$SRV_DIR/bin/neo4j-community-$NEO4J_VER
 
 CONS_DIV="##################################################"
 R_COL="\e[31m"
@@ -49,7 +49,7 @@ else
 fi
 
 # 0.1. Verify status of neo4j
-STATUS=`./$NEO_DIR/bin/neo4j status`
+STATUS=`./$NEO4J_DIR/bin/neo4j status`
 if [[ $STATUS == *"not"* ]]
 then
     loggerGreen "Starting Neo4J Server...\n"
@@ -66,9 +66,13 @@ loggerGreen "Dependencies OK!\n"
 loggerGreen "Registering nodes in database...\n"
 node regEdtNodes.js
 
-# 3. Stop Neo4J Server
+# 3. Register activities in Neo4J
+loggerGreen "Registering activities in database...\n"
+./$NEO4J_DIR/bin/neo4j-shell -c 'LOAD CSV WITH HEADERS FROM "file:///edt/activities.csv" AS line MATCH (u) WHERE left(u.firstName,1)+". "+u.lastName=line.whoName WITH ID(u) AS whoId, line MATCH (i) WHERE i.name=line.whatName WITH ID(i) AS whatId, whoId, line MERGE (a:ACTIVITY {to: line.to, desc: line.desc, whoName: line.whoName, from: line.from, type: line.type, whoId: whoId, whatName: line.whatName, timezone: toInt(line.timezone), whatId: whatId, year: toInt(line.year), day: toInt(line.day), group: toInt(line.group), week: toInt(line.week)});' >/dev/null 2>&1 || { loggerRed "Could not create activities. Are you sure your Neo4J server is up and running?"; exit 1; }
+
+# 4. Stop Neo4J Server
 loggerGreen "Stopping Neo4J Server...\n"
 ./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J Server!\n"; exit 1; }
 
-# 7. Done
+# 5. Done
 loggerGreen "Nodes created!\n"

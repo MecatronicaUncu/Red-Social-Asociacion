@@ -34,7 +34,7 @@
 				it('Factory defaults',function(){
 
 					expect(deps.session.getID()).toEqual(0);
-					expect(deps.session.getLang()).toBe('ar');
+					expect(deps.session.getLang()).toBe('es');
 					expect(deps.session.getProfile()).toBe(null);
 					expect(deps.session.getTranslation()).toBe(null);
 					expect(deps.session.getSubscriptions()).toBe(null);
@@ -57,7 +57,7 @@
 				});
 
 				it('Should fire the correct event upon correct login',function(){
-					deps.$httpBackend.expectPOST('/login').respond(200, { idNEO: 13, lang: 'ar', admin:false});
+					deps.$httpBackend.expectPOST('/login').respond(200, { idNEO: 13, lang: 'es', admin:false});
 					deps.session.login();
 
 					deps.http.flush();
@@ -88,7 +88,7 @@
 				});
 
 				it('Should fire the correct event upon correct logout',function(){
-					deps.$httpBackend.expectPOST('/login').respond(200, { idNEO: 13, lang: 'ar', admin: false});
+					deps.$httpBackend.expectPOST('/login').respond(200, { idNEO: 13, lang: 'es', admin: false});
 					deps.session.login();
 
 					deps.http.flush();
@@ -199,7 +199,7 @@
 				});
 
 				it('Verify session state after succesful login',function(){
-					deps.$httpBackend.expectPOST('/login').respond(200, {idNEO: 13, lang:'ar', admin:false});
+					deps.$httpBackend.expectPOST('/login').respond(200, {idNEO: 13, lang:'es', admin:false});
 					deps.$httpBackend.expectGET(/\/profile\/[0-9]+/).respond(200, { test: 'hola'});
 					deps.$httpBackend.expectGET('/contacts').respond(200, { test: 'bonjour'});
 					deps.$httpBackend.expectGET('/subscriptions').respond(200, { test: 'hello'});
@@ -223,7 +223,7 @@
 				});
 
 				it('Verify session state after succesful login - 2',function(){
-					deps.$httpBackend.expectPOST('/login').respond(200, {idNEO: 13, lang:'ar', admin:true});
+					deps.$httpBackend.expectPOST('/login').respond(200, {idNEO: 13, lang:'es', admin:true});
 					deps.$httpBackend.expectGET(/\/profile\/[0-9]+/).respond(200, { test: 'hola'});
 					deps.$httpBackend.expectGET('/contacts').respond(200, { test: 'bonjour'});
 					deps.$httpBackend.expectGET('/subscriptions').respond(200, { test: 'hello'});
@@ -248,7 +248,7 @@
 
 
 				it('Verify session state after succesful logout',function(){
-					deps.$httpBackend.expectPOST('/login').respond(200, {idNEO: 13, lang: 'ar', admin:false});
+					deps.$httpBackend.expectPOST('/login').respond(200, {idNEO: 13, lang: 'es', admin:false});
 					deps.$httpBackend.expectGET(/\/profile\/[0-9]+/).respond(200, { test: 'hola'});
 					deps.$httpBackend.expectGET('/contacts').respond(200, { test: 'bonjour'});
 					deps.$httpBackend.expectGET('/subscriptions').respond(200, { test: 'hello'});
@@ -273,13 +273,13 @@
 				});
 
 				it('Should try to change the user language when language is selected',function(){
-					deps.$httpBackend.expectPOST('/login').respond(200, { idNEO: 13, lang: 'ar', admin: false});
+					deps.$httpBackend.expectPOST('/login').respond(200, { idNEO: 13, lang: 'es', admin: false});
 					deps.session.login({});
 
 					deps.http.flush();
 
 					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('login',null);
-					expect(deps.session.getLang()).toEqual('ar');
+					expect(deps.session.getLang()).toEqual('es');
 
 					deps.$rootScope.$broadcast.calls.reset();
 					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { translation: { test: 'Nokia'}});
@@ -325,7 +325,7 @@
 
 				it('Should have the same lifecycle as correct login',function(){
 					deps.$httpBackend.expectGET('/checkCookie').respond(200, {idNEO: 13});
-					deps.$httpBackend.expectGET(/.*\/profile\/[0-9]+/).respond(200, { test: 'hola', lang: 'ar'});
+					deps.$httpBackend.expectGET(/.*\/profile\/[0-9]+/).respond(200, { test: 'hola', lang: 'es'});
 					deps.$httpBackend.expectGET('/contacts').respond(200, { test: 'bonjour'});
 					deps.$httpBackend.expectGET('/subscriptions').respond(200, { test: 'hello'});
 					deps.$httpBackend.expectGET(/.*\/translation\/[a-z]+$/).respond(200, { translation: {test: 'yay'}});
@@ -334,21 +334,21 @@
 					deps.http.flush();
 
 					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('login',null);
-					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotProfile',{ test: 'hola', lang: 'ar'});
+					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotProfile',{ test: 'hola', lang: 'es'});
 					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotContacts',{ test: 'bonjour'});
 					expect(deps.$rootScope.$broadcast).toHaveBeenCalledWith('gotSubscriptions',{ test: 'hello'});
 
 					expect(deps.session.isLoggedIn()).toBe(true);
 					expect(deps.session.isAdmin()).toBe(false);
 					expect(deps.session.getID()).toEqual(13);
-					expect(deps.session.getProfile()).toEqual({ test: 'hola', lang: 'ar'});
+					expect(deps.session.getProfile()).toEqual({ test: 'hola', lang: 'es'});
 					expect(deps.session.getContacts()).toEqual({ test: 'bonjour'});
 					expect(deps.session.getSubscriptions()).toEqual({ test: 'hello'});
 					expect(deps.session.getTranslation()).toEqual({ test: 'yay'});
 				});
 
 				it('Should set the admin flag correctly',function(){
-					deps.$httpBackend.expectGET('/checkCookie').respond(200, { idNEO: 13, lang: 'ar', admin:true});
+					deps.$httpBackend.expectGET('/checkCookie').respond(200, { idNEO: 13, lang: 'es', admin:true});
 					deps.session.checkCookie();
 
 					deps.http.flush();

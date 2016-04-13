@@ -1,4 +1,4 @@
-FROM ubuntu:15.10
+FROM ubuntu:16.04
 
 # Expose required port
 EXPOSE 3000
@@ -14,7 +14,7 @@ RUN apt-get install -y nodejs
 RUN apt-get install -y npm
 RUN apt-get install -y ruby ruby-dev
 RUN apt-get install -y curl
-RUN apt-get install -y openjdk-7-jre-headless
+RUN apt-get install -y openjdk-8-jre-headless
 RUN apt-get install -y lsof
 
 # Install sudo
@@ -44,16 +44,16 @@ RUN git clone https://github.com/mecatronicauncu/Red-Social-Asociacion.git
 RUN cd Red-Social-Asociacion && git checkout develop
 
 # Install scripts in social network
-RUN cd Red-Social-Asociacion && ./bootstrap/setup -v
+RUN cd Red-Social-Asociacion && ./script/bootstrap -v
 
 # Config for lan use
-RUN cd Red-Social-Asociacion && ./bootstrap/config LAN
+RUN cd Red-Social-Asociacion && ./script/config -p asoc -h LAN -nomail
 
 # Setup some users
-RUN cd Red-Social-Asociacion && ./bootstrap/testDataset/testDataset no-wait
+RUN cd Red-Social-Asociacion && ./script/Datasets/userBase/userBase no-wait
 
 # Setup some nodes for the EDT
-RUN cd Red-Social-Asociacion && ./bootstrap/edt/edt no-wait
+RUN cd Red-Social-Asociacion && ./script/Datasets/edt/edt no-wait
 
 # Entry point command: build and run tests on project, then launch
 # server

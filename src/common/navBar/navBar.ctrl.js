@@ -19,11 +19,11 @@
           $scope.navBarItems = navBar.getTabs();
         };
 
-        $scope.avLangs = ['ar','us','fr'];
+        $scope.avLangs = ['es','en'];
 
         $scope.selectLang = function(lang){
             console.log(lang);
-            session.setLang(lang);
+            session.saveLang(lang);
         };
           
         $scope.$on('gotAdmin', function(){

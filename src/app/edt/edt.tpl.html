@@ -4,7 +4,7 @@
             <div id="edtSearchSelect" class="dropdown">
                 <button class="edtSearchBtn dropdown-toggle" data-toggle="dropdown" type="button">
                     <i id="edtSearchIcon" class="fa fa-fw fa-star"></i>
-                    Favoritos
+		    {{translation.edt['bookmarks']}}
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
@@ -17,7 +17,7 @@
         <div class="edtSearchGroup" ng-show="newActCollapse">        
             <div class="input-group" id="edtPartSearch">       
                 <input type="text" edt-enter="partSearch()" ng-model="partSearchTerm"
-                       class="form-control edtSearchInput" placeholder="<Enter> para buscar...">
+							    class="form-control edtSearchInput" placeholder="{{translation.edt['entertosearch']}}">
                 <div class="dropdown" id="partSearchDDToggle">
                     <button data-toggle="dropdown" hidden></button>
                     <ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
@@ -55,7 +55,7 @@
             <div id="edtWeekSelect" class="dropdown">
                 <button class="edtSearchBtn dropdown-toggle" data-toggle="dropdown" type="button">
                     <i id="edtWeekIcon" class="fa fa-fw fa-calendar"></i>
-                    Semana {{searchWeek}}
+		    {{translation.edt['week']}} {{searchWeek}}
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu scrollable-menu edt-search-dropdown" role="menu">
@@ -78,7 +78,7 @@
 
             <div class="sign-input-wrap newActPeriod">
                 <div class="dropdown newActSelect">
-                    <span class="edtSearchBtn newActBtn newActLbl">Asociado a:</span>
+			<span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['asocto']}}</span>
                     <button class="edtSearchBtn newActBtn dropdown-toggle" data-toggle="dropdown" type="button">
                         {{newAct.whatName}}
                     </button>
@@ -89,100 +89,13 @@
                         </li>
                     </ul>
                 </div>
-
-                <div class="sign-input-wrap">
-                    <button class="edtSearchBtn newActBtn" ng-class="{dayOrPeriodActive: dayOrPeriod === 'DAY'}" type="button" 
-                            ng-click="dayOrPeriod = 'DAY';clearAct()">
-                        Día
-                    </button>
-                </div>
-
-                <div class="sign-input-wrap">
-                    <button class="edtSearchBtn newActBtn" ng-class="{dayOrPeriodActive: dayOrPeriod === 'PERIOD'}" type="button" 
-                            ng-click="dayOrPeriod = 'PERIOD';clearAct()">
-                        Periodo
-                    </button>
-                </div>
-
             </div>
 
-            <form id="newActFormDAY" class="newActForm" ng-submit="newActivity()" data-parsley-validate ng-show="dayOrPeriod==='DAY'">
+            <form id="newActForm" class="newActForm" ng-submit="newActivity()" data-parsley-validate>
 
                 <div ng-repeat="(periodIndex, period) in newAct.periods" class="newActPeriod">
                     <div class="sign-input-wrap">
-                        <span class="edtSearchBtn newActBtn newActLbl newActPeriodLabel">Día {{periodIndex + 1}}:</span>
-                        <div>
-                            <button ng-click="addRemovePeriod(periodIndex)" class="edtSearchBtn newActAddRemoveBtn dropdown-toggle" type="button" ng-if="newAct.periods.length > 1">
-                                <i class="fa fa-fw fa-minus-circle"></i>
-                            </button>
-                            <button ng-click="addRemovePeriod(-1)" class="edtSearchBtn newActAddRemoveBtn dropdown-toggle" type="button">
-                                <i class="fa fa-fw fa-plus-circle"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="sign-input-wrap">
-                        <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">Tipo de actividad:</span>
-                            <button class="edtSearchBtn newActBtn dropdown-toggle" data-toggle="dropdown" type="button">
-                                {{translation.labels[newAct.periods[periodIndex].type]}}
-                            </button>
-                            <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
-                                <li role="presentation" ng-repeat="type in actTypes">
-                                    <a role="menuitem" tabindex="-1" 
-                                       ng-click="selectActType(type.label, periodIndex)">{{translation.labels[type.label]}}</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="sign-input-wrap">
-                        <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">Descripción extra:</span>
-                            <input type="text" class="sign-input newActBtn" 
-                                   ng-model="newAct.periods[periodIndex].desc"
-                                   placeholder="...">
-                        </div>
-                    </div>
-                    <div class="sign-input-wrap">
-                        <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">Fecha:</span>
-                            <input id="newActFromDAY{{periodIndex}}" type="text" 
-				   placeholder="Fecha"
-				   class="sign-input" data-parsley-ui-enabled="false"
-				   ng-model="dummy[periodIndex]"
-	                           ng-change="newActWhen(dummy[periodIndex], periodIndex)"
-                                   ng-required="daySelected(periodIndex)">
-                        </div>
-                    </div>
-
-                    <div class="newActDayGroup" ng-repeat="(dayIndex, day) in period.days" ng-show="newActDays[periodIndex][dayIndex] === true">
-                        <span class="edtSearchBtn newActBtn newActLbl">Horario ({{translation.edt[period.days[dayIndex].day + Min]}}):</span>
-                        <div class="sign-input-wrap" ng-repeat="(timeIndex, time) in day.times">
-                            <div class="dropdown newActSelect">
-                                <span class="edtSearchBtn newActBtn newActLbl">Desde:</span>
-                                <input type="text" ng-model="time.from" placeholder="Inicio" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'from')" data-parsley-ui-enabled="false" ng-required="newActDays[periodIndex][dayIndex]===true">
-                            </div>
-                            <div class="dropdown newActSelect">
-                                <span class="edtSearchBtn newActBtn newActLbl">Hasta:</span>
-                                <input type="text" ng-model="time.to" placeholder="Fin" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$"
-                                       ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'to')" data-parsley-ui-enabled="false"
-                                       ng-required="newActDays[periodIndex][dayIndex]===true">
-                            </div>
-                            <button ng-click="addRemoveTime(periodIndex, dayIndex, -1)" class="edtSearchBtn newActAddRemoveBtn dropdown-toggle" type="button" ng-if="$last">
-                                <i class="fa fa-fw fa-plus-circle"></i>
-                            </button>
-                            <button ng-click="addRemoveTime(periodIndex, dayIndex, timeIndex)" class="edtSearchBtn newActAddRemoveBtn dropdown-toggle" type="button" ng-if="!$last">
-                                <i class="fa fa-fw fa-minus-circle"></i>
-                            </button>
-                        </div>
-                    </div>                    
-                </div>
-            </form>            
-
-            <form id="newActFormPERIOD" class="newActForm" ng-submit="newActivity()" data-parsley-validate ng-show="dayOrPeriod==='PERIOD'">
-
-                <div ng-repeat="(periodIndex, period) in newAct.periods" class="newActPeriod">
-                    <div class="sign-input-wrap">
-                        <span class="edtSearchBtn newActBtn newActLbl newActPeriodLabel">Periodo {{periodIndex + 1}}:</span>
+			    <span class="edtSearchBtn newActBtn newActLbl newActPeriodLabel">{{translation.edt['period']}} {{periodIndex + 1}}:</span>
                         <div>
                             <button ng-click="addRemovePeriod(periodIndex)" class="edtSearchBtn newActAddRemoveBtn dropdown-toggle" type="button" ng-if="newAct.periods.length > 1">
                                 <i class="fa fa-fw fa-minus-circle"></i>
@@ -194,16 +107,16 @@
                     </div>
                     <div class="sign-input-wrap newActDayList">
                         <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">Días:</span>
+				<span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['days']}}:</span>
                         </div>
                         <div class="dropdown newActSelect" ng-repeat="(idx, day) in daysToShow">
-                            <input id="PERIOD{{day.name}}{{periodIndex}}" type="checkbox" ng-model="newActDays[periodIndex][idx]"/>
-                            <label for="PERIOD{{day.name}}{{periodIndex}}">{{translation.edt[day.name + 'Min']}}</label>
+                            <input id="{{day.name}}{{periodIndex}}" type="checkbox" ng-model="newActDays[periodIndex][idx]"/>
+                            <label for="{{day.name}}{{periodIndex}}">{{translation.edt[day.name + 'Min']}}</label>
                         </div>
                     </div>
                     <div class="sign-input-wrap">
                         <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">Tipo de actividad:</span>
+                            <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['acttype']}}:</span>
                             <button class="edtSearchBtn newActBtn dropdown-toggle" data-toggle="dropdown" type="button">
                                 {{translation.labels[newAct.periods[periodIndex].type]}}
                             </button>
@@ -217,58 +130,41 @@
                     </div>
                     <div class="sign-input-wrap">
                         <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">Descripción extra:</span>
                             <input type="text" class="sign-input newActBtn" 
                                    ng-model="newAct.periods[periodIndex].desc"
-                                   placeholder="...">
-                        </div>
-                    </div>
-                    <div class="sign-input-wrap" ng-show="daySelected(periodIndex)">
-                        <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">Repetir:</span>
-                            <button class="edtSearchBtn newActBtn dropdown-toggle" data-toggle="dropdown" type="button">
-                                {{actRepeats[newAct.periods[periodIndex].repeat]}}
-                            </button>
-                            <ul class="dropdown-menu scrollable-menu edt-newact-dropdown" role="menu">
-                                <li role="presentation" ng-repeat="(key, repeat) in actRepeats">
-                                    <a role="menuitem" tabindex="-1" 
-                                       ng-click="newActSelectRepeat(key, periodIndex)">{{repeat}}</a>
-                                </li>
-                            </ul>
+                                   placeholder="{{translation.edt['desc']}}">
                         </div>
                     </div>
 
                     <div class="sign-input-wrap" ng-show="daySelected(periodIndex)">
                         <div class="dropdown newActSelect">
-                            <span class="edtSearchBtn newActBtn newActLbl">Desde:</span>
-                            <input id="newActFromPERIOD{{periodIndex}}" type="text" 
-                                   placeholder="Desde" 
+                            <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['date']}}:</span>
+                            <input id="newActFrom{{periodIndex}}" type="text" 
+                                   placeholder="{{translation.edt['from']}}"
                                    class="sign-input" data-parsley-ui-enabled="false" 
-                                   ng-model="dummy[periodIndex]"
-                                   ng-change="newActWhen(dummy[periodIndex], periodIndex)"
+                                   ng-model="dummyWhenFrom[periodIndex]"
+                                   ng-change="newActWhenFrom(dummyWhenFrom[periodIndex], periodIndex)"
                                    ng-required="daySelected(periodIndex)">
                         </div>
-                        <div class="dropdown newActSelect" ng-show="period.repeat != 'n' && period.repeat != 'nw'">
-                            <span class="edtSearchBtn newActBtn newActLbl">Hasta:</span>
-                            <input id="newActToPERIOD{{periodIndex}}" type="text"
-                                   placeholder="Hasta" 
+                        <div class="dropdown newActSelect">
+                            <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['date']}}:</span>
+                            <input id="newActTo{{periodIndex}}" type="text"
+                                   placeholder="{{translation.edt['to']}}" 
                                    class="sign-input" data-parsley-ui-enabled="false" 
-                                   ng-model="dummy2[periodIndex]"
-                                   ng-change="newActRepeatTo(dummy2[periodIndex], periodIndex)"
-                                   ng-required="period.repeat != 'n'">
+                                   ng-model="dummyWhenTo[periodIndex]"
+                                   ng-change="newActWhenTo(dummyWhenTo[periodIndex], periodIndex)"
+                                   ng-required="true">
                         </div>
                     </div>
 
                     <div class="newActDayGroup" ng-repeat="(dayIndex, day) in period.days" ng-show="newActDays[periodIndex][dayIndex] === true">
-                        <span class="edtSearchBtn newActBtn newActLbl">Horario ({{translation.edt[period.days[dayIndex].day + Min]}}):</span>
+                        <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['schedule']}} ({{translation.edt[period.days[dayIndex].day + Min]}}):</span>
                         <div class="sign-input-wrap" ng-repeat="(timeIndex, time) in day.times">
                             <div class="dropdown newActSelect">
-                                <span class="edtSearchBtn newActBtn newActLbl">Desde:</span>
-                                <input type="text" ng-model="time.from" placeholder="Inicio" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'from')" data-parsley-ui-enabled="false" ng-required="newActDays[periodIndex][dayIndex]===true">
+				    <input type="text" ng-model="time.from" placeholder="{{translation.edt['from']}}" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'from')" data-parsley-ui-enabled="false" ng-required="newActDays[periodIndex][dayIndex]===true">
                             </div>
                             <div class="dropdown newActSelect">
-                                <span class="edtSearchBtn newActBtn newActLbl">Hasta:</span>
-                                <input type="text" ng-model="time.to" placeholder="Fin" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$"
+				<input type="text" ng-model="time.to" placeholder="{{translation.edt['to']}}" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$"
                                        ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'to')" data-parsley-ui-enabled="false"
                                        ng-required="newActDays[periodIndex][dayIndex]===true">
                             </div>
@@ -279,12 +175,12 @@
                                 <i class="fa fa-fw fa-minus-circle"></i>
                             </button>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
             </form>
-            
+
              <div id="WrongAct" class="alert alert-danger" hidden></div>
-            
+
             <div class="sign-input-wrap newActSubmitGroup">
                 <button class="edtSearchBtn newActSubmitBtn dropdown-toggle" 
                         type="submit" form="newActForm{{dayOrPeriod}}">
@@ -301,8 +197,8 @@
     <div collapse="!newActCollapse">
         <table id="timeTable">
             <thead class="edt-head">
-                <th class="edt-head-wrap">Día</th>
-                <th class="edt-head-time-h" id="Hora">Hora
+                <th class="edt-head-wrap">{{translation.edt['day']}}</th>
+                <th class="edt-head-time-h" id="Hora">{{translation.edt['schedule']}}
                     <a id="iCalDownload" target="_self"
                        href="/getTimesIcal?whoId={{whoIdToSearch}}&whatId={{whatIdToSearch}}&week={{searchWeek}}&year={{thisYear}}&whatName=Test"
                        download="calendar.ics">
