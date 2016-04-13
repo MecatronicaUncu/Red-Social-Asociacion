@@ -98,10 +98,9 @@
                     {day: 'vi', times: [{}]}, {day: 'sa', times: [{}]}, {day: 'do', times: [{}]}];
                 $scope.newActDays.push([false, false, false, false, false, false, false]);
                 $scope.newAct.periods[periodIndex].type = ($scope.actTypes.length > 0) ? $scope.actTypes[0].label : 'NOT_SPECIFIED';
-                //TODO: Se puede hacer mas elegante esto?
-                $timeout(function () {
-                    $scope.attachCalendar(periodIndex);
-                }, 200);
+                $timeout(function(){
+                  $scope.attachCalendar(periodIndex);
+                },300);
             }
             //Remove
             else {
@@ -172,6 +171,12 @@
 
         /** @type {Boolean} Decide si se muestra el EDT o el form de nueva actividad */
         $scope.newActCollapse = true;
+        $scope.toggleNewActForm = function(){
+          $scope.newActCollapse = !$scope.newActCollapse;
+          if($scope.newAct.periods.length === 0){
+            $scope.addRemovePeriod(-1);
+          }
+        };
         /** @type {Array} Guarda las <div>s que muestran las frajas horarias para poder eliminarlas */
         $scope.divs = [];
         /** @type {Integer} Usado para referenciar un <div> en timeplot() */
@@ -230,10 +235,15 @@
          * Devuelve el número de semanas en el presente año
          * @return {Integer} week
          */
-        $scope.weeksInYear = function () {
-            var d = new Date((new Date()).getFullYear(), 11, 31);
-            var week = $scope.DobToYWDarr(d)[1];
-            return week == 1 ? $scope.DobToYWDarr(d.setDate(24))[1] : week;
+        $scope.weeksInYear = function (year) {
+          var d;
+          if(year){
+            d = new Date(year,11,31);
+          }else{
+            d = new Date((new Date()).getFullYear(), 11, 31);
+          }
+          var week = $scope.DobToYWDarr(d)[1];
+          return week == 1 ? $scope.DobToYWDarr(d.setDate(24))[1] : week;
         };
 
         $scope.selectFav = function(fav){
@@ -251,28 +261,30 @@
         $scope.setDates = function (w) {
 
             // No importa el Day Of Week en week, porque al iterar se sobreescribe
-          if(!w){
+          if(w === 0){
+            $scope.searchYear -= 1;
+            w = $scope.weeksInYear($scope.searchYear);
+            $scope.weeks = Array.apply(null, new Array(w)).map(function (_, i) {return i+1;});
+          }else if(w > $scope.weeksInYear($scope.searchYear)){
+            $scope.searchYear += 1;
+            w = 1;
+          }else if(!w){
             return;
           }
-          var week = [(new Date()).getFullYear(), w, 0];
 
-            $scope.searchWeek = week[1];
+          $scope.searchWeek = w;
 
-            if (w) {
-                $scope.edtGetTimes();
-                $scope.clearplot();
-                $scope.replot();
-            } else {
-                $scope.clearplot();
-            }
+          $scope.edtGetTimes();
+          $scope.clearplot();
+          $scope.replot();
 
-            $scope.daysToShow.forEach(function (el, index) {
-                var jour = $scope.YWDarrToDob([week[0], week[1], index + 1]);
-                var d = jour.getDate();
-                var m = (jour.getMonth() + 1);
-                var y = jour.getFullYear();
-                el.date = (d < 10 ? '0' : '') + d + '/' + (m < 10 ? '0' : '') + m + '/' + y;
-            });
+          $scope.daysToShow.forEach(function (el, index) {
+            var jour = $scope.YWDarrToDob([$scope.searchYear, $scope.searchWeek, index + 1]);
+            var d = jour.getDate();
+            var m = (jour.getMonth() + 1);
+            var y = jour.getFullYear();
+            el.date = (d < 10 ? '0' : '') + d + '/' + (m < 10 ? '0' : '') + m + '/' + y;
+          });
         };
 
         /**
@@ -282,7 +294,9 @@
          * la consulta.
          */
         $scope.clearSearch = function () {
-            
+
+          $scope.searchYear = $scope.thisYear;
+
             $scope.setDates($scope.thisWeek);
             $scope.newActCollapse = true;
 
@@ -384,7 +398,7 @@
          * Shortcut para la función timeplot()
          */
         $scope.replot = function () {
-            $scope.timeplot($scope.times, $scope.config);
+          $scope.timeplot($scope.times, $scope.config);
         };
 
         /**
@@ -398,7 +412,7 @@
          */
         $scope.timeplot = function (alltimes, config) {
 
-            if(alltimes.length === 0){
+            if(alltimes.length === 0 || !$scope.config || !session.getTranslation()){
                 return;
             }
 
@@ -529,6 +543,7 @@
          */
         $scope.$on('edt:gotConfig',function(e,config){
           $scope.config = config;
+          $scope.replot();
         });
 
         /**
@@ -842,6 +857,7 @@
         $scope.thisDay = $scope.today[2];
         $scope.thisWeek = $scope.today[1];
         $scope.thisYear = $scope.today[0];
+        $scope.searchYear = $scope.thisYear;
 
         $scope.$on('login', function () {
             $scope.newAct.whoId = session.getID();
@@ -891,6 +907,25 @@
             $scope.newAct.whoName = profile.firstName[0] + '. ' + profile.lastName;
         }
 
+        $scope.setDates($scope.thisWeek);
+        $scope.newActCollapse = true;
+        // Si no está definido no se pueden crear los campos al vuelo
+        $scope.actCats = {};
+
+        $scope.config = null;
+        edt.updateConfig(function(err,config){
+          if(err == null){
+            $scope.config = config;
+          }
+        });
+
+        /*	Cargar las semanas en el año, sólo una vez al cargar el controlador
+         */
+        var wn = $scope.weeksInYear();
+        var i;
+        $scope.weeks = Array.apply(null, new Array(wn)).map(function (_, i) {return i+1;});
+
+
         /**
          * Realiza el pedido de valores por única vez al cargar el controlador,
          * luego de que se haya generado el DOM. Importante!!
@@ -899,50 +934,13 @@
          * en ParentCtrl.js porque sino, cada vez que tocamos 'EDT' vuelve a cargar esto!
          */
         $scope.$on('$viewContentLoaded', function () {
-            $scope.setDates($scope.thisWeek);
-            $scope.newActCollapse = true;
 
-            /* Como los ids de la tabla del EDT se generan dinámicamente en un ng-repeat,
-             * el documento tarda un tiempo en verlos. Deberia haber un evento como $viewContentLoaded
-             * que indique cuándo están accesibles. O se debería cambiar la forma en que está hecho el EDT.
-             * Por el momento hacer un delay funciona...
-             */
-            $timeout(function () {
+          /**
+           * Mostramos el calendario
+           */
+          $('#edt').prop('hidden', false);
 
-                // Si no está definido no se pueden crear los campos al vuelo
-                $scope.actCats = {};
-
-                $scope.config = {limits: {}, colors: {}};
-                edt.updateConfig(function(err,config){
-                  if(err == null){
-                    $scope.config = config;
-                  }
-                });
-
-                /*	Cargar las semanas en el año, sólo una vez al cargar el controlador
-                 */
-                var wn = $scope.weeksInYear();
-                var i;
-                $scope.weeks = [];
-                for (i = 1; i <= wn; i++) {
-                    $scope.weeks.push(i);
-                }
-
-                /**
-                 * Mostramos el calendario
-                 */
-                $('#edt').prop('hidden', false);
-
-                /**
-                 * No sé porqué pero es muy necesario hacer esto
-                 *
-                 * TODO: Realmente lo es?
-                 */
-                $('.ui-datepicker').css('margin-top', '0px');
-
-                $scope.addRemovePeriod(-1);
-                $scope.edtGetTimes();
-            }, 200);
+          $scope.edtGetTimes();
         });
 
     });

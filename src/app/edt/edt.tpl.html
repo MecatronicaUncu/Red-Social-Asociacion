@@ -39,7 +39,7 @@
         </div>
 
         <div class="edtSearchGroup" ng-show="session.isLoggedIn()">
-            <button class="edtSearchBtn" id="newActivityBtn" ng-click="newActCollapse = !newActCollapse">
+            <button class="edtSearchBtn" id="newActivityBtn" ng-click="toggleNewActForm()">
                 <i id="newActivityIcon" class="fa fa-fw" ng-class="{'fa-plus': newActCollapse, 'fa-calendar': !newActCollapse}"></i>
             </button>
         </div>    
