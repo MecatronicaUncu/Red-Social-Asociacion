@@ -334,7 +334,7 @@ module.exports = function ( grunt ) {
             },
             // spec files
             specs: [
-				'server/specs/*spec.js'
+        '<%= server_files.jsunit %>'
             ]
             //helpers: [
             //    "test/helpers/**"
@@ -356,6 +356,12 @@ module.exports = function ( grunt ) {
       ],
       test: [
         '<%= app_files.jsunit %>'
+      ],
+//      server: [
+//        '<%= server_files.js %>'
+//      ],
+      server_test: [
+        '<%= server_files.jsunit %>'
       ],
       gruntfile: [
         'Gruntfile.js'
@@ -503,14 +509,14 @@ module.exports = function ( grunt ) {
       },
       prod: {
         options: {
-          script: 'server/server.js',
+          script: 'server/run.js',
           background: false,
           args: [ 'prod' ]
         }
       },
       dev: {
         options: {
-          script: 'server/server.js',
+          script: 'server/run.js',
           args: [ 'dev' ]
         }
       }

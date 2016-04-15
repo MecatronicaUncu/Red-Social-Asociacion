@@ -34,6 +34,11 @@ module.exports = {
     sass: 'src/sass/main.scss'
   },
 
+  server_files: {
+    js: [ 'server/**/*.js', '!server/**/*.spec.js' ],
+    jsunit: [ 'server/**/*.spec.js' ]
+  },
+
   /**
    * This is a collection of files used during testing only.
    */
