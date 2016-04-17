@@ -35,7 +35,8 @@ module.exports = {
   },
 
   server_files: {
-    js: [ 'server/**/*.js', '!server/**/*.spec.js' ],
+    js: [ 'server/**/*.js', '!server/**/*.spec.js', '!server/**/*.mock.js' ],
+    jsmock: [ 'server/**/*.mock.js' ],
     jsunit: [ 'server/**/*.spec.js' ]
   },
 
