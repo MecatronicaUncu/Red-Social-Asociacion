@@ -13,7 +13,7 @@
         'placeholders.img',
         'ui.router'
       ])
-      .config(function ($httpProvider, $stateProvider, $urlRouterProvider) {
+      .config(function ($provide, $httpProvider, $stateProvider, $urlRouterProvider, $locationProvider) {
         // For any unmatched url, redirect to /
         $urlRouterProvider.otherwise('/');
         // Now set up the states
