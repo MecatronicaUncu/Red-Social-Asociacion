@@ -24,8 +24,8 @@ exports.getTimes = function(timeData, callback){
 			}else{
 				var times = [];
 				res.forEach(function(time){
-					time.time._data.data['idNEO']=time.idNEO;
-					times.push(time.time._data.data);
+					time.time.properties['idNEO']=time.idNEO;
+					times.push(time.time.properties);
 				});
 				return callback(null, times);
 			}
@@ -51,8 +51,8 @@ exports.getActivityTypes = function(parent, callback){
 		} else {
 		  var activityTypes = [];
 		  res.forEach(function(type){
-			type.activityType._data.data['idNEO']=type.idNEO;
-			activityTypes.push(type.activityType._data.data);
+			type.activityType.properties['idNEO']=type.idNEO;
+			activityTypes.push(type.activityType.properties);
 		  });
 		  return callback(null, activityTypes);
 		}

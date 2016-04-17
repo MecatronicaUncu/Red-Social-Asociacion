@@ -26,7 +26,7 @@ exports.getAdminNodes = function(idNEO, callback){
 				return callback(null,'Unauthorized');
 			}else{
 				results.forEach(function(res){
-					res.nodeData = res.nodeData._data.data;
+					res.nodeData = res.nodeData.properties;
 					res.label = res.label[0];
 				});
 				return callback(null, results);
@@ -54,7 +54,7 @@ exports.getNodeRelTypes = function(memberof, callback){
 				var parts = [];
 				var rels = [];
 				results.forEach(function(res){
-					res = res.nodeData._data.data;
+					res = res.nodeData.properties;
 					if(res.type === 'User'){
 						//Handle relationships
 						rels.push(res);
