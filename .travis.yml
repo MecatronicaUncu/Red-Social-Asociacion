@@ -1,6 +1,15 @@
+sudo: required
 language: node_js
+services:
+  - docker
 node_js:
     - "4.2"
+env:
+  global:
+    - secure: "lTadBxa/idJ/ulP1QQN3NDVIWxFsfCbnSDqKVBBYxHMOe0zTs5818ssHhUjWE/nqBRSL5ou0vFcX9HK1N5Viw1NpYtlMqQ1YRfOrheUHEnkJChGjvWb4Ejzox9WGLuERBHIeaV98cI/CkhA7YS7ygnW54Cj0uDX5MvTple4L3wKwy6i6upMQv6riJMgoPu2l+7MlGLFns81C/Th4MzSlYvEZB6o81deGZ4rO3krsi3OuC4kDvNja21/Cm5f+Z97HPksDU0FshODmlA2jvTiQ4jiLftneMkDIz/is5VCnZZ8vnobmEBCcb4D8zJojLIF4RHy/cZIcLUZmSrbaZYLDBT8C3ErZNHLZ3X5oIayepoQp3JPepqNHg5o+FcALzepRSOgr9p+rctSobKGGdnz6oEPYbIips2I/m8l/4iGKtA1bF4ePu40kLK+sIStQan9KpParvl3sFPQn5r4X4lFsXNM7EVaG4BFpwBtSFuyyqqUXpmLSERL9w5ye5j/1Kv5A6KneyO445P4rGz2TNTHK8j8l2mDDryAEXdLrApWv101Gus+W0dV39Udif60a5EDUGVpBIP9w3lC4Kupe0/up0aEAvVlz23q/TPQN430RRLfwDitvO6KYhjB5btlcmPkJ+ACmwqDZ2SgnJcJdQPgFowT4ahw8Bw0peOAblBKLK1g=" # Docker Email
+    - secure: "sjtz37T6ZicrlyiuHCy7ru+qkJFnbIAp5koK3RqSZ1RQ7dY3Wg/tjm22C0kTFeDXjixR3tTqlt7iPISHHJYjtZdE9vngtSSKxOkVX+VatPTQw/94ZSX9VzvDNszxnX5Teiivd8fAM8ZVA2Ank93rFSERITHhYmsf6tAIXceGjGqseyvOrg/+QMbVHP/2DI9pjLc8ryD61PXhBvh6G0flk+JHVGhSXLvJ7oxpUaUqGJERbeeRU1c6tNTtYtAktpJaP1muq4ob2LaBozpsqGzZlJI2hDkeANQWVSOOfdpz+iZI7OFcyZ+ThhbAPKUCTlVmRy1h5r0AG/nO1xGukS/yBkIAp5jF5sLg7abUDysuutU77JteYBG3JRL1kMRUVxm+Xrl06KhzJx3EJLEl7hafAeDn1lX2hlSOVVAkFW8VCOffak3vDzv6Q5+JFvmahHyyT0+E+JphL2W5ynQjvbQ/jJTXFiGib+4koEM8e786oIn1Fs7wEk/k7dXHcqd6F0Ae3ZW7Uz31KuUXskknVS/cHu01Mzn6S8ez0/E7xCwXpL+B3vhTVTB7gb4fCbGb+BMFVuvFaqyx/Au7tFLsNperh6HrMOuBzuV2yrRBnurbrK1JFnD/AVU3cu90E7DKjC5rrPD9PD2BYTSslGGDi5g+arnBx3r6ij6h6RZrX+OOuUQ=" # Docker User
+    - secure: "YM3hHSNRYRnFUn6DEMFQubsMbZRNTRu+LdUSlGP1xkgZrh6TRexMazU9YXl8/d0iw4+rqeh19dLA8rBG/6rqIlJY9r3eU8l/csi9lDBJU++DnQ+vOdnd5R9LQm1q3q/F9/5rz7opGHltRUSya+XYXZJ7Ix2cXxKt9UhvxUf7MkSxrGExiKpJgpiY4A7XNC7YMwybwdudcW1f6zP4v/OWDyEtMYk7DNmHa1nJUMFmE0KhSBEzam5SC3KG6MtMMeHaP6HaUXdNgp0MCMk80IoG0RTr2G+Bzk89TXVVjHdBvW/bIc41b1Xg6G/9O7/5hwUF4BWvhxnr+5rw7+YhVa8WLSA0F0PFky3LBezjaLPp8cpLu8QDskRG4yV4BjUv5cu2UVifOCQeu+4Zmi1B1j08u7cG31GFjXCiG7KHwxl7KPX7S3HdWJuliVsmWRe24IgcaLA6A1HWyG0GcI5drFqbns4dsqb3HLbgG+fTk0g9Et31Mj1XVZTk2cXyOgZO71RnRU7MWTbgoQ1gHQLzAA/3NzdYzO2WbyVWaCfmMncd4F9Wo+wKx3czQx+u+Iw4vNy0ZWGuli6HruZpiKJh2kGf2iMz7H8Q3i6MgfZ4I9UCdL+QZZcchyhhkjztkDvurMtU++B6iBeRGCncTb4NxRP+ormD/vEJBqKNJmTi6y3qxGA=" # Docker Password
+    - COMMIT=${TRAVIS_COMMIT::8}
 before_install:
     - rvm install 2.1.5
     - ./script/bootstrap
@@ -9,3 +18,12 @@ before_install:
     - ./script/Datasets/edt/edt no-wait
 notifications:
       email: false
+after_success:
+  - sed -i 's/checkout develop/checkout '"$COMMIT"'/' Dockerfile # Change current branch in Dockerfile
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - export REPO=mecatronicauncu/red-social-asociacion-dev
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "develop" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - docker build -f Dockerfile -t $REPO:$COMMIT .
+  - docker tag $REPO:$COMMIT $REPO:$TAG
+  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+  - docker push $REPO
