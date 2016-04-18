@@ -41,6 +41,9 @@ USER swuser
 
 # Clone repo
 RUN git clone https://github.com/mecatronicauncu/Red-Social-Asociacion.git
+ # DO NOT REMOVE the following line, it is automatically changed by
+ # travis when building the images (and it does not hurt the "normal"
+ # user)
 RUN cd Red-Social-Asociacion && git checkout develop
 
 # Install scripts in social network
