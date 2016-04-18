@@ -35,6 +35,7 @@ exports.getPlaces = function(req, res, next){
 
 var configFile = path.resolve(path.join(__dirname, '../config/edtConfig.json'));
 var edtConfig = null;
+
 fs.readFile(configFile, 'utf-8', function (err, config) {
     if (err){
         console.log(err);
@@ -45,22 +46,28 @@ fs.readFile(configFile, 'utf-8', function (err, config) {
     }
 });
 
+/**
+ * TODO : Comment on functionality
+ */
 exports.getEdtConfig = function(req, res, next){
 
-  if(edtConfig){
-    res.status(200).send({config: edtConfig});
-  }else{
-    fs.readFile(configFile, 'utf-8', function (err, config) {
-        if (err){
-            console.log(err);
-            res.sendStatus(500);
-        }
-        else{
-            console.log(config);
-            res.status(200).send({config: JSON.parse(config)});
-        }
-    });
-  }
+	if(edtConfig){
+		res.status(200).send({config: edtConfig});
+	}else{
+		try{
+			fs.readFile(configFile, 'utf-8', function (err, config) {
+				if (err){
+					console.log(err);
+					res.status(500).send(err);
+				}
+				else{
+					res.status(200).send({config: JSON.parse(config)});
+				}
+			});
+		}catch(err){
+			res.status(500).send(err);
+		}
+	}
 };
 
 /**
