@@ -39,6 +39,9 @@ RUN adduser swuser sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER swuser
 
+# Hack to force a rebuild of the repo, from this point
+ADD http://www.random.org/strings/?num=10&len=8&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new uuid
+
 # Clone repo
 RUN git clone https://github.com/mecatronicauncu/Red-Social-Asociacion.git
  # DO NOT REMOVE the following line, it is automatically changed by

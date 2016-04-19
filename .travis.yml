@@ -22,6 +22,7 @@ after_success:
   - sed -i 's/checkout develop/checkout '"$COMMIT"'/' Dockerfile # Change current branch in Dockerfile
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=mecatronicauncu/red-social-asociacion-dev
+  - docker pull $REPO:$TAG # Get previous images, improve build speed
   - export TAG=`if [ "$TRAVIS_BRANCH" == "develop" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
   - docker build -f Dockerfile -t $REPO:$COMMIT .
   - docker tag $REPO:$COMMIT $REPO:$TAG
