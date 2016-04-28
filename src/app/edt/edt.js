@@ -622,6 +622,12 @@
             });
         };
 
+        $scope.renderCalendars = function(periodIndex){
+            $('#newActTo' + periodIndex).pickadate('picker').render();
+            $('#newActFrom' + periodIndex).pickadate('picker').render();
+        };
+
+
         /**
          * Guarda en newAct el valor de la fecha [de inicio] || [de desarrollo] de
          * la actividad. Autocompleta el campo de fin de actividad.
@@ -637,7 +643,7 @@
             var year = date[2] - 0;
 
             date = new Date(year, month, day);
-            $('#newActTo' + periodIndex).datepicker("option", "minDate", date);
+            $('#newActTo' + periodIndex).pickadate('picker').set('min', date).set('highlight',date).render();
             date = $scope.DobToYWDarr(date);
 
             $scope.newAct.periods[periodIndex].from = {year: date[0], week: date[1], day: date[2]};
@@ -812,29 +818,28 @@
              * Configuración del calendario de fecha de inicio.
              * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
              */
-            $('#newActFrom' + periodIndex).datepicker({minDate: 0,
-                showWeek: true,
-                dateFormat: 'dd/mm/yy',
-                defaultDate: 0,
-                firstDay: 1,
-                beforeShowDay: function (date) {
-                    date = $scope.DobToYWDarr(date);
-                    return [$scope.newActDays[periodIndex][date[2] - 1]];
-                }
+            $('#newActFrom' + periodIndex).pickadate({
+                min: new Date(),
+                format: 'dd/mm/yyyy',
+                firstDay: 1, //Monday
+                disable: [
+                    true,
+                    function(){ return $scope.newActDays[periodIndex].map(function(boolDay,i){i=i+1; i=(i===7?0:i); return boolDay?i:10;}); }
+                ]
             });
 
             /**
              * Configuración del calendario de fecha de cierre.
              * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
              */
-            $('#newActTo' + periodIndex).datepicker({showWeek: true,
-                dateFormat: 'dd/mm/yy',
-                firstDay: 1,
-                minDate: 0,
-                beforeShowDay: function (date) {
-                    date = $scope.DobToYWDarr(date);
-                    return [$scope.newActDays[periodIndex][date[2] - 1]];
-                }
+            $('#newActTo' + periodIndex).pickadate({
+                min: new Date(),
+                format: 'dd/mm/yyyy',
+                firstDay: 1, //Monday
+                disable: [
+                    true,
+                    function(){ return $scope.newActDays[periodIndex].map(function(boolDay,i){i=i+1; i=(i===7?0:i); return boolDay?i:10;}); }
+                ]
             });
         };
 

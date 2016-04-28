@@ -77,14 +77,17 @@ module.exports = {
       'vendor/angular-cookies/angular-cookies.min.js',
       'vendor/bower-angular-placeholders/angular-placeholders.min.js',
       'vendor/jQuery.mmenu/dist/js/jquery.mmenu.min.js',
-      'vendor/jquery-ui/jquery-ui.js',
-      'vendor/bootstrap/dist/js/bootstrap.js'
+      'vendor/bootstrap/dist/js/bootstrap.js',
+      'vendor/pickadate/lib/picker.js',
+      'vendor/pickadate/lib/picker.date.js',
+      'vendor/pickadate/lib/picker.time.js'
     ],
     css: [
       'vendor/bootstrap/dist/css/bootstrap.css',
       'vendor/jQuery.mmenu/dist/css/jquery.mmenu.css',
-      'src/assets/styles/jquery-ui-custom/jquery-ui.min.css',
-      'src/assets/styles/jquery-ui-custom/jquery-ui.theme.min.css'
+      'vendor/pickadate/lib/themes/default.css',
+      'vendor/pickadate/lib/themes/default.date.css',
+      'vendor/pickadate/lib/themes/default.time.css'
     ],
     assets: [
     ]

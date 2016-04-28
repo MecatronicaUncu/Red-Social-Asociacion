@@ -110,7 +110,7 @@
 				<span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['days']}}:</span>
                         </div>
                         <div class="dropdown newActSelect" ng-repeat="(idx, day) in daysToShow">
-                            <input id="{{day.name}}{{periodIndex}}" type="checkbox" ng-model="newActDays[periodIndex][idx]"/>
+                            <input id="{{day.name}}{{periodIndex}}" type="checkbox" ng-model="newActDays[periodIndex][idx]" ng-change="renderCalendars(periodIndex)"/>
                             <label for="{{day.name}}{{periodIndex}}">{{translation.edt[day.name + 'Min']}}</label>
                         </div>
                     </div>
