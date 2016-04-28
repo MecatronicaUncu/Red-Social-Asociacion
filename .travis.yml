@@ -19,12 +19,12 @@ before_install:
 notifications:
       email: false
 after_success:
-  - sed -i 's/checkout develop/checkout '"$COMMIT"'/' Dockerfile # Change current branch in Dockerfile
+  - sed -i 's/checkout develop/checkout '"$TRAVIS_BRANCH"'/' Dockerfile # Change current branch in Dockerfile
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=mecatronicauncu/red-social-asociacion-dev
-  - docker pull $REPO:$TAG # Get previous images, improve build speed
   - export TAG=`if [ "$TRAVIS_BRANCH" == "develop" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - docker pull $REPO:$TAG # Get previous images, improve build speed
   - docker build -f Dockerfile -t $REPO:$COMMIT .
-  - docker tag $REPO:$COMMIT $REPO:$TAG
+  - docker tag -f $REPO:$COMMIT $REPO:$TAG
   - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
   - docker push $REPO
