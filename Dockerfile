@@ -49,6 +49,9 @@ RUN git clone https://github.com/mecatronicauncu/Red-Social-Asociacion.git
  # user)
 RUN cd Red-Social-Asociacion && git checkout develop
 
+# Print current commit SHA in index.html
+RUN cd Red-Social-Asociacion && sed -i 's/Version:/Version: '"$(git rev-list --count HEAD)"'.'"$(git rev-parse --short HEAD)"'/' src/index.html
+
 # Install scripts in social network
 RUN cd Red-Social-Asociacion && ./script/bootstrap -v
 
