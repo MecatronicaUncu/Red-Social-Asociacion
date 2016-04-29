@@ -16,7 +16,7 @@
     "json3": "~3.2.6",
     "parsleyjs": "~2.0.5",
     "angular-ui-router": "~0.2.15",
-    "pickadate": "^3.5.6"
+    "pickadate": "https://github.com/MecatronicaUncu/pickadate.js.git#710a75d"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",
