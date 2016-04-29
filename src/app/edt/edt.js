@@ -128,10 +128,11 @@
             var newValue = limit;
             newValue[0]=(limit[1]===60-interval)?limit[0]+1:limit[0];
             newValue[1]=(limit[1]===60-interval)?0:limit[1]+interval;
-            if((currentTo[0] > limit[0]) || ((currentTo[0] <= limit[0]) && (currentTo[1] > limit[1]))){
-                $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('select',newValue);
+            if(!isNaN(currentTo[0])){
+                if((currentTo[0] < limit[0]) || ((currentTo[0] === limit[0]) && (currentTo[1] <= limit[1]))){
+                    $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('select',newValue);
+                }
             }
-            console.log(newValue);
             $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('min',newValue);
         };
 
@@ -142,10 +143,11 @@
             var newValue = limit;
             newValue[0]=(limit[1]===0)?limit[0]-1:limit[0];
             newValue[1]=(limit[1]===0)?60-interval:limit[1]-interval;
-            if((currentFrom[0] < limit[0]) || ((currentFrom[0] >= limit[0]) && (currentFrom[1] < limit[1]))){
-                $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('select',newValue);
+            if(!isNaN(currentFrom[0])){
+                if((currentFrom[0] > limit[0]) || ((currentFrom[0] === limit[0]) && (currentFrom[1] >= limit[1]))){
+                    $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('select',newValue);
+                }
             }
-            console.log(limit);
             $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('max',newValue);
         };
 
