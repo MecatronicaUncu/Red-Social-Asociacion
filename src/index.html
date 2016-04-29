@@ -41,6 +41,12 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
+    <div id="RSAversion">
+      <!-- Do not remove the following line. It is used by Dockerfile to
+        print the website version -->
+      <p>Ver xxx</p>
+    </div>
+
     <!-- compiled vendor JavaScript --><% vendorjs.forEach( function ( file ) { %>
     <script type="text/javascript" src="<%= file %>"></script><% }); %>
     <!-- compiled app.js JavaScript --><% appjs.forEach( function ( file ) { %>
