@@ -19,6 +19,7 @@
                     });
 
                     element.pickadate({
+                        clear: false,
                         min: new Date(),
                         format: 'dd/mm/yyyy',
                         firstDay: 1, //Monday
