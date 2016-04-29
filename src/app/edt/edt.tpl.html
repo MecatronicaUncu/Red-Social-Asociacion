@@ -161,12 +161,10 @@
                         <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['schedule']}} ({{translation.edt[period.days[dayIndex].day + Min]}}):</span>
                         <div class="sign-input-wrap" ng-repeat="(timeIndex, time) in day.times">
                             <div class="dropdown newActSelect">
-				    <input type="text" ng-model="time.from" placeholder="{{translation.edt['from']}}" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$" ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'from')" data-parsley-ui-enabled="false" ng-required="newActDays[periodIndex][dayIndex]===true">
+                              <input id="newActTimeFrom{{periodIndex}}-{{dayIndex}}-{{timeIndex}}" type="text" ng-model="time.from" placeholder="{{translation.edt['from']}}" class="sign-input" data-parsley-ui-enabled="false" ng-change="setMinTimeTo(periodIndex,dayIndex,timeIndex)" ng-required="newActDays[periodIndex][dayIndex]===true">
                             </div>
                             <div class="dropdown newActSelect">
-				<input type="text" ng-model="time.to" placeholder="{{translation.edt['to']}}" class="sign-input" pattern="[0-9][0-9][h][0-9][0-9]$"
-                                       ng-change="correctTime(periodIndex, dayIndex, timeIndex, 'to')" data-parsley-ui-enabled="false"
-                                       ng-required="newActDays[periodIndex][dayIndex]===true">
+                              <input id="newActTimeTo{{periodIndex}}-{{dayIndex}}-{{timeIndex}}" type="text" ng-model="time.to" placeholder="{{translation.edt['to']}}" class="sign-input" data-parsley-ui-enabled="false" ng-required="newActDays[periodIndex][dayIndex]===true" ng-change="setMaxTimeFrom(periodIndex,dayIndex,timeIndex)">
                             </div>
                             <button ng-click="addRemoveTime(periodIndex, dayIndex, -1)" class="edtSearchBtn newActAddRemoveBtn dropdown-toggle" type="button" ng-if="$last">
                                 <i class="fa fa-fw fa-plus-circle"></i>
