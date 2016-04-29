@@ -139,21 +139,23 @@
                     <div class="sign-input-wrap" ng-show="daySelected(periodIndex)">
                         <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['date']}}:</span>
-                            <input id="newActFrom{{periodIndex}}" type="text" 
+                            <input calendar-input id="newActFrom{{periodIndex}}" type="text" 
                                    placeholder="{{translation.edt['from']}}"
                                    class="sign-input" data-parsley-ui-enabled="false" 
                                    ng-model="dummyWhenFrom[periodIndex]"
                                    ng-change="newActWhenFrom(dummyWhenFrom[periodIndex], periodIndex)"
-                                   ng-required="daySelected(periodIndex)">
+                                   ng-required="daySelected(periodIndex)"
+                                   days-selected="newActDays[periodIndex]">
                         </div>
                         <div class="dropdown newActSelect">
                             <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['date']}}:</span>
-                            <input id="newActTo{{periodIndex}}" type="text"
+                            <input calendar-input id="newActTo{{periodIndex}}" type="text"
                                    placeholder="{{translation.edt['to']}}" 
                                    class="sign-input" data-parsley-ui-enabled="false" 
                                    ng-model="dummyWhenTo[periodIndex]"
                                    ng-change="newActWhenTo(dummyWhenTo[periodIndex], periodIndex)"
-                                   ng-required="true">
+                                   ng-required="true"
+                                  days-selected="newActDays[periodIndex]">
                         </div>
                     </div>
 

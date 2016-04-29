@@ -99,7 +99,6 @@
                 $scope.newActDays.push([false, false, false, false, false, false, false]);
                 $scope.newAct.periods[periodIndex].type = ($scope.actTypes.length > 0) ? $scope.actTypes[0].label : 'NOT_SPECIFIED';
                 $timeout(function(){
-                  $scope.attachCalendar(periodIndex);
                   $scope.newActDays[periodIndex].forEach(function(day,i){
                       $('#newActTimeFrom'+periodIndex+'-'+i+'-0').pickatime({
                           min: $scope.config.limits.start.split('h').map(function(el){return parseInt(el);}),
@@ -679,12 +678,6 @@
             });
         };
 
-        $scope.renderCalendars = function(periodIndex){
-            $('#newActTo' + periodIndex).pickadate('picker').render();
-            $('#newActFrom' + periodIndex).pickadate('picker').render();
-        };
-
-
         /**
          * Guarda en newAct el valor de la fecha [de inicio] || [de desarrollo] de
          * la actividad. Autocompleta el campo de fin de actividad.
@@ -835,36 +828,6 @@
 
             $scope.newActDays = [];
             $scope.addRemovePeriod(-1);
-        };
-
-        $scope.attachCalendar = function (periodIndex) {
-            /**
-             * Configuración del calendario de fecha de inicio.
-             * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
-             */
-            $('#newActFrom' + periodIndex).pickadate({
-                min: new Date(),
-                format: 'dd/mm/yyyy',
-                firstDay: 1, //Monday
-                disable: [
-                    true,
-                    function(){ return $scope.newActDays[periodIndex].map(function(boolDay,i){i=i+1; i=(i===7?0:i); return boolDay?i:10;}); }
-                ]
-            });
-
-            /**
-             * Configuración del calendario de fecha de cierre.
-             * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
-             */
-            $('#newActTo' + periodIndex).pickadate({
-                min: new Date(),
-                format: 'dd/mm/yyyy',
-                firstDay: 1, //Monday
-                disable: [
-                    true,
-                    function(){ return $scope.newActDays[periodIndex].map(function(boolDay,i){i=i+1; i=(i===7?0:i); return boolDay?i:10;}); }
-                ]
-            });
         };
 
         /**
