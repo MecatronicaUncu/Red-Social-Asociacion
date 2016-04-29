@@ -98,22 +98,6 @@
                     {day: 'vi', times: [{}]}, {day: 'sa', times: [{}]}, {day: 'do', times: [{}]}];
                 $scope.newActDays.push([false, false, false, false, false, false, false]);
                 $scope.newAct.periods[periodIndex].type = ($scope.actTypes.length > 0) ? $scope.actTypes[0].label : 'NOT_SPECIFIED';
-                $timeout(function(){
-                  $scope.newActDays[periodIndex].forEach(function(day,i){
-                      $('#newActTimeFrom'+periodIndex+'-'+i+'-0').pickatime({
-                          min: $scope.config.limits.start.split('h').map(function(el){return parseInt(el);}),
-                          max: $scope.config.limits.end.split('h').map(function(el){return parseInt(el);}),
-                          format: 'HH!hi',
-                          editable: false
-                      });
-                      $('#newActTimeTo'+periodIndex+'-'+i+'-0').pickatime({
-                          min: $scope.config.limits.start.split('h').map(function(el){return parseInt(el);}),
-                          max: $scope.config.limits.end.split('h').map(function(el){return parseInt(el);}),
-                          format: 'HH!hi',
-                          editable: false
-                      });
-                  });
-                },300);
             }
             //Remove
             else {
@@ -130,21 +114,6 @@
             //Add
             if (timeIndex === -1) {
                 $scope.newAct.periods[periodIndex].days[dayIndex].times.push({});
-                var i = $scope.newAct.periods[periodIndex].days[dayIndex].times.length-1;
-                $timeout(function(){
-                  $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+i).pickatime({
-                      min: $scope.config.limits.start.split('h').map(function(el){return parseInt(el);}),
-                      max: $scope.config.limits.end.split('h').map(function(el){return parseInt(el);}),
-                      format: 'HH!hi',
-                      editable: false
-                  });
-                  $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+i).pickatime({
-                      min: $scope.config.limits.start.split('h').map(function(el){return parseInt(el);}),
-                      max: $scope.config.limits.end.split('h').map(function(el){return parseInt(el);}),
-                      format: 'HH!hi',
-                      editable:false
-                  });
-                },200);
             }
             //Remove
             else {

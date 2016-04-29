@@ -163,10 +163,10 @@
                         <span class="edtSearchBtn newActBtn newActLbl">{{translation.edt['schedule']}} ({{translation.edt[period.days[dayIndex].day + Min]}}):</span>
                         <div class="sign-input-wrap" ng-repeat="(timeIndex, time) in day.times">
                             <div class="dropdown newActSelect">
-                              <input id="newActTimeFrom{{periodIndex}}-{{dayIndex}}-{{timeIndex}}" type="text" ng-model="time.from" placeholder="{{translation.edt['from']}}" class="sign-input" data-parsley-ui-enabled="false" ng-change="setMinTimeTo(periodIndex,dayIndex,timeIndex)" ng-required="newActDays[periodIndex][dayIndex]===true">
+                              <input rsa-time-input id="newActTimeFrom{{periodIndex}}-{{dayIndex}}-{{timeIndex}}" type="text" ng-model="time.from" placeholder="{{translation.edt['from']}}" class="sign-input" data-parsley-ui-enabled="false" ng-change="setMinTimeTo(periodIndex,dayIndex,timeIndex)" ng-required="newActDays[periodIndex][dayIndex]===true" limits="config.limits">
                             </div>
                             <div class="dropdown newActSelect">
-                              <input id="newActTimeTo{{periodIndex}}-{{dayIndex}}-{{timeIndex}}" type="text" ng-model="time.to" placeholder="{{translation.edt['to']}}" class="sign-input" data-parsley-ui-enabled="false" ng-required="newActDays[periodIndex][dayIndex]===true" ng-change="setMaxTimeFrom(periodIndex,dayIndex,timeIndex)">
+                              <input rsa-time-input id="newActTimeTo{{periodIndex}}-{{dayIndex}}-{{timeIndex}}" type="text" ng-model="time.to" placeholder="{{translation.edt['to']}}" class="sign-input" data-parsley-ui-enabled="false" ng-required="newActDays[periodIndex][dayIndex]===true" ng-change="setMaxTimeFrom(periodIndex,dayIndex,timeIndex)" limits="config.limits">
                             </div>
                             <button ng-click="addRemoveTime(periodIndex, dayIndex, -1)" class="edtSearchBtn newActAddRemoveBtn dropdown-toggle" type="button" ng-if="$last">
                                 <i class="fa fa-fw fa-plus-circle"></i>
