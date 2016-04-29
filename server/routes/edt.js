@@ -33,23 +33,41 @@ exports.getPlaces = function(req, res, next){
   res.status(501).send('Not Implemented');
 };
 
+var configFile = path.resolve(path.join(__dirname, '../config/edtConfig.json'));
+var edtConfig = null;
+
+fs.readFile(configFile, 'utf-8', function (err, config) {
+    if (err){
+        console.log(err);
+        return;
+    }
+    else{
+        edtConfig = JSON.parse(config);
+    }
+});
+
 /**
  * TODO : Comment on functionality
  */
 exports.getEdtConfig = function(req, res, next){
-    
-    //TODO: Configuracion personal del usuario
-    
-    var configFile = path.resolve(path.join(__dirname, '../config/edtConfig.json'));
-    
-    fs.readFile(configFile, 'utf-8', function (err, config) {
-        if (err){
-            res.sendStatus(500);
-        }
-        else{
-            res.status(200).send({config: JSON.parse(config)});
-        }
-    });  
+
+	if(edtConfig){
+		res.status(200).send({config: edtConfig});
+	}else{
+		try{
+			fs.readFile(configFile, 'utf-8', function (err, config) {
+				if (err){
+					console.log(err);
+					res.status(500).send(err);
+				}
+				else{
+					res.status(200).send({config: JSON.parse(config)});
+				}
+			});
+		}catch(err){
+			res.status(500).send(err);
+		}
+	}
 };
 
 /**
@@ -187,14 +205,37 @@ exports.getActivityTypes = function (req, res, next) {
  * TODO : Comment on functionality
  */
 exports.newActivity = function (req, res, next) {
+
+    if(!req.id){
+      res.status(401).send('Unauthorized');
+      return;
+    }
+
     var acts = req.body.activities;
+    if(!acts || acts.length === 0){
+      res.status(400).send('Missing Activities');
+      return;
+    }
+    //Verify time limits
+    var error = acts.some(function(act){
+      if(act.to > edtConfig.limits.end || act.from < edtConfig.limits.start){
+        return true;
+      }else{
+        return false;
+      }
+    });
+
+    if(error){
+      res.status(400).send('Activity Off Limits');
+      return;
+    }
 
     Edt.newActivity(acts, function (err, result) {
         if (err) {
             res.status(500).send(err);
             return;
         } else {
-            res.status(200).send('OK');
+            res.status(200).send('Activity Created Successfully');
             return;
         }
     });

@@ -305,36 +305,18 @@ module.exports = function ( grunt ) {
                     listStyle: "indent", // "flat"|"indent"
                     activity: false
                 },
-                // junit: {
-                //     savePath: "./reports",
-                //     filePrefix: "junit-report",
-                //     consolidate: true,
-                //     useDotNotation: true
-                // },
-                // nunit: {
-                //     savePath: "./reports",
-                //     filename: "nunit-report.xml",
-                //     reportName: "Test Results"
-                // },
-                // terminal: {
-                //     color: false,
-                //     showStack: false,
-                //     verbosity: 2
-                // },
-                // teamcity: true,
-                // tap: true
             },
             // add custom Jasmine reporter(s)
             customReporters: []
         },
-        your_target: {
+        unit: {
             // target specific options
             options: {
                 useHelpers: true
             },
             // spec files
             specs: [
-				'server/specs/*spec.js'
+                '<%= server_files.jsunit %>'
             ]
             //helpers: [
             //    "test/helpers/**"
@@ -356,6 +338,13 @@ module.exports = function ( grunt ) {
       ],
       test: [
         '<%= app_files.jsunit %>'
+      ],
+//      server: [
+//        '<%= server_files.js %>'
+//      ],
+      server_test: [
+        '<%= server_files.jsunit %>',
+        '<%= server_files.jsmock %>'
       ],
       gruntfile: [
         'Gruntfile.js'
@@ -503,17 +492,28 @@ module.exports = function ( grunt ) {
       },
       prod: {
         options: {
-          script: 'server/server.js',
+          script: 'server/run.js',
           background: false,
           args: [ 'prod' ]
         }
       },
       dev: {
         options: {
-          script: 'server/server.js',
+          script: 'server/run.js',
           args: [ 'dev' ]
         }
       }
+    },
+
+    /**
+     * This task clear the require's cache
+     */
+    uncache: {
+        srvunit: {
+            src: [
+                '<%= server_files.jsunit %>'
+            ]
+        }
     },
 
     /**
@@ -558,6 +558,20 @@ module.exports = function ( grunt ) {
           '<%= app_files.js %>'
         ],
         tasks: [ 'jshint:src', 'karma:unit', 'copy:build_appjs' ]
+      },
+
+      /**
+       * When our Server source files change, we want to run lint them and
+       * run our unit tests.
+       */
+      srvsrc: {
+        files: [
+          '<%= server_files.js %>'
+        ],
+        tasks: [ 'jshint:server', 'express:dev:stop', 'uncache:srvunit', 'jasmine_nodejs:unit', 'express:dev' ],
+        options: {
+          spawn: false
+        }
       },
 
       /**
@@ -624,6 +638,22 @@ module.exports = function ( grunt ) {
       },
 
       /**
+       * When a Server unit test file changes, we only want to lint it and
+       * run the unit tests. We don't want to do any live reloading.
+       */
+      srvunit: {
+        files: [
+          '<%= server_files.jsunit %>',
+          '<%= server_files.jsmock %>'
+        ],
+        tasks: [ 'jshint:server_test', 'express:dev:stop', 'uncache:srvunit', 'jasmine_nodejs', 'express:dev' ],
+        options: {
+          livereload: false,
+          spawn: false
+        }
+      },
+
+      /**
        * When a CoffeeScript unit test file changes, we only want to lint it and
        * run the unit tests. We don't want to do any live reloading.
        */
@@ -634,17 +664,6 @@ module.exports = function ( grunt ) {
         tasks: [ 'coffeelint:test', 'karma:unit' ],
         options: {
           livereload: false
-        }
-      },
-
-      /**
-       * When the Express server or one of its modules changes, restart the server
-       */
-      express: {
-        files: [ 'server/**/*.js' ],
-        tasks: [ 'express:dev' ],
-        options: {
-            spawn: false
         }
       }
     }
@@ -816,4 +835,19 @@ module.exports = function ( grunt ) {
     });
   });
 
+    /*
+     * When running multiple times grunt-jasmine-nodejs the spec files are not
+     * reloaded because of require's cache. Until we find another solution, manually
+     * clear cache.
+     *
+     * inspired by: https://github.com/gruntjs/grunt-contrib-watch/issues/67
+     */
+    grunt.registerMultiTask('uncache', 'Un-caches cached specs', function(){
+        var specs = this.filesSrc;
+
+        specs.forEach(function(specFile){
+            grunt.verbose.writeln('Deleting file : ', specFile, 'from require\'s cache');
+            delete require.cache[require.resolve('./' + specFile)];
+        });
+    });
 };

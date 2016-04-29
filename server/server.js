@@ -7,21 +7,7 @@ var express = require('express')
     , edt = require('./routes/edt.js')
     , admin = require('./routes/admin.js')
     , secur = require('./routes/secur.js')
-    , fs = require('fs')
-    , http = require('http')
-    , https = require('https')
-    , passphrase = 'mecuncu'
-    , key_file = './server/Red-Social-Asociacion.key'
-    , cert_file = './server/Red-Social-Asociacion.crt'
-    , config = {
-        key: fs.readFileSync(key_file),
-        cert: fs.readFileSync(cert_file),
-        passphrase: passphrase
-    }
     , path = require('path')
-    , cluster = require('cluster')
-    , domain = require('domain')
-    , numCPU = require('os').cpus().length
     , favicon = require('serve-favicon')
     , logger = require('morgan')
     , bodyParser = require('body-parser')
@@ -114,7 +100,7 @@ app.get('/edtconfig', edt.getEdtConfig);
 app.get('/edtplaces', edt.getPlaces);
 app.get('/getTimesIcal', edt.getTimesIcal);
 app.get('/subscriptions', secur.extractCookieData, users.getSubscriptions);
-app.post('/edtnewact', edt.newActivity);
+app.post('/edtnewact', secur.extractCookieData, edt.newActivity);
 /******************************************************************************/
 
 /****************************   COOKIES REQUESTS   ****************************/
@@ -191,74 +177,4 @@ app.get('/', function (req, res) {
 app.get('/images/pub/:name', users.getPub);
 /******************************************************************************/
 
-/******************************************************************************/
-/*                           START SERVER                                     */
-/******************************************************************************/
-//http.createServer(app).listen(app.get('port'), function(){
-//  console.log("Express server listening on port " + app.get('port'));
-//});
-
-//https.createServer(config, app).listen(app.get('port'), function () {
-//    console.log("Express HTTPS server listening on port " + app.get('port'));
-//});
-
-
-if (cluster.isMaster) {
-  // Si el proceso es el proceso maestro se crean los procesos worker
-  for (var i = 0; i < numCPU; i++) {
-    cluster.fork();
-  }
-
-  cluster.on('disconnect', function(worker) {
-    console.log('worker ' + worker.process.pid + ' died');
-    cluster.fork();
-  }); 
-
-} else {
-  var server = https.createServer(config, app, function(request, response) {
-    var d = domain.create();
-    d.on('error', function(err) {
-      console.log(err.stack);
-
-      try {
-        // Ten minutes to let other connections finish:
-        var killTimer = setTimeout(function() {
-          process.exit(1);
-        }, 30000);
-        killTimer.unref(); // Don't stay up just for the timer
-        server.close(); // stop taking new requests.
-        cluster.worker.disconnect(); // Let the master know we're dead.
-        // try to send an error to the request that triggered the problem
-        res.statusCode = 500;
-        res.setHeader('content-type', 'text/plain');
-        res.end('Oops, there was a problem!\n');
-      } catch (err2) {
-        console.log("Error handling error!: " + err2);
-      } 
-    });
-
-    d.add(request);  // Explicit binding
-    d.add(response); // Explicit binding
-
-    d.run(function() {
-      handleRequest(req, res);
-    });
-  }).listen(app.get('port'), function () {
-    console.log("Express HTTPS server listening on port " + app.get('port'));
-    });
-} 
-
-// You'd put your fancy application logic here.
-function handleRequest(req, res) {
-  switch(req.url) {
-    case '/error':
-      // We do some async stuff, and then...
-      setTimeout(function() {
-        // Whoops!
-        flerb.bark();
-      });
-      break;
-    default:
-      res.end('ok');
-  }
-}
+module.exports = app;

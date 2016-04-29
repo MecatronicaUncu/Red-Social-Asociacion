@@ -586,9 +586,9 @@
 
             //TODO: HACERLO FOR EACH PERIOD Y TIME!
             console.log($scope.config.limits);
+            var msg = null;
             $scope.newAct.periods[periodIndex].days[dayIndex].times.forEach(function (time, timeIndex) {
                 console.log(time);
-                var msg = null;
                 if ($scope.getminutes(time.from) < $scope.getminutes($scope.config.limits.start)) {
                     msg = 'La hora inicial no puede ser anterior al inicio general! (' +
                         $scope.config.limits.start + ') en Periodo ' + (periodIndex + 1) + ', ' +
@@ -609,17 +609,16 @@
                         ', Horario ' + (timeIndex + 1);
                 } else {
                     $('#WrongAct').prop('hidden', true);
-                    return false;
-                }
-
-                if (msg) {
-                    $('#WrongAct').text(msg).prop('hidden', false);
-                    return true;
-                } else {
-                    $('#WrongAct').prop('hidden', true);
-                    return false;
                 }
             });
+
+            if (msg) {
+                $('#WrongAct').text(msg).prop('hidden', false);
+                return true;
+            } else {
+                $('#WrongAct').prop('hidden', true);
+                return false;
+            }
         };
 
         /**
