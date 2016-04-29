@@ -3,7 +3,7 @@
     'use strict';
 
     angular.module('linkedEnibApp')
-        .directive('calendarInput', function(){
+        .directive('rsaCalendarInput', function(){
             return {
                 restrict: 'A',
                 scope: {
