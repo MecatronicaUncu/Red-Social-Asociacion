@@ -98,9 +98,6 @@
                     {day: 'vi', times: [{}]}, {day: 'sa', times: [{}]}, {day: 'do', times: [{}]}];
                 $scope.newActDays.push([false, false, false, false, false, false, false]);
                 $scope.newAct.periods[periodIndex].type = ($scope.actTypes.length > 0) ? $scope.actTypes[0].label : 'NOT_SPECIFIED';
-                $timeout(function(){
-                  $scope.attachCalendar(periodIndex);
-                },300);
             }
             //Remove
             else {
@@ -122,6 +119,36 @@
             else {
                 $scope.newAct.periods[periodIndex].days[dayIndex].times.splice(timeIndex, 1);
             }
+        };
+
+        $scope.setMinTimeTo = function(periodIndex, dayIndex, timeIndex){
+            var currentTo = $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').get().split('h').map(function(str){return parseInt(str);});
+            var limit = $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').get().split('h').map(function(str){return parseInt(str);});
+            var interval = $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').get('interval');
+            var newValue = limit;
+            newValue[0]=(limit[1]===60-interval)?limit[0]+1:limit[0];
+            newValue[1]=(limit[1]===60-interval)?0:limit[1]+interval;
+            if(!isNaN(currentTo[0])){
+                if((currentTo[0] < limit[0]) || ((currentTo[0] === limit[0]) && (currentTo[1] <= limit[1]))){
+                    $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('select',newValue);
+                }
+            }
+            $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('min',newValue);
+        };
+
+        $scope.setMaxTimeFrom = function(periodIndex, dayIndex, timeIndex){
+            var currentFrom = $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').get().split('h').map(function(str){return parseInt(str);});
+            var limit = $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').get().split('h').map(function(str){return parseInt(str);});
+            var interval = $('#newActTimeTo'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').get('interval');
+            var newValue = limit;
+            newValue[0]=(limit[1]===0)?limit[0]-1:limit[0];
+            newValue[1]=(limit[1]===0)?60-interval:limit[1]-interval;
+            if(!isNaN(currentFrom[0])){
+                if((currentFrom[0] > limit[0]) || ((currentFrom[0] === limit[0]) && (currentFrom[1] >= limit[1]))){
+                    $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('select',newValue);
+                }
+            }
+            $('#newActTimeFrom'+periodIndex+'-'+dayIndex+'-'+timeIndex).pickatime('picker').set('max',newValue);
         };
 
         //Necesita translations..
@@ -636,7 +663,7 @@
             var year = date[2] - 0;
 
             date = new Date(year, month, day);
-            $('#newActTo' + periodIndex).datepicker("option", "minDate", date);
+            $('#newActTo' + periodIndex).pickadate('picker').set('min', date).set('highlight',date).render();
             date = $scope.DobToYWDarr(date);
 
             $scope.newAct.periods[periodIndex].from = {year: date[0], week: date[1], day: date[2]};
@@ -750,39 +777,6 @@
             return (h < 10 ? '0' + h : h) + 'h' + (m < 10 ? '0' + m : m);
         };
 
-        /**
-         * Impide al usuario ingresar cadenas de caracteres erróneas y no conformes al formato de horarios.
-         * Sólo permite ingresar números, y autocompleta la 'h'. Tampoco permite ingresar por ejemplo, 
-         * la cifra '7' para las horas.
-         * 
-         * @param  {String} Valor de hora
-         * @return {Bool}    true si la hora fue completada con éxito. false si falta algún dato.
-         *
-         * TODO: Permitir ingresar sólo el '7' para '07h00' por ejemplo. Lo mismo para los minutos
-         */
-        $scope.correctTime = function (periodIndex, dayIndex, timeIndex, toFrom) {
-            var el = $scope.newAct.periods[periodIndex].days[dayIndex].times[timeIndex][toFrom];
-            var matches = /([0-2]{0,1})([0-9]{0,1})(h{0,1})([0-5]{0,1})([0-9]{0,1})/g.exec(el);
-            if (matches[1] === '') {
-                el = '';
-            } else if (matches[2] === '' || parseInt(matches[1] + '' + matches[2]) > 23) {
-                el = matches[1];
-            } else if (matches[4] === '') {
-                el = matches[1] + '' + matches[2] + 'h';
-            } else if (matches[5] === '') {
-                el = matches[1] + '' + matches[2] + 'h' + '' + matches[4];
-            } else if (matches[5] !== '') {
-                el = matches[1] + '' + matches[2] + 'h' + '' + matches[4] + '' + matches[5];
-                $scope.newAct.periods[periodIndex].days[dayIndex].times[timeIndex][toFrom] = el;
-                return true;
-                //Desabilitar input?
-            }
-
-            $scope.newAct.periods[periodIndex].days[dayIndex].times[timeIndex][toFrom] = el;
-
-            return false;
-        };
-
         $scope.clearAct = function () {
             $scope.newAct.periods = [];
             $scope.newAct.whatId = $scope.actAsocs[0].instID;
@@ -804,37 +798,6 @@
 
             $scope.newActDays = [];
             $scope.addRemovePeriod(-1);
-        };
-
-        $scope.attachCalendar = function (periodIndex) {
-            /**
-             * Configuración del calendario de fecha de inicio.
-             * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
-             */
-            $('#newActFrom' + periodIndex).datepicker({minDate: 0,
-                showWeek: true,
-                dateFormat: 'dd/mm/yy',
-                defaultDate: 0,
-                firstDay: 1,
-                beforeShowDay: function (date) {
-                    date = $scope.DobToYWDarr(date);
-                    return [$scope.newActDays[periodIndex][date[2] - 1]];
-                }
-            });
-
-            /**
-             * Configuración del calendario de fecha de cierre.
-             * Por más que diga dd/mm/yy el formato mostrado es dd/mm/yyyy
-             */
-            $('#newActTo' + periodIndex).datepicker({showWeek: true,
-                dateFormat: 'dd/mm/yy',
-                firstDay: 1,
-                minDate: 0,
-                beforeShowDay: function (date) {
-                    date = $scope.DobToYWDarr(date);
-                    return [$scope.newActDays[periodIndex][date[2] - 1]];
-                }
-            });
         };
 
         /**

@@ -13,10 +13,10 @@
     "font-awesome": "~4.3.0",
     "jQuery.mmenu": "~5.6.2",
     "jquery": "~2.1.4",
-    "jquery-ui": "~1.11.2",
     "json3": "~3.2.6",
     "parsleyjs": "~2.0.5",
-    "angular-ui-router": "~0.2.15"
+    "angular-ui-router": "~0.2.15",
+    "pickadate": "https://github.com/MecatronicaUncu/pickadate.js.git#710a75d"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",
