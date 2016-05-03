@@ -12,7 +12,7 @@ exports.getTimes = function(timeData, callback){
     
     var query = [
         'MATCH (a:ACTIVITY)',
-        'WHERE (a.whatId='+timeData.whatId+' OR a.whoId='+timeData.whoId+')',
+        'WHERE (a.whatId='+timeData.id+' OR a.whoId='+timeData.id+')',
         'AND a.week='+timeData.week+' AND a.year='+timeData.year,
         'RETURN a AS time, ID(a) AS idNEO'
     ].join('\n');

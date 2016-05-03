@@ -350,8 +350,8 @@ User.isFriend = function (id, friend, callback) {
 User.getSubscriptions = function (idNEO, callback){
     
     var query = [
-        'MATCH (n:User)-[:SUBSCRIBED]->(s) WHERE ID(n)='+idNEO,
-        'RETURN distinct s, ID(s) AS idNEO'
+        'MATCH (n:User)-[r:SUBSCRIBED]->(s) WHERE ID(n)='+idNEO,
+        'RETURN distinct s, ID(s) AS idNEO, r.mergeCal AS mergeCal'
     ].join('\n');
     
     try{
@@ -363,6 +363,7 @@ User.getSubscriptions = function (idNEO, callback){
 			results.forEach(function(el){
 				var temp = el.s.properties;
 				temp['idNEO']=el.idNEO;
+                temp['mergeCal']=el.mergeCal;
 				subsc.push(temp);
 			});
 			return callback(null,subsc);
@@ -488,12 +489,13 @@ User.subscribe = function(idNEO, instId, callback){
     
     var params = {
         instID: instId,
-        usrID: idNEO
+        usrID: idNEO,
+        mergeCal: true
     };
   
     var query = [
     'MATCH (u),(i) WHERE ID(u)={usrID} AND ID(i)={instID}',
-    'MERGE (u)-[:SUBSCRIBED]->(i)'
+    'MERGE (u)-[:SUBSCRIBED {mergeCal: {mergeCal}}]->(i)'
     ].join('\n');
     
     try{

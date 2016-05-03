@@ -75,8 +75,8 @@ exports.getEdtConfig = function(req, res, next){
  */
 exports.getTimesIcal = function(req, res, next){
     
-    if( !req.query.whatId || !req.query.whoId || 
-        !req.query.week || !req.query.year || !req.query.whatName)
+    if( !req.query.id || !req.query.week
+        || !req.query.year || !req.query.whatName)
     {
         res.status(401).send('Missing information');
         return;
@@ -86,8 +86,7 @@ exports.getTimesIcal = function(req, res, next){
         //TODO: Extender a array de whats
         whatName: req.query.whatName,
         //whoName: req.query.whoName,
-        whatId: req.query.whatId,
-        whoId: req.query.whoId,
+        id: req.query.id,
         week: req.query.week,
         year: req.query.year,
     };
@@ -160,8 +159,7 @@ exports.getTimesIcal = function(req, res, next){
 exports.getTimes = function(req, res, next){
   
     var timeData = {
-        whatId: req.query.whatId,
-        whoId: req.query.whoId,
+        id: req.query.id,
         week: req.query.week,
         year: req.query.year,
     };

@@ -13,9 +13,9 @@
     };
 
     var api = {
-      getTimes: function(whatId, whoId, week, year, next){
+      getTimes: function(id, week, year, next){
         $http({ method:'GET', url:'/times',
-                params:{whatId:whatId, whoId:whoId, week:week, year:year}})
+                params:{id:id, week:week, year:year}})
         .success(function(data){
           return next(null,data.times);
         })

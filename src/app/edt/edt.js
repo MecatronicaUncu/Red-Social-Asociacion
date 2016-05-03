@@ -23,15 +23,12 @@
         //Required. If not present produce errors.
         $scope.dummyWhenFrom = [];
         $scope.dummyWhenTo = [];
-        $scope.whatIdToSearch = 0;
-        $scope.whoIdToSearch = 0;
+        $scope.idToSearch = 0;
         
         if($stateParams.id){
-            $scope.whatIdToSearch = $stateParams.id;
-            $scope.whoIdToSearch = $stateParams.id;
+            $scope.idToSearch = $stateParams.id;
         }else{
-            $scope.whatIdToSearch = 0;
-            $scope.whoIdToSearch = 0;
+            $scope.idToSearch = 0;
         }
 
         $scope.newAct = {
@@ -274,8 +271,7 @@
         };
 
         $scope.selectFav = function(fav){
-            $scope.whoIdToSearch = 0;
-            $scope.whatIdToSearch = fav.idNEO;
+            $scope.idToSearch = fav.idNEO;
             
             $scope.edtGetTimes();
         };
@@ -327,8 +323,7 @@
             $scope.setDates($scope.thisWeek);
             $scope.newActCollapse = true;
 
-            $scope.whoIdToSearch = session.getID();
-            $scope.whatIdToSearch = 0;
+            $scope.idToSearch = session.getID();
 
             $scope.edtGetTimes();
 
@@ -548,8 +543,7 @@
          */
         $scope.edtGetTimes = function () {
 
-            edt.getTimes(   $scope.whatIdToSearch, 
-                            $scope.whoIdToSearch, 
+            edt.getTimes(   $scope.idToSearch,
                             $scope.searchWeek, 
                             $scope.thisYear, 
                             function (err, times) {
@@ -785,14 +779,13 @@
             $scope.newAct.whoName = session.getProfile().firstName[0] + '. ' + session.getProfile().lastName;
 
             if($stateParams.id){
-                $scope.whatIdToSearch = $stateParams.id;
-                $scope.whoIdToSearch = $stateParams.id;
+                $scope.idToSearch = $stateParams.id;
             }else{
-                $scope.whatIdToSearch = 0;
+                $scope.idToSearch = 0;
                 if(session.isLoggedIn()){
-                    $scope.whoIdToSearch = session.getID();
+                    $scope.idToSearch = session.getID();
                 }else{
-                    $scope.whoIdToSearch = 0;
+                    $scope.idToSearch = 0;
                 }
             }
 
@@ -824,9 +817,9 @@
         $scope.$on('login', function () {
             $scope.newAct.whoId = session.getID();
             if($stateParams.id){
-                $scope.whoIdToSearch = $stateParams.id;
+                $scope.idToSearch = $stateParams.id;
             }else{
-                $scope.whoIdToSearch = session.getID();
+                $scope.idToSearch = session.getID();
             }
         });
 
@@ -851,9 +844,9 @@
         if (session.isLoggedIn()) {
             $scope.newAct.whoId = session.getID();
             if($stateParams.id){
-                $scope.whoIdToSearch = $stateParams.id;
+                $scope.idToSearch = $stateParams.id;
             }else{
-                $scope.whoIdToSearch = session.getID();
+                $scope.idToSearch = session.getID();
             }
         }
 
