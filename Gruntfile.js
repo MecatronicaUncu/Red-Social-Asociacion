@@ -100,6 +100,16 @@ module.exports = function ( grunt ) {
      * `build_dir`, and then to copy the assets to `compile_dir`.
      */
     copy: {
+      favicon: {
+        files: [
+          {
+            src: [ 'favicon.ico' ],
+            dest: '<%= build_dir %>/',
+            cwd: 'src',
+            expand: true
+          }
+        ]
+      },
       build_app_assets: {
         files: [
           { 
@@ -692,7 +702,7 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'build', [
     'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'sass:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
-    'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_vendorcss', 'index:build', 
+    'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_vendorcss', 'copy:favicon', 'index:build', 
     'jasmine_nodejs', 'karmaconfig', 'karma:unit' 
   ]);
 

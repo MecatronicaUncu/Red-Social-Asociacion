@@ -83,6 +83,7 @@ app.use(cors(corsOptions));
 app.use(express.static(path.join(__dirname, '../build/src/app')));
 app.use(express.static(path.join(__dirname, '../build')));
 app.use(express.static(path.join(__dirname, 'routes/upload')));
+app.use(express.static(path.join(__dirname, '../build/src/icons')));
 
 
 if('development' == app.get('env')){
