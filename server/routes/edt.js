@@ -158,8 +158,13 @@ exports.getTimesIcal = function(req, res, next){
  */
 exports.getTimes = function(req, res, next){
   
+    if(!Array.isArray(req.query.ids)){
+        req.query.ids = req.query.ids?[req.query.ids]:[];
+    }
     var timeData = {
-        id: req.query.id,
+        me: req.query.me==="true",
+        myID: req.id,
+        ids: req.query.ids,
         week: req.query.week,
         year: req.query.year,
     };

@@ -11,11 +11,28 @@ var db = new neo4j.GraphDatabase(
 exports.getTimes = function(timeData, callback){
     
     var query = [
-        'MATCH (a:ACTIVITY)',
-        'WHERE (a.whatId='+timeData.id+' OR a.whoId='+timeData.id+')',
-        'AND a.week='+timeData.week+' AND a.year='+timeData.year,
-        'RETURN a AS time, ID(a) AS idNEO'
-    ].join('\n');
+        'MATCH (a:ACTIVITY) WHERE'
+    ];
+
+    var whereQuery = '(';
+    if(timeData.ids.length === 0){
+        whereQuery += ' FALSE';
+    }else{
+        timeData.ids.forEach(function(id){
+            whereQuery += 'a.whatId='+id+' OR ';
+        });
+        whereQuery = whereQuery.slice(0,-4);
+    }
+    if(timeData.me){
+        whereQuery += ' OR a.whoId='+timeData.myID;
+    }
+    whereQuery += ')';
+    query.push(
+        whereQuery,
+        ' AND a.week='+timeData.week+' AND a.year='+timeData.year,
+        'RETURN DISTINCT a AS time, ID(a) AS idNEO'
+    );
+    query = query.join('\n');
     
     try{
 		db.cypher({query:query, params:null}, function (err, res) {
