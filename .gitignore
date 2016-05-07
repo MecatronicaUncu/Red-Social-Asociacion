@@ -2,9 +2,6 @@
 node_modules
 vendor
 
-# MongoDB database
-mongodata
-
 # IDEs created files
 nbproject/
 .project
@@ -18,7 +15,7 @@ nbproject/
 *.log
 */*.log
 
-# Uploaded files 
+# Uploaded files
 server/routes/upload
 
 # start-stop services scripts
@@ -29,9 +26,6 @@ server/neoStop
 
 # neo4j installation
 server/neo*
-
-# mongoDB installation
-server/mongodb
 
 # Vim temp files
 .*.swp
@@ -51,7 +45,7 @@ build/
 *.csr
 
 # testDataset created files
-bootstrap/testDataset/people_email_pass.csv
-bootstrap/testDataset/people_email_pass_salt.csv
-bootstrap/testDataset/usersIDs.csv
+script/Datasets/userBase/people_email_pass.csv
+script/Datasets/userBase/people_email_pass_salt.csv
+script/Datasets/userBase/usersIDs.csv
 
