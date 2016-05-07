@@ -19,6 +19,7 @@ before_install:
 notifications:
       email: false
 after_success:
+  - test $TRAVIS_PULL_REQUEST = false && exit 1 # Only build Docker images on branches
   - sed -i 's/checkout develop/checkout '"$TRAVIS_BRANCH"'/' Dockerfile # Change current branch in Dockerfile
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=mecatronicauncu/red-social-asociacion-dev
