@@ -23,7 +23,7 @@ after_success:
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=mecatronicauncu/red-social-asociacion-dev
   - export TAG=`if [ "$TRAVIS_BRANCH" == "develop" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - docker pull $REPO:$TAG # Get previous images, improve build speed
+  - docker pull $REPO # Get previous images, improve build speed
   - docker build -f Dockerfile -t $REPO:$COMMIT .
   - docker tag -f $REPO:$COMMIT $REPO:$TAG
   - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
