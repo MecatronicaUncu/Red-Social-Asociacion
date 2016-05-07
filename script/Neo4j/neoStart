@@ -1,0 +1,24 @@
+#!/bin/bash
+
+NEO4J_VER=2.3.3
+
+MY_PATH="`dirname \"$0\"`" 
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+
+BIN_DIR=../../server/bin
+
+#-----------------------------------------#
+# Getting in the right location
+
+if [ -z "$MY_PATH" ] ; then
+  # error; for some reason, the path is not accessible
+  # to the script (e.g. permissions re-evaled after suid)
+  loggerRed "Please verify permissions on bootstrap folder!\n"
+  exit 1  # fail
+fi
+cd "$MY_PATH"
+
+#-----------------------------------------#
+
+# Start server
+$BIN_DIR/neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseG1GC

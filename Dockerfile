@@ -66,4 +66,4 @@ RUN cd Red-Social-Asociacion && ./script/Datasets/edt/edt no-wait
 
 # Entry point command: build and run tests on project, then launch
 # server
-CMD cd Red-Social-Asociacion && ./server/bin/neoRun && grunt watch
+CMD cd Red-Social-Asociacion && ./script/Neo4j/neoStart && grunt watch

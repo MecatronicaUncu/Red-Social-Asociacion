@@ -9,6 +9,7 @@ BIN_DIR=../server/bin
 NEO4J_DIR=$BIN_DIR/neo4j-community-$NEO4J_VER
 NEO4J_SERVER_CONF_FILE=$NEO4J_DIR/conf/neo4j-server.properties
 NEO4J_CONF_FILE=$NEO4J_DIR/conf/neo4j.properties
+SCRIPT_DIR=./Neo4j
 LOG_FILE=$MY_PATH/config.log
 
 CONS_DIV="#####################################"
@@ -106,7 +107,7 @@ STATUS=`./$NEO4J_DIR/bin/neo4j status`
 if [[ $STATUS != *"not"* ]]
 then
     loggerGreen "Stopping Neo4J Server...\n"
-	./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J Server!\n"; exit 1; }
+	./$SCRIPT_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J Server!\n"; exit 1; }
 fi
 
 loggerGreen "Configuring Neo4J Server...\n"
@@ -123,7 +124,7 @@ STATUS=`./$NEO4J_DIR/bin/neo4j status`
 if [[ $STATUS == *"not"* ]]
 then
     loggerGreen "Starting Neo4J Server...\n"
-	./$BIN_DIR/neoRun >/dev/null 2>&1 || { loggerRed "Error starting Neo4J Server!\n"; exit 1; }
+	./$SCRIPT_DIR/neoStart >/dev/null 2>&1 || { loggerRed "Error starting Neo4J Server!\n"; exit 1; }
 fi
 
 #-----------------------------------------#
@@ -227,7 +228,7 @@ openssl x509 -req -days 365 -in $BIN_DIR/../$domain.csr -signkey $BIN_DIR/../$do
 
 #-----------------------------------------#
 # Stop Neo4J
-./$BIN_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J server\n"; exit 1; }
+./$SCRIPT_DIR/neoStop >/dev/null 2>&1 || { loggerRed "Error stopping Neo4J server\n"; exit 1; }
 
 #-----------------------------------------#
 # Extra configs in config.js

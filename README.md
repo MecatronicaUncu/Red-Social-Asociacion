@@ -78,7 +78,7 @@ Afterwards, configure the server.
 1. Start the database server [neo4j](http://neo4j.org/)
 
     ```
-    ./server/bin/neoRun
+    ./script/Neo4j/neoStart
     ```
 2. Run the server
 

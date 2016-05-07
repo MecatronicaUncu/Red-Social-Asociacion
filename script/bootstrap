@@ -194,18 +194,6 @@ fi
 
 cd $MY_PATH
 
-#----------------------------------------#
-# Create service start and shutdown scripts
-loggerGreen "Installing service start and shutdown scripts...\n"
-
-cat $LOCATION_FILE > $BIN_DIR/neoRun
-echo "./neo4j-community-$NEO4J_VER/bin/neo4j start -server -Xmx512M -XX:+UseG1GC" >> $BIN_DIR/neoRun
-chmod +x $BIN_DIR/neoRun
-
-cat $LOCATION_FILE > $BIN_DIR/neoStop
-echo "./neo4j-community-$NEO4J_VER/bin/neo4j stop" >> $BIN_DIR/neoStop
-chmod +x $BIN_DIR/neoStop
-
 #-----------------------------------------#
 # Done!
 loggerGreen "Install Ok!\n"
