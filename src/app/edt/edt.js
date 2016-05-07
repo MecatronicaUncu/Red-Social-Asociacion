@@ -17,7 +17,7 @@
           }
         });
       }])
-      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, $timeout, $http, $location) {
+      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, $timeout, $http, $location, users) {
 
         $scope.partSearchResults = [];
         //Required. If not present produce errors.
@@ -559,6 +559,16 @@
                     $scope.times = times;
                     $scope.clearplot();
                     $scope.replot();
+                }
+            });
+        };
+
+        $scope.toggleMergeCal = function(sub, e){
+
+            e.stopPropagation();
+            edt.mergeCalendar(sub.idNEO, !sub.mergeCal, function(err){
+                if(err === null){
+                    session.updateSubscriptions();
                 }
             });
         };

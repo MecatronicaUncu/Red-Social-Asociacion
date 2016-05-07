@@ -77,6 +77,15 @@
       },
       getConfig: function(){
         return angular.copy(config);
+      },
+      mergeCalendar: function(idNEO, mergeCal, next){
+          $http({method:'POST', url:'/edtmergecal', data:{idNEO:idNEO, mergeCal:mergeCal}})
+          .success(function(){
+              return next(null);
+          })
+          .error(function(){
+              return next('Error Updating Merge Attribute');
+          });
       }
     };
 

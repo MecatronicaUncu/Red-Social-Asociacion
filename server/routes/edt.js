@@ -243,3 +243,29 @@ exports.newActivity = function (req, res, next) {
         }
     });
 };
+
+/**
+ * TODO : Comment on functionality
+ */
+exports.mergeCalendar = function(req, res, next) {
+
+    if(!req.id){
+        res.status(401).send('Unauthorized');
+        return;
+    }
+    if(!req.body.idNEO || typeof(req.body.mergeCal) !== "boolean"){
+        res.status(400).send('Missing Parameters');
+        return;
+    }
+
+    Edt.mergeCalendar(req.id, req.body.idNEO, req.body.mergeCal, function(err){
+        if(err){
+            console.log(err);
+            res.status(500).send('Internal Server Error');
+            return;
+        }else{
+            res.status(200).send('Ok');
+            return;
+        }
+    });
+};

@@ -134,3 +134,29 @@ exports.newActivity = function(acts, callback){
 		return callback(err);
 	}
 };
+
+exports.mergeCalendar = function(myID, subID, mergeCal, callback){
+
+    var params = {
+        myID: myID,
+        subID: subID,
+        mergeCal: mergeCal
+    };
+
+    var query = [
+        'MATCH (u)-[r]->(i) WHERE ID(u)={myID}',
+        'AND ID(i)={subID}',
+        'SET r.mergeCal={mergeCal}'
+    ].join('\n');
+    try {
+        db.cypher({query: query, params:params}, function (err, results) {
+            if(err){
+                return callback(err);
+            }else{
+                return callback(null);
+            }
+        });
+    }catch(err){
+        return callback(err);
+    }
+};

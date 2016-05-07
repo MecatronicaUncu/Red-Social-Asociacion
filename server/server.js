@@ -102,6 +102,7 @@ app.get('/edtplaces', edt.getPlaces);
 app.get('/getTimesIcal', edt.getTimesIcal);
 app.get('/subscriptions', secur.extractCookieData, users.getSubscriptions);
 app.post('/edtnewact', secur.extractCookieData, edt.newActivity);
+app.post('/edtmergecal', secur.extractCookieData, edt.mergeCalendar);
 /******************************************************************************/
 
 /****************************   COOKIES REQUESTS   ****************************/
