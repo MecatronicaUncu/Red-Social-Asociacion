@@ -64,3 +64,13 @@
 [type="checkbox"]:not(:checked):focus + label:before {
   border: 1px dotted blue;
 }
+
+.favCheckbox {
+  color: black;
+  padding-left: 10px;
+  font-size: 1.2em;
+}
+
+#edtSearchSelect > ul > li {
+	cursor: pointer;
+}
