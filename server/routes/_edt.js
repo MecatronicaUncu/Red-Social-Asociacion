@@ -11,11 +11,28 @@ var db = new neo4j.GraphDatabase(
 exports.getTimes = function(timeData, callback){
     
     var query = [
-        'MATCH (a:ACTIVITY)',
-        'WHERE (a.whatId='+timeData.whatId+' OR a.whoId='+timeData.whoId+')',
-        'AND a.week='+timeData.week+' AND a.year='+timeData.year,
-        'RETURN a AS time, ID(a) AS idNEO'
-    ].join('\n');
+        'MATCH (a:ACTIVITY) WHERE'
+    ];
+
+    var whereQuery = '(';
+    if(timeData.ids.length === 0){
+        whereQuery += ' FALSE';
+    }else{
+        timeData.ids.forEach(function(id){
+            whereQuery += 'a.whatId='+id+' OR ';
+        });
+        whereQuery = whereQuery.slice(0,-4);
+    }
+    if(timeData.me){
+        whereQuery += ' OR a.whoId='+timeData.myID;
+    }
+    whereQuery += ')';
+    query.push(
+        whereQuery,
+        ' AND a.week='+timeData.week+' AND a.year='+timeData.year,
+        'RETURN DISTINCT a AS time, ID(a) AS idNEO'
+    );
+    query = query.join('\n');
     
     try{
 		db.cypher({query:query, params:null}, function (err, res) {
@@ -116,4 +133,30 @@ exports.newActivity = function(acts, callback){
 	}catch(err){
 		return callback(err);
 	}
+};
+
+exports.mergeCalendar = function(myID, subID, mergeCal, callback){
+
+    var params = {
+        myID: myID,
+        subID: subID,
+        mergeCal: mergeCal
+    };
+
+    var query = [
+        'MATCH (u)-[r]->(i) WHERE ID(u)={myID}',
+        'AND ID(i)={subID}',
+        'SET r.mergeCal={mergeCal}'
+    ].join('\n');
+    try {
+        db.cypher({query: query, params:params}, function (err, results) {
+            if(err){
+                return callback(err);
+            }else{
+                return callback(null);
+            }
+        });
+    }catch(err){
+        return callback(err);
+    }
 };

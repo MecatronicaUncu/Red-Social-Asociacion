@@ -13,9 +13,9 @@
     };
 
     var api = {
-      getTimes: function(whatId, whoId, week, year, next){
+      getTimes: function(ids, week, year, me, next){
         $http({ method:'GET', url:'/times',
-                params:{whatId:whatId, whoId:whoId, week:week, year:year}})
+                params:{ids:ids, week:week, year:year, me:me}})
         .success(function(data){
           return next(null,data.times);
         })
@@ -77,6 +77,15 @@
       },
       getConfig: function(){
         return angular.copy(config);
+      },
+      mergeCalendar: function(idNEO, mergeCal, next){
+          $http({method:'POST', url:'/edtmergecal', data:{idNEO:idNEO, mergeCal:mergeCal}})
+          .success(function(){
+              return next(null);
+          })
+          .error(function(){
+              return next('Error Updating Merge Attribute');
+          });
       }
     };
 

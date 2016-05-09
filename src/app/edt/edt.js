@@ -17,22 +17,13 @@
           }
         });
       }])
-      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, $timeout, $http) {
+      .controller('EdtCtrl', function ($scope, $stateParams, edt, session, $timeout, $http, $location, users) {
 
         $scope.partSearchResults = [];
         //Required. If not present produce errors.
         $scope.dummyWhenFrom = [];
         $scope.dummyWhenTo = [];
-        $scope.whatIdToSearch = 0;
-        $scope.whoIdToSearch = 0;
-        
-        if($stateParams.id){
-            $scope.whatIdToSearch = $stateParams.id;
-            $scope.whoIdToSearch = $stateParams.id;
-        }else{
-            $scope.whatIdToSearch = 0;
-            $scope.whoIdToSearch = 0;
-        }
+        $scope.idToSearch = [0];
 
         $scope.newAct = {
             periods: [],
@@ -274,10 +265,7 @@
         };
 
         $scope.selectFav = function(fav){
-            $scope.whoIdToSearch = 0;
-            $scope.whatIdToSearch = fav.idNEO;
-            
-            $scope.edtGetTimes();
+            $location.url('/edt/'+fav.idNEO);
         };
 
         /**
@@ -327,10 +315,7 @@
             $scope.setDates($scope.thisWeek);
             $scope.newActCollapse = true;
 
-            $scope.whoIdToSearch = session.getID();
-            $scope.whatIdToSearch = 0;
-
-            $scope.edtGetTimes();
+            $location.url('/edt/'+session.getID());
 
         };
 
@@ -548,10 +533,23 @@
          */
         $scope.edtGetTimes = function () {
 
-            edt.getTimes(   $scope.whatIdToSearch, 
-                            $scope.whoIdToSearch, 
+            var me = false;
+            var ids = [];
+            if(session.isLoggedIn()){
+                if(session.getID() !== parseInt($stateParams.id)){
+                    ids = [$stateParams.id];
+                }else{
+                    ids = $scope.idToSearch;
+                    me = true;
+                }
+            }else{
+                ids = [$stateParams.id];
+            }
+
+            edt.getTimes(   ids,
                             $scope.searchWeek, 
                             $scope.thisYear, 
+                            me,
                             function (err, times) {
                 if (err) {
                     console.log(err);
@@ -561,6 +559,16 @@
                     $scope.times = times;
                     $scope.clearplot();
                     $scope.replot();
+                }
+            });
+        };
+
+        $scope.toggleMergeCal = function(sub, e){
+
+            e.stopPropagation();
+            edt.mergeCalendar(sub.idNEO, !sub.mergeCal, function(err){
+                if(err === null){
+                    session.updateSubscriptions();
                 }
             });
         };
@@ -784,18 +792,6 @@
             $scope.newAct.whoId = session.getID();
             $scope.newAct.whoName = session.getProfile().firstName[0] + '. ' + session.getProfile().lastName;
 
-            if($stateParams.id){
-                $scope.whatIdToSearch = $stateParams.id;
-                $scope.whoIdToSearch = $stateParams.id;
-            }else{
-                $scope.whatIdToSearch = 0;
-                if(session.isLoggedIn()){
-                    $scope.whoIdToSearch = session.getID();
-                }else{
-                    $scope.whoIdToSearch = 0;
-                }
-            }
-
             $scope.newActDays = [];
             $scope.addRemovePeriod(-1);
         };
@@ -823,16 +819,15 @@
 
         $scope.$on('login', function () {
             $scope.newAct.whoId = session.getID();
-            if($stateParams.id){
-                $scope.whoIdToSearch = $stateParams.id;
-            }else{
-                $scope.whoIdToSearch = session.getID();
+            if($stateParams.id === 0){
+                $location.url('/edt/'+session.getID());
             }
         });
 
         $scope.$on('gotSubscriptions', function () {
             $scope.subscriptions = session.getSubscriptions();
-            console.log($scope.subscriptions);
+            $scope.idToSearch = $scope.subscriptions.filter(function(sub){return sub.mergeCal;}).map(function(sub){return sub.idNEO;});
+            $scope.edtGetTimes();
         });
 
         $scope.$on('gotTranslation', function () {
@@ -846,15 +841,11 @@
 
         if(session.getSubscriptions()){
             $scope.subscriptions = session.getSubscriptions();
+            $scope.idToSearch = $scope.subscriptions.filter(function(sub){return sub.mergeCal;}).map(function(sub){return sub.idNEO;});
         }
 
         if (session.isLoggedIn()) {
             $scope.newAct.whoId = session.getID();
-            if($stateParams.id){
-                $scope.whoIdToSearch = $stateParams.id;
-            }else{
-                $scope.whoIdToSearch = session.getID();
-            }
         }
 
         if (session.getTranslation()) {

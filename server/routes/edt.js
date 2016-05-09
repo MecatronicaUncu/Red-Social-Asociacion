@@ -75,8 +75,8 @@ exports.getEdtConfig = function(req, res, next){
  */
 exports.getTimesIcal = function(req, res, next){
     
-    if( !req.query.whatId || !req.query.whoId || 
-        !req.query.week || !req.query.year || !req.query.whatName)
+    if( !req.query.id || !req.query.week
+        || !req.query.year || !req.query.whatName)
     {
         res.status(401).send('Missing information');
         return;
@@ -86,8 +86,7 @@ exports.getTimesIcal = function(req, res, next){
         //TODO: Extender a array de whats
         whatName: req.query.whatName,
         //whoName: req.query.whoName,
-        whatId: req.query.whatId,
-        whoId: req.query.whoId,
+        id: req.query.id,
         week: req.query.week,
         year: req.query.year,
     };
@@ -159,9 +158,13 @@ exports.getTimesIcal = function(req, res, next){
  */
 exports.getTimes = function(req, res, next){
   
+    if(!Array.isArray(req.query.ids)){
+        req.query.ids = req.query.ids?[req.query.ids]:[];
+    }
     var timeData = {
-        whatId: req.query.whatId,
-        whoId: req.query.whoId,
+        me: req.query.me==="true",
+        myID: req.id,
+        ids: req.query.ids,
         week: req.query.week,
         year: req.query.year,
     };
@@ -236,6 +239,36 @@ exports.newActivity = function (req, res, next) {
             return;
         } else {
             res.status(200).send('Activity Created Successfully');
+            return;
+        }
+    });
+};
+
+/**
+ * TODO : Comment on functionality
+ */
+exports.mergeCalendar = function(req, res, next) {
+
+    if(!req.id){
+        res.status(401).send('Unauthorized');
+        return;
+    }
+    if( typeof(req.body.idNEO) === 'undefined' || typeof(req.body.mergeCal) === 'undefined'){
+        res.status(400).send('Missing Parameters');
+        return;
+    }
+    if( !Number.isInteger(req.body.idNEO) || typeof(req.body.mergeCal) !== 'boolean'){
+        res.status(400).send('Incorrect Data Type');
+        return;
+    }
+
+    Edt.mergeCalendar(req.id, req.body.idNEO, req.body.mergeCal, function(err){
+        if(err){
+            console.log(err);
+            res.status(500).send('Internal Server Error');
+            return;
+        }else{
+            res.status(200).send('Ok');
             return;
         }
     });

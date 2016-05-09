@@ -118,5 +118,101 @@
                   });
             });
         });
+
+        describe('Merge Calendars', function(){
+
+            it('should return 401 if not logged in', function(done){
+
+                request(server)
+                  .post('/edtmergecal')
+                  .expect(401, 'Unauthorized')
+                  .end(function(err, res){
+                      if(err){
+                          return done.fail(err);
+                      }
+                      done();
+                  });
+            });
+
+            it('should return 400 if some data is missing', function(done){
+                var dataWrong1 = {idNEO: 58};
+
+                request(server)
+                  .post('/edtmergecal')
+                  .send(dataWrong1)
+                  .set('Cookie', ['LinkedEnibId=3'])
+                  .expect(400, 'Missing Parameters')
+                  .end(function(err, res){
+                      if(err){
+                          return done.fail(err);
+                      }
+                      done();
+                  });
+            });
+
+            it('should return 400 if some data is missing - 2', function(done){
+                var dataWrong2 = {mergeCal: true};
+
+                request(server)
+                  .post('/edtmergecal')
+                  .send(dataWrong2)
+                  .set('Cookie', ['LinkedEnibId=3'])
+                  .expect(400, 'Missing Parameters')
+                  .end(function(err, res){
+                      if(err){
+                          return done.fail(err);
+                      }
+                      done();
+                  });
+            });
+
+            it('should return 200 if data is ok', function(done){
+                var dataCorrect = {idNEO: 58, mergeCal: true};
+
+                request(server)
+                  .post('/edtmergecal')
+                  .send(dataCorrect)
+                  .set('Cookie', ['LinkedEnibId=3'])
+                  .expect(200, 'Ok')
+                  .end(function(err, res){
+                      if(err){
+                          return done.fail(err);
+                      }
+                      done();
+                  });
+            });
+
+            it('should return 400 if type of data is incorrect', function(done){
+                var dataWrong1 = {idNEO: "58", mergeCal: true};
+
+                request(server)
+                  .post('/edtmergecal')
+                  .send(dataWrong1)
+                  .set('Cookie', ['LinkedEnibId=3'])
+                  .expect(400, 'Incorrect Data Type')
+                  .end(function(err, res){
+                      if(err){
+                          done.fail(err);
+                      }
+                      done();
+                  });
+            });
+
+            it('should return 400 if type of data is incorrect', function(done){
+                var dataWrong2 = {idNEO: 58, mergeCal: "asd"};
+
+                request(server)
+                  .post('/edtmergecal')
+                  .send(dataWrong2)
+                  .set('Cookie', ['LinkedEnibId=3'])
+                  .expect(400, 'Incorrect Data Type')
+                  .end(function(err, res){
+                      if(err){
+                          done.fail(err);
+                      }
+                      done();
+                  });
+            });
+        });
     });
 })();

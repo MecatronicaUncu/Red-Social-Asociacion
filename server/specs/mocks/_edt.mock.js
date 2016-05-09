@@ -14,5 +14,9 @@
         return callback(null, []);
     };
 
+    exports.mergeCalendar = function(myID, subID, mergeCal, callback){
+        return callback(null);
+    };
+
     exports.isMock = true;
 })();

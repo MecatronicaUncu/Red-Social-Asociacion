@@ -96,12 +96,13 @@ if('development' == app.get('env')){
 
 /****************************    EDT REQUESTS   *******************************/
 app.get('/acttypes', secur.extractCookieData, edt.getActivityTypes);
-app.get('/times', edt.getTimes);
+app.get('/times', secur.extractCookieData, edt.getTimes);
 app.get('/edtconfig', edt.getEdtConfig);
 app.get('/edtplaces', edt.getPlaces);
 app.get('/getTimesIcal', edt.getTimesIcal);
 app.get('/subscriptions', secur.extractCookieData, users.getSubscriptions);
 app.post('/edtnewact', secur.extractCookieData, edt.newActivity);
+app.post('/edtmergecal', secur.extractCookieData, edt.mergeCalendar);
 /******************************************************************************/
 
 /****************************   COOKIES REQUESTS   ****************************/
