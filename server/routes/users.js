@@ -561,8 +561,8 @@ exports.login = function (req, res, next) {
         if (results['idNEO']) {
             if (!secur.loggedIn(req, res)) {
                 var cook = new cookies(req, res, secur.cookKeys);
-                cook.set('LinkedEnibId', results.idNEO, {signed: true, maxAge: 9000000});
-                cook.set('LinkedEnibLang', results.lang, {signed: true, maxAge: 9000000});
+                cook.set('RedSocialAsociacionID', results.idNEO, {signed: true, maxAge: 9000000});
+                cook.set('RedSocialAsociacionLANG', results.lang, {signed: true, maxAge: 9000000});
                 secur.isAdmin(results.idNEO,function(is){
                   if(is){
                     res.status(200).send({idNEO: results['idNEO'], lang: results.lang, admin: true});
@@ -671,7 +671,7 @@ exports.changeProperty = function (req, res, next) {
         }else{
           if(tmp.field === 'lang'){
             var cook = new cookies(req, res, secur.cookKeys);
-            cook.set('LinkedEnibLang', tmp.value, {signed: true, maxAge: 9000000, overwrite: true});
+            cook.set('RedSocialAsociacionLANG', tmp.value, {signed: true, maxAge: 9000000, overwrite: true});
             res.sendStatus(200);
           }else{
             res.sendStatus(200);

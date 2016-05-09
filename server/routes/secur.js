@@ -99,8 +99,8 @@ exports.isAdmin = isAdmin;
 exports.extractCookieData = function (req, res, next) {
 
     var cook = new cookies(req, res, keys);
-    var idCookie = cook.get('LinkedEnibId');
-    var langCookie = cook.get('LinkedEnibiLang');
+    var idCookie = cook.get('RedSocialAsociacionID');
+    var langCookie = cook.get('RedSocialAsociacionLANG');
 
     if (idCookie) {
         req.id = parseInt(idCookie);
