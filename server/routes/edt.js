@@ -253,8 +253,12 @@ exports.mergeCalendar = function(req, res, next) {
         res.status(401).send('Unauthorized');
         return;
     }
-    if(!req.body.idNEO || typeof(req.body.mergeCal) !== "boolean"){
+    if( typeof(req.body.idNEO) === 'undefined' || typeof(req.body.mergeCal) === 'undefined'){
         res.status(400).send('Missing Parameters');
+        return;
+    }
+    if( !Number.isInteger(req.body.idNEO) || typeof(req.body.mergeCal) !== 'boolean'){
+        res.status(400).send('Incorrect Data Type');
         return;
     }
 
