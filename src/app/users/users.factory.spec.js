@@ -4,7 +4,7 @@
 
   ngDescribe({
     name: 'Users factory',
-    module: 'linkedEnibApp',
+    module: 'RedSocialAsociacion',
     inject: ['users','session','$httpBackend'],
     tests: function(deps){
 

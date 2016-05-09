@@ -2,11 +2,11 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
-    .directive('caiUserContacts', function(){
+  angular.module('RedSocialAsociacion')
+    .directive('rsaUserContacts', function(){
       return {
         restrict: 'E', // Element Name
-        templateUrl: 'caiUserContacts/caiUserContacts.tpl.html'
+        templateUrl: 'rsaUserContacts/rsaUserContacts.tpl.html'
       };
     });
 })();

@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('linkedEnibApp')
+    angular.module('RedSocialAsociacion')
         .directive('rsaCalendarInput', function(){
             return {
                 restrict: 'A',

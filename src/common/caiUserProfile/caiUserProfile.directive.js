@@ -2,15 +2,15 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
-    .directive('caiUserProfile', function(){
+  angular.module('RedSocialAsociacion')
+    .directive('rsaUserProfile', function(){
       return {
         restrict: 'E', // Element Name
-        templateUrl: 'caiUserProfile/caiUserProfile.tpl.html',
+        templateUrl: 'rsaUserProfile/rsaUserProfile.tpl.html',
         scope: {
-          fields: '=caiFields',
-          session: '=caiSession',
-            'updateProfile': '&caiUpdateProfile'
+          fields: '=rsaFields',
+          session: '=rsaSession',
+            'updateProfile': '&rsaUpdateProfile'
         }
       };
     });

@@ -2,7 +2,7 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
+  angular.module('RedSocialAsociacion')
     .directive('partField', function(){
       return {
         restrict: 'E', // Element Name

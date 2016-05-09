@@ -2,7 +2,7 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
+  angular.module('RedSocialAsociacion')
   .factory('users', function($http, $rootScope, session) {
 
     var api = {

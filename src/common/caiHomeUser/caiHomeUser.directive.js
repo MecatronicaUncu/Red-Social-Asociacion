@@ -2,14 +2,14 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
-    .directive('caiHomeUser', function(){
+  angular.module('RedSocialAsociacion')
+    .directive('rsaHomeUser', function(){
       return {
         restrict: 'E', // Element Name
-        templateUrl: 'caiHomeUser/caiHomeUser.tpl.html',
+        templateUrl: 'rsaHomeUser/rsaHomeUser.tpl.html',
         scope: {
-          they: '=caiThey',
-          host: '=caiHost'
+          they: '=rsaThey',
+          host: '=rsaHost'
         }
       };
     });

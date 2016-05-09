@@ -3,7 +3,7 @@
     'use strict';
 
     angular
-      .module('linkedEnibApp', [
+      .module('RedSocialAsociacion', [
         'templates-app',
         'templates-common',
         'ngResource',

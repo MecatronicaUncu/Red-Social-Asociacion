@@ -2,7 +2,7 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
+  angular.module('RedSocialAsociacion')
     .provider('pubBar',[function pubBarProvider(){
 
       var pubs = {};

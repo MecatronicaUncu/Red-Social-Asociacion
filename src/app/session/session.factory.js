@@ -2,7 +2,7 @@
 
 		'use strict';
 
-		angular.module('linkedEnibApp')
+		angular.module('RedSocialAsociacion')
       .factory('session',function($rootScope,$http) {
         var ID = 0;
         var admin = false;

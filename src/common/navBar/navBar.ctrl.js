@@ -10,7 +10,7 @@
 (function(){
     'use strict';
 
-    angular.module('linkedEnibApp')
+    angular.module('RedSocialAsociacion')
       .controller('NavBarCtrl',function($scope,$location,session,navBar){
 
         $scope.session = session;

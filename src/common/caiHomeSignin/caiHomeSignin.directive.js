@@ -2,11 +2,11 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
-    .directive('caiHomeSignin', function(){
+  angular.module('RedSocialAsociacion')
+    .directive('rsaHomeSignin', function(){
       return {
         restrict: 'E',
-        templateUrl: 'caiHomeSignin/caiHomeSignin.tpl.html'
+        templateUrl: 'rsaHomeSignin/rsaHomeSignin.tpl.html'
       };
     });
 })();

@@ -6,7 +6,7 @@
 
 	ngDescribe({
 		name: 'Session factory',
-		module: 'linkedEnibApp',
+		module: 'RedSocialAsociacion',
 		inject: ['session', '$httpBackend'],
 		tests: function(deps){
 

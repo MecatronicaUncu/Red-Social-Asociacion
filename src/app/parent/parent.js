@@ -8,7 +8,7 @@
 (function(){
     'use strict';
 
-    angular.module('linkedEnibApp')
+    angular.module('RedSocialAsociacion')
     .controller('ParentCtrl', function ($scope,$http,session) {
         $scope.loggedIn=false;
          

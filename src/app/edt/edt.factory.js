@@ -2,7 +2,7 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
+  angular.module('RedSocialAsociacion')
     .factory('edt',function($http, $rootScope, session){
 
     var config = null;
