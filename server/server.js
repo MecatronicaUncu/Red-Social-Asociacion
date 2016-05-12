@@ -2,21 +2,21 @@
 /******************************************************************************/
 /*                           Module dependencies                              */
 /******************************************************************************/
-var express = require('express')
-    , users = require('./routes/users.js')
-    , edt = require('./routes/edt.js')
-    , admin = require('./routes/admin.js')
-    , secur = require('./routes/secur.js')
-    , path = require('path')
-    , favicon = require('serve-favicon')
-    , logger = require('morgan')
-    , bodyParser = require('body-parser')
-    , multer = require('multer')
-    //, upload = multer({dest: path.join(__dirname, 'routes/upload')})
-    , cookieParser = require('cookie-parser')
-    , serveStatic = require('serve-static')
-    , errorHandler = require('errorhandler')
-    , cors = require('cors');
+var express = require('express'),
+    users = require('./routes/users.js'),
+    edt = require('./routes/edt.js'),
+    admin = require('./routes/admin.js'),
+    secur = require('./routes/secur.js'),
+    path = require('path'),
+    favicon = require('serve-favicon'),
+    logger = require('morgan'),
+    bodyParser = require('body-parser'),
+    multer = require('multer'),
+//upload = multer({dest: path.join(__dirname, 'routes/upload')}),
+    cookieParser = require('cookie-parser'),
+    serveStatic = require('serve-static'),
+    errorHandler = require('errorhandler'),
+    cors = require('cors');
 
 var app = express();
 
@@ -26,14 +26,14 @@ var app = express();
 /******************************************************************************/
 var whiteList=['https://127.0.0.1:3000', 'https://localhost:3000'];
 var corsOptions = {
-  origin: function(origin, callback){
-    var originIsWhitelisted = whiteList.indexOf(origin) !== -1;
-    callback(null, originIsWhitelisted);
-  },
-  credentials: true,
-  methods: ['GET', 'POST', /*'PUT', 'DELETE',*/ 'OPTIONS'],
-  //allowedHeaders: 
-  maxAge: 3600
+    origin: function(origin, callback){
+        var originIsWhitelisted = whiteList.indexOf(origin) !== -1;
+        callback(null, originIsWhitelisted);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', /*'PUT', 'DELETE',*/ 'OPTIONS'],
+    //allowedHeaders:
+    maxAge: 3600
 };
 
 
@@ -41,10 +41,10 @@ var corsOptions = {
 /*                    Cookies configuration (NOT USED)                        */
 /******************************************************************************/
 var csrfValue = function (req) {
-    var token = (req.body && req.body._csrf)
-        || (req.query && req.query._csrf)
-        || (req.headers['x-csrf-token'])
-        || (req.headers['x-xsrf-token']);
+    var token = (req.body && req.body._csrf) ||
+                (req.query && req.query._csrf) ||
+                (req.headers['x-csrf-token']) ||
+                (req.headers['x-xsrf-token']);
     return token;
 };
 var cookie2angular = function (req, res, next) {
@@ -59,7 +59,7 @@ var cookie2angular = function (req, res, next) {
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 
-// Node.js middleware for serving a favicon. 
+// Node.js middleware for serving a favicon.
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 
 // HTTP request logger middleware for node.js
@@ -69,13 +69,13 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Parse Cookie header and populate req.cookies with an object keyed by the cookie names. 
+// Parse Cookie header and populate req.cookies with an object keyed by the cookie names.
 app.use(cookieParser("se3vf65dse"));
 
 //app.use(csrf({value: csrfValue}));
 //app.use(cookie2angular);
 
-// Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. 
+// Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files.
 app.use(multer({dest: path.join(__dirname, 'routes/upload')}).single('image'));
 
 app.use(cors(corsOptions));
@@ -110,10 +110,12 @@ app.get('/checkCookie', secur.extractCookieData, function (req, res) {
 
     if (req.id) {
         secur.isAdmin(req.id, function (is) {
-            if (is)
+            if (is){
                 res.status(200).send({idNEO: req.id, lang: req.lang, admin: true});
-            else
+            }
+            else{
                 res.status(200).send({idNEO: req.id, lang: req.lang, admin: false});
+            }
         });
     } else {
         res.sendStatus(500);

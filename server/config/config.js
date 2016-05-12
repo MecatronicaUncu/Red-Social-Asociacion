@@ -9,7 +9,7 @@ var sslKey   = 0;
 var sslCert  = 0;
 var mailServedConfigured = true;
 var domain="https://127.0.1.1:3000";
-var dbURL = 'http://neo4j:neo@localhost:7474'
+var dbURL = 'http://neo4j:neo@localhost:7474';
 
 exports.mailFrom = mailFrom;
 exports.fromName = fromName;
