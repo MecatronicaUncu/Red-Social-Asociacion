@@ -11,7 +11,6 @@ var db = new neo4j.GraphDatabase(
 exports.getTimes = function(timeData, callback){
 
     var query = [
-<<<<<<< 67f108cb94cfe34906682b76c368622adaeb20e0
         'MATCH (a:ACTIVITY) WHERE'
     ];
 
