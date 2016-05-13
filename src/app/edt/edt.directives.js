@@ -2,7 +2,7 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
+  angular.module('RedSocialAsociacion')
     .directive('edtEnter', function () {
       return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {

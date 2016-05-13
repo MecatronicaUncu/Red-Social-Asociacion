@@ -3,11 +3,10 @@
   'use strict';
 
   angular.module('RedSocialAsociacion')
-    .directive('rsaPubBar',function(){
+    .directive('rsaHomeSignin', function(){
       return {
         restrict: 'E',
-        templateUrl: 'pubBar/pubBar.tpl.html',
-        controller: 'PubBarCtrl'
+        templateUrl: 'rsaHomeSignin/rsaHomeSignin.tpl.html'
       };
     });
 })();

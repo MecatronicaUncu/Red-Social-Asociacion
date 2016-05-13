@@ -2,7 +2,7 @@
 
   'use strict';
 
-  angular.module('linkedEnibApp')
+  angular.module('RedSocialAsociacion')
     .config(['pubBarProvider',function(pubBarProvider){
       pubBarProvider.addPub('fing',{src: 'assets/images/pub/pubFING.png',link:'https://fing.uncu.edu.ar', alt: 'fing'});
       pubBarProvider.addPub('uncuyo',{src: 'assets/images/pub/pubUNCUYO.jpg', link: 'https://www.uncu.edu.ar', alt: 'uncuyo'});

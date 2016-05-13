@@ -36,7 +36,7 @@
             it('should return 400 if no activity', function(done){
                 request(server)
                   .post('/edtnewact')
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(400, 'Missing Activities')
                   .end(function(err,res){
                       if(err) {
@@ -46,7 +46,7 @@
                 });
                 request(server)
                   .post('/edtnewact',[])
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(400, 'Missing Activities')
                   .end(function(err,res){
                       if(err) {
@@ -76,7 +76,7 @@
                 request(server)
                   .post('/edtnewact')
                   .send({ activities: acts})
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(400, 'Activity Off Limits')
                   .end(function(err, res){
                       if(err){
@@ -92,7 +92,7 @@
                 request(server)
                   .post('/edtnewact')
                   .send({ activities: acts })
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(400, 'Activity Off Limits')
                   .end(function(err, res){
                       if(err){
@@ -108,7 +108,7 @@
                 request(server)
                   .post('/edtnewact')
                   .send({ activities: acts })
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(200, 'Activity Created Successfully')
                   .end(function(err, res){
                       if(err){

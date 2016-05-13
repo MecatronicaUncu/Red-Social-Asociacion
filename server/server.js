@@ -145,13 +145,13 @@ app.post('/subscribe', secur.extractCookieData, users.subscribe);
 app.post('/unsubscribe', secur.extractCookieData, users.unsubscribe);
 app.post('/delUser/:id', secur.extractCookieData, users.deleteUser, function (req, res, next) {
     if (req.id) {
-        res.clearCookie('LinkedEnibId');
+        res.clearCookie('RedSocialAsociacionID');
     }
     res.sendStatus(200);
 });
 app.post('/logout', secur.extractCookieData, function (req, res, next) {
     if (req.id) {
-        res.clearCookie('LinkedEnibId');
+        res.clearCookie('RedSocialAsociacionID');
     }
     res.sendStatus(200);
 });

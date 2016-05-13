@@ -4,7 +4,7 @@
 (function(){
 	'use strict';
 
-	angular.module('linkedEnibApp')
+	angular.module('RedSocialAsociacion')
       .config(['navBarProvider',function(navBarProvider){
         navBarProvider.addTab('admin',function(session,$location){
           var translation = session.getTranslation();
