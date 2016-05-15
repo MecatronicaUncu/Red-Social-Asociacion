@@ -140,7 +140,7 @@
                 request(server)
                   .post('/edtmergecal')
                   .send(dataWrong1)
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(400, 'Missing Parameters')
                   .end(function(err, res){
                       if(err){
@@ -156,7 +156,7 @@
                 request(server)
                   .post('/edtmergecal')
                   .send(dataWrong2)
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(400, 'Missing Parameters')
                   .end(function(err, res){
                       if(err){
@@ -172,7 +172,7 @@
                 request(server)
                   .post('/edtmergecal')
                   .send(dataCorrect)
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(200, 'Ok')
                   .end(function(err, res){
                       if(err){
@@ -188,7 +188,7 @@
                 request(server)
                   .post('/edtmergecal')
                   .send(dataWrong1)
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(400, 'Incorrect Data Type')
                   .end(function(err, res){
                       if(err){
@@ -204,7 +204,7 @@
                 request(server)
                   .post('/edtmergecal')
                   .send(dataWrong2)
-                  .set('Cookie', ['LinkedEnibId=3'])
+                  .set('Cookie', ['RedSocialAsociacionID=3'])
                   .expect(400, 'Incorrect Data Type')
                   .end(function(err, res){
                       if(err){
