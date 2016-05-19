@@ -519,7 +519,7 @@
 														var oldX = $("#"+div.id)[0].offsetLeft;
 														var oldW = $("#"+div.id)[0].offsetWidth;
 														// Superposition
-														if	((x >= oldX && x < oldX+oldW) || (x+w > oldX && x+w <= oldX+oldW)){
+														if	((x >= oldX && x < oldX+oldW) || (x+w > oldX && x+w <= oldX+oldW) || (x <= oldX && x+w>= oldX+oldW)){
 															superposition = true; // In this tr there is superposition
 														}
 													});
