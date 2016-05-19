@@ -432,22 +432,22 @@
          * Genera el html inicial para el calendario()
          */
         $scope.makeCalendar = function() {
-					$scope.daysToShow.forEach(function(day,index){
-						var tr = ["<tr id='tr"+day.name+"'>",
-							"<th class='edt-days' id='th"+day.name+"' rowspan='1'>",
-							"<div ng-click='showTimesV("+index+")'>",
-							"<span id='span"+day.name+"'>",
-							"<p>"+ day.name +" </p>",
-							"<p id='fecha"+ day.name +"'>" + day.date +" </p>",
-							"</span></div>",
-							"<div collapse='"+ day.collapsed+"'>",
-							"<div class='chartContainerV' id='"+ day.name +"V'>",
-							"</div></div> </th>",
-							"<td class='edt-times-h' id='td"+day.name+"'>",
-							"<div class='chartContainer' id='" + day.name +"H'></div> </td> </tr>"].join(" ");
-						$("#tableBody").append(tr);
-						$scope.trs.push("tr"+day.name);
-					});
+			$scope.daysToShow.forEach(function(day,index){
+				var tr = ["<tr id='tr"+day.name+"'>",
+					"<th class='edt-days' id='th"+day.name+"' rowspan='1'>",
+					"<div ng-click='showTimesV("+index+")'>",
+					"<span id='span"+day.name+"'>",
+					"<p>"+ session.getTranslation().edt[day.name] +" </p>",
+					"<p id='fecha"+ day.name +"'>" + day.date +" </p>",
+					"</span></div>",
+					"<div collapse='"+ day.collapsed+"'>",
+					"<div class='chartContainerV' id='"+ day.name +"V'>",
+					"</div></div> </th>",
+					"<td class='edt-times-h' id='td"+day.name+"'>",
+					"<div class='chartContainer' id='" + day.name +"H'></div> </td> </tr>"].join(" ");
+				$("#tableBody").append(tr);
+				$scope.trs.push("tr"+day.name);
+			});
 		};
 
         /**
@@ -503,70 +503,44 @@
                     var x = ((el.mti - start) / tt) * divwidth;
                     var w = ((el.mtf - el.mti) / tt) * divwidth;
                     
-										// Superposition verification. If after this loop, tdId is null, then a new row is needed
-										var tdId = null;
-										var trIndex = 0;
-										if (localIndex > 0){
-											id = null;
-											var name = $scope.daysToShow[el.day - 1].name;
-											$scope.trs.forEach(function(tr,index){
-												if (tr.indexOf(name)>=0){
-													trIndex = index;
-													var td = tr.replace("tr","td");
-													var superposition = false;
-													$("#"+$("#"+td).children()[0].id).children().each(function(divIndex){
-														var div = $("#"+$("#"+td).children()[0].id).children()[divIndex];
-														var oldX = $("#"+div.id)[0].offsetLeft;
-														var oldW = $("#"+div.id)[0].offsetWidth;
-														// Superposition
-														if	((x >= oldX && x < oldX+oldW) || (x+w > oldX && x+w <= oldX+oldW) || (x <= oldX && x+w>= oldX+oldW)){
-															superposition = true; // In this tr there is superposition
-														}
-													});
-													if (superposition === false){
-														tdId = td;
-													}
-												}
-											});
-											if (tdId == null){
-												$scope.additionalTrs.forEach(function(tr,index){
-												if (tr.indexOf(name)>=0){
-													trIndex = index;//?
-													var td = tr.replace("tr","td");
-													var superposition = false;
-													$("#"+$("#"+td).children()[0].id).children().each(function(divIndex){
-														var div = $("#"+$("#"+td).children()[0].id).children()[divIndex];
-														var oldX = $("#"+div.id)[0].offsetLeft;
-														var oldW = $("#"+div.id)[0].offsetWidth;
-														// Superposition
-														if	((x >= oldX && x < oldX+oldW) || (x+w > oldX && x+w <= oldX+oldW)){
-															superposition = true; // In this tr there is superposition
-														}
-													});
-													if (superposition === false){
-														tdId = td;
-													}
-												}
-												});
-											}
-										}
-										
-										if (tdId != null){
-											id = $("#"+tdId).children()[0].id;						
-										}
-										else if (id == null){
-											// New row needed
-											id = $scope.daysToShow[el.day - 1].name + 'T' + $scope.additionalTrs.length;
-											var tr = ["<tr id='tr"+id+"'>",
-												"<td class='edt-times-h' id='td"+id+"'>",
-												"<div class='chartContainer' id='" + id +"H'></div> </td> </tr>"].join(" ");
-											$scope.additionalTrs.push("tr"+id);
-											$("#"+$scope.trs[trIndex+1]).before(tr);
-											var th = "th"+$scope.daysToShow[el.day - 1].name;
-											var rowspan = Number($("#"+th).attr("rowspan")) + 1;
-											$("#"+th).attr("rowspan",rowspan);
-											id += $scope.suffix;
-										}
+					// Superposition verification. If after this loop, tdId is null, then a new row is needed
+					var tdId = null;
+					var trIndex = 0;
+					if (localIndex > 0){
+						id = null;
+						var name = $scope.daysToShow[el.day - 1].name;
+						$scope.trs.forEach(function(tr,index){
+							if (tr.indexOf(name)>=0){
+								trIndex = index;
+								tdId = funcionTr(tr,tdId,x,w);
+							}
+						});
+						if (tdId == null){
+							$scope.additionalTrs.forEach(function(tr,index){
+							if (tr.indexOf(name)>=0){
+								trIndex = index;//?
+								tdId = funcionTr(tr,tdId,x,w);
+							}
+							});
+						}
+					}
+					
+					if (tdId != null){
+						id = $("#"+tdId).children()[0].id;						
+					}
+					else if (id == null){
+						// New row needed
+						id = $scope.daysToShow[el.day - 1].name + 'T' + $scope.additionalTrs.length;
+						var tr = ["<tr id='tr"+id+"'>",
+							"<td class='edt-times-h' id='td"+id+"'>",
+							"<div class='chartContainer' id='" + id +"H'></div> </td> </tr>"].join(" ");
+						$scope.additionalTrs.push("tr"+id);
+						$("#"+$scope.trs[trIndex+1]).before(tr);
+						var th = "th"+$scope.daysToShow[el.day - 1].name;
+						var rowspan = Number($("#"+th).attr("rowspan")) + 1;
+						$("#"+th).attr("rowspan",rowspan);
+						id += $scope.suffix;
+					}
                     
                     $scope.divs[$scope.divIndex] = document.createElement('div');
                     $scope.divs[$scope.divIndex].id = 'act-' + id + $scope.divIndex;
@@ -610,6 +584,24 @@
                 }
             });
         };
+
+		var funcionTr = function(tr,tdId,x,w){
+			var td = tr.replace("tr","td");
+			var superposition = false;
+			$("#"+$("#"+td).children()[0].id).children().each(function(divIndex){
+				var div = $("#"+$("#"+td).children()[0].id).children()[divIndex];
+				var oldX = $("#"+div.id)[0].offsetLeft;
+				var oldW = $("#"+div.id)[0].offsetWidth;
+				// Superposition
+				if	((x >= oldX && x < oldX+oldW) || (x+w > oldX && x+w <= oldX+oldW) || (x <= oldX && x+w>= oldX+oldW)){
+					superposition = true; // In this tr there is superposition
+				}
+			});
+			if (superposition === false){
+				tdId = td;
+			}
+			return tdId;
+		};
 
         /**
          * Da el valor de verdad para el campo days[day].collapsed, que a su vez es
