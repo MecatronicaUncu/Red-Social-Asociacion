@@ -210,9 +210,9 @@
                     </a>
                 </th>
             </thead>
-            <tbody>
-                <tr ng-repeat="day in daysToShow">
-                    <td class="edt-days">
+            <tbody id="tableBody">
+                <!--tr ng-repeat="day in daysToShow">
+                    <th class="edt-days">
                         <div ng-click="showTimesV($index)">
                             <span id="{{day.name}}"><p>{{translation.edt[day.name]}}</p>
                                 <p>{{day.date}}</p></span>
@@ -220,11 +220,11 @@
                         <div collapse="day.collapsed">
                             <div class="chartContainerV" id="{{day.name}}V"></div>
                         </div>
-                    </td>
+                    </th>
                     <td class="edt-times-h">
                         <div class="chartContainer" id="{{day.name}}H"></div>
                     </td>
-                </tr>
+                </tr-->
             </tbody>	
         </table>
     </div>

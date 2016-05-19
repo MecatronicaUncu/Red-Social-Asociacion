@@ -195,8 +195,12 @@
             $scope.addRemovePeriod(-1);
           }
         };
-        /** @type {Array} Guarda las <div>s que muestran las frajas horarias para poder eliminarlas */
+        /** @type {Array} Guarda las <div>s que muestran las franjas horarias para poder eliminarlas */
         $scope.divs = [];
+        /** @type {Array} Guarda las <tr>s que muestran las franjas horarias para poder eliminarlas */
+        $scope.trs = [];
+        /** @type {Array} Guarda las <tr>s que muestran las franjas horarias para poder eliminarlas */
+        $scope.additionalTrs = [];
         /** @type {Integer} Usado para referenciar un <div> en timeplot() */
         $scope.divIndex = 0;
         /** @type {String} Sufijo usado para elegir entre las <div>s contenedoras
@@ -292,13 +296,14 @@
           $scope.edtGetTimes();
           $scope.clearplot();
           $scope.replot();
-
+          
           $scope.daysToShow.forEach(function (el, index) {
             var jour = $scope.YWDarrToDob([$scope.searchYear, $scope.searchWeek, index + 1]);
             var d = jour.getDate();
             var m = (jour.getMonth() + 1);
             var y = jour.getFullYear();
             el.date = (d < 10 ? '0' : '') + d + '/' + (m < 10 ? '0' : '') + m + '/' + y;
+            $("#fecha"+el.name).html(el.date);
           });
         };
 
@@ -401,8 +406,18 @@
             $scope.divs.forEach(function (el) {
                 $('#edt * #' + el.id).remove();
             });
+            
+            $scope.additionalTrs.forEach(function (el) {
+                $('#' + el).remove();
+            });
+            
+			$scope.trs.forEach(function (el) {
+				var th = el.replace("tr","th");
+                $('#' + th).attr("rowspan","1");
+            });
 
             $scope.divs = [];
+            $scope.additionalTrs = [];
             $scope.divIndex = 0;
         };
 
@@ -412,6 +427,28 @@
         $scope.replot = function () {
           $scope.timeplot($scope.times, $scope.config);
         };
+        
+        /**
+         * Genera el html inicial para el calendario()
+         */
+        $scope.makeCalendar = function() {
+					$scope.daysToShow.forEach(function(day,index){
+						var tr = ["<tr id='tr"+day.name+"'>",
+							"<th class='edt-days' id='th"+day.name+"' rowspan='1'>",
+							"<div ng-click='showTimesV("+index+")'>",
+							"<span id='span"+day.name+"'>",
+							"<p>"+ day.name +" </p>",
+							"<p id='fecha"+ day.name +"'>" + day.date +" </p>",
+							"</span></div>",
+							"<div collapse='"+ day.collapsed+"'>",
+							"<div class='chartContainerV' id='"+ day.name +"V'>",
+							"</div></div> </th>",
+							"<td class='edt-times-h' id='td"+day.name+"'>",
+							"<div class='chartContainer' id='" + day.name +"H'></div> </td> </tr>"].join(" ");
+						$("#tableBody").append(tr);
+						$scope.trs.push("tr"+day.name);
+					});
+		};
 
         /**
          * Crea las <div>s correspondientes a las franjas horarias, coloca la
@@ -462,9 +499,75 @@
                 el.mtf = $scope.getminutes(el.to);
 
                 if ($scope.suffix == 'H') {
-
+					
                     var x = ((el.mti - start) / tt) * divwidth;
                     var w = ((el.mtf - el.mti) / tt) * divwidth;
+                    
+										// Superposition verification. If after this loop, tdId is null, then a new row is needed
+										var tdId = null;
+										var trIndex = 0;
+										if (localIndex > 0){
+											id = null;
+											var name = $scope.daysToShow[el.day - 1].name;
+											$scope.trs.forEach(function(tr,index){
+												if (tr.indexOf(name)>=0){
+													trIndex = index;
+													var td = tr.replace("tr","td");
+													var superposition = false;
+													$("#"+$("#"+td).children()[0].id).children().each(function(divIndex){
+														var div = $("#"+$("#"+td).children()[0].id).children()[divIndex];
+														var oldX = $("#"+div.id)[0].offsetLeft;
+														var oldW = $("#"+div.id)[0].offsetWidth;
+														// Superposition
+														if	((x >= oldX && x < oldX+oldW) || (x+w > oldX && x+w <= oldX+oldW)){
+															superposition = true; // In this tr there is superposition
+														}
+													});
+													if (superposition === false){
+														tdId = td;
+													}
+												}
+											});
+											if (tdId == null){
+												$scope.additionalTrs.forEach(function(tr,index){
+												if (tr.indexOf(name)>=0){
+													trIndex = index;//?
+													var td = tr.replace("tr","td");
+													var superposition = false;
+													$("#"+$("#"+td).children()[0].id).children().each(function(divIndex){
+														var div = $("#"+$("#"+td).children()[0].id).children()[divIndex];
+														var oldX = $("#"+div.id)[0].offsetLeft;
+														var oldW = $("#"+div.id)[0].offsetWidth;
+														// Superposition
+														if	((x >= oldX && x < oldX+oldW) || (x+w > oldX && x+w <= oldX+oldW)){
+															superposition = true; // In this tr there is superposition
+														}
+													});
+													if (superposition === false){
+														tdId = td;
+													}
+												}
+												});
+											}
+										}
+										
+										if (tdId != null){
+											id = $("#"+tdId).children()[0].id;						
+										}
+										else if (id == null){
+											// New row needed
+											id = $scope.daysToShow[el.day - 1].name + 'T' + $scope.additionalTrs.length;
+											var tr = ["<tr id='tr"+id+"'>",
+												"<td class='edt-times-h' id='td"+id+"'>",
+												"<div class='chartContainer' id='" + id +"H'></div> </td> </tr>"].join(" ");
+											$scope.additionalTrs.push("tr"+id);
+											$("#"+$scope.trs[trIndex+1]).before(tr);
+											var th = "th"+$scope.daysToShow[el.day - 1].name;
+											var rowspan = Number($("#"+th).attr("rowspan")) + 1;
+											$("#"+th).attr("rowspan",rowspan);
+											id += $scope.suffix;
+										}
+                    
                     $scope.divs[$scope.divIndex] = document.createElement('div');
                     $scope.divs[$scope.divIndex].id = 'act-' + id + $scope.divIndex;
                     $scope.divs[$scope.divIndex].title = "";
@@ -477,7 +580,7 @@
                         $($scope.divs[$scope.divIndex]).append($scope.blockHTML(el));
                         $scope.divs[$scope.divIndex].className += ' edt-block-info';
                     }
-                    document.getElementById(id).appendChild($scope.divs[$scope.divIndex]);
+                    $("#"+id)[0].appendChild($scope.divs[$scope.divIndex]);
                     $scope.divIndex++;
                     //TODO: new row if superposition found
                 } else {
@@ -554,8 +657,6 @@
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log('EDT GET TIMES: ');
-                    console.log(times);
                     $scope.times = times;
                     $scope.clearplot();
                     $scope.replot();
@@ -892,7 +993,8 @@
            * Mostramos el calendario
            */
           $('#edt').prop('hidden', false);
-
+          
+          $scope.makeCalendar();
           $scope.edtGetTimes();
         });
 

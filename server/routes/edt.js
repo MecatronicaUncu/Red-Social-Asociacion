@@ -260,7 +260,7 @@ exports.mergeCalendar = function(req, res, next) {
         res.status(400).send('Missing Parameters');
         return;
     }
-    if( !Number.isInteger(req.body.idNEO) || typeof(req.body.mergeCal) !== 'boolean'){
+    if( !isInt(req.body.idNEO) || typeof(req.body.mergeCal) !== 'boolean'){
         res.status(400).send('Incorrect Data Type');
         return;
     }
@@ -276,3 +276,9 @@ exports.mergeCalendar = function(req, res, next) {
         }
     });
 };
+
+function isInt(value) {
+  return !isNaN(value) && 
+         parseInt(Number(value)) === value && 
+         !isNaN(parseInt(value, 10));
+}
