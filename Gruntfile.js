@@ -349,9 +349,9 @@ module.exports = function ( grunt ) {
       test: [
         '<%= app_files.jsunit %>'
       ],
-//      server: [
-//        '<%= server_files.js %>'
-//      ],
+      server: [
+        '<%= server_files.js %>'
+      ],
       server_test: [
         '<%= server_files.jsunit %>',
         '<%= server_files.jsmock %>'

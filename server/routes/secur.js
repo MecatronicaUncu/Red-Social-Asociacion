@@ -12,7 +12,7 @@ var keys = keygrip(["Andres", "Franco"]);
 
 exports.cookKeys = keys;
 
-/** 
+/**
  * Hash password
  * @param {String} pwd: The user's password
  * @param {String} salt: The user password's salt
@@ -54,7 +54,7 @@ var sameUser = function (id, req, res) {
 exports.sameUser = sameUser;
 
 /**
- * Checks the presence of an ID in the headers (if the user is logged in). Call 
+ * Checks the presence of an ID in the headers (if the user is logged in). Call
  * extractCookieData before using this method!
  * @param {Object} req: The HTTP request's headers
  * @param {Object} res: The HTTP request's response headers
@@ -78,12 +78,15 @@ exports.loggedIn = loggedIn;
 var isAdmin = function (id, next) {
 
     Secur.isAdmin(id, function (err,is) {
-		if (err)
-			return next(false);
-        else if (is)
-            return next(true);
-        else
+        if (err){
             return next(false);
+        }
+        else if (is){
+            return next(true);
+        }
+        else{
+            return next(false);
+        }
     });
 };
 exports.isAdmin = isAdmin;
@@ -109,9 +112,9 @@ exports.extractCookieData = function (req, res, next) {
         console.log('Cookies Errors');
     }
     if (langCookie) {
-      req.lang = langCookie;
+        req.lang = langCookie;
     }else{
-      req.lang = 'es';
+        req.lang = 'es';
     }
 
     return next();

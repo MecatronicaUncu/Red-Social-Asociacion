@@ -10,7 +10,7 @@
         return callback(null, []);
     };
 
-    exports.newActivity = function(acts, callback){
+    exports.newActivity = function(myID, acts, callback){
         return callback(null, []);
     };
 
