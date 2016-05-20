@@ -13,6 +13,7 @@ var express = require('express')
     , bodyParser = require('body-parser')
     , multer = require('multer')
     //, upload = multer({dest: path.join(__dirname, 'routes/upload')})
+    , logDirectory = path.join(__dirname,'/log')
     , cookieParser = require('cookie-parser')
     , serveStatic = require('serve-static')
     , errorHandler = require('errorhandler')
@@ -62,8 +63,22 @@ app.set('view engine', 'ejs');
 // Node.js middleware for serving a favicon. 
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 
+// ensure log directory exists
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
+
+// create a rotating write stream
+var accessLogStream = FileStreamRotator.getStream({
+  date_format: 'YYYYMMDD',
+  filename: logDirectory + '/access-%DATE%.log',
+  frequency: 'daily',
+  verbose: false
+})
+
+// setup the HTTP request logger
+app.use(morgan('combined', {stream: accessLogStream}))
+
 // HTTP request logger middleware for node.js
-app.use(logger('dev'));
+// app.use(logger('dev'));
 
 // Node.js body parsing middleware.
 app.use(bodyParser.json());
