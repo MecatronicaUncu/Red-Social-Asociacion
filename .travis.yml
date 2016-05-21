@@ -19,7 +19,8 @@ before_install:
 notifications:
       email: false
 after_success:
-  - sed -i 's/checkout develop/checkout '"$TRAVIS_BRANCH"'/' Dockerfile # Change current branch in Dockerfile
+  - echo $TRAVIS_BRANCH
+  - sed -i 's|checkout develop|checkout '"$TRAVIS_BRANCH"'|' Dockerfile # Change current branch in Dockerfile
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=mecatronicauncu/red-social-asociacion-dev
   - export TAG=`if [ "$TRAVIS_BRANCH" == "develop" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
