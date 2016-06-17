@@ -197,8 +197,9 @@
       };
       /** @type {Array} Guarda las <div>s que muestran las franjas horarias para poder eliminarlas */
       $scope.divs = [];
+      // Unificar las dos?
       /** @type {Array} Guarda las <tr>s que muestran las franjas horarias para poder eliminarlas */
-      $scope.trs = [];
+      $scope.fixedTrs = [];
       /** @type {Array} Guarda las <tr>s que muestran las franjas horarias para poder eliminarlas */
       $scope.additionalTrs = [];
       /** @type {Integer} Usado para referenciar un <div> en timeplot() */
@@ -411,7 +412,7 @@
           $('#' + el).remove();
         });
 
-        $scope.trs.forEach(function (el) {
+        $scope.fixedTrs.forEach(function (el) {
           var th = el.replace("tr","th");
           $('#' + th).attr("rowspan","1");
         });
@@ -446,7 +447,7 @@
             "<td class='edt-times-h' id='td"+day.name+"'>",
             "<div class='chartContainer' id='" + day.name +"H'></div> </td> </tr>"].join(" ");
           $("#tableBody").append(tr);
-          $scope.trs.push("tr"+day.name);
+          $scope.fixedTrs.push("tr"+day.name);
         });
       };
 
@@ -501,46 +502,58 @@
 
           if ($scope.suffix == 'H') {
 
+            // Offset from start
             var x = ((el.mti - start) / tt) * divwidth;
+            // Width of element
             var w = ((el.mtf - el.mti) / tt) * divwidth;
 
             // Superposition verification. If after this loop, tdId is null, then a new row is needed
+            // tdIs es el id de la primera div en donde podemos colocar el elemento actual
             var tdId = null;
+            // Es el index de la tr que contiene al elemento actual! Se busca en $scope.fixedTrs.forEach(...)
             var trIndex = 0;
             if (localIndex > 0){
               id = null;
               var name = $scope.daysToShow[el.day - 1].name;
-              $scope.trs.forEach(function(tr,index){
+              $scope.fixedTrs.some(function(tr,index){
                 if (tr.indexOf(name)>=0){
                   trIndex = index;
-                  tdId = funcionTr(tr,tdId,x,w);
+                  tdId = funcionTr(tr,x,w);
+                  return true;
                 }
+                return false;
               });
               if (tdId == null){
-                $scope.additionalTrs.forEach(function(tr,index){
+                // Verificamos la superposición en las tr adicionales para este día
+                // Hacer de addTrs un objeto para poder hacer addTrs[name].forEach() ?
+                $scope.additionalTrs.some(function(tr,index){
                   if (tr.indexOf(name)>=0){
-                    trIndex = index;//?
-                    tdId = funcionTr(tr,tdId,x,w);
+                    tdId = funcionTr(tr,x,w);
+                    return true;
                   }
+                  return false;
                 });
               }
             }
 
+            // Encontramos en que tr ubicar el elemento. La div dentro de la tr que contiene los elementos es 
+            // $("#"+tdId).children()[0]
             if (tdId != null){
               id = $("#"+tdId).children()[0].id;
             }
+            // Unificar tdId con id ?
             else if (id == null){
               // New row needed
-              id = $scope.daysToShow[el.day - 1].name + 'T' + $scope.additionalTrs.length;
+              id = $scope.daysToShow[el.day - 1].name + 'T' + $scope.additionalTrs.length + $scope.suffix;
+              var afterId = $scope.additionalTrs.length>0?id:"tr"+$scope.daysToShow[el.day-1].name;
               var tr = ["<tr id='tr"+id+"'>",
                 "<td class='edt-times-h' id='td"+id+"'>",
-                "<div class='chartContainer' id='" + id +"H'></div> </td> </tr>"].join(" ");
+                "<div class='chartContainer' id='" + id +"'></div> </td> </tr>"].join(" ");
               $scope.additionalTrs.push("tr"+id);
-              $("#"+$scope.trs[trIndex+1]).before(tr);
+              $("#"+afterId).after(tr);
               var th = "th"+$scope.daysToShow[el.day - 1].name;
               var rowspan = Number($("#"+th).attr("rowspan")) + 1;
               $("#"+th).attr("rowspan",rowspan);
-              id += $scope.suffix;
             }
 
             $scope.divs[$scope.divIndex] = document.createElement('div');
@@ -557,7 +570,6 @@
             }
             $("#"+id)[0].appendChild($scope.divs[$scope.divIndex]);
             $scope.divIndex++;
-            //TODO: new row if superposition found
           } else {
 
             var top = 0;
@@ -586,10 +598,17 @@
         });
       };
 
-      var funcionTr = function(tr,tdId,x,w){
-        var td = tr.replace("tr","td");
+      var funcionTr = function(tr,x,w){
+        var tdId = null;
         var superposition = false;
-        $("#"+$("#"+td).children()[0].id).children().each(function(divIndex){
+        var td = tr.replace("tr","td");
+        // $("#"+td).children()[0] es una de las divs que contiene los bloques de horarios para este día
+        var timesContainer = $("#"+td).children()[0];
+        // divTimes.children() son los bloques de horarios de esa tr
+        // guardar en variable divTimes.children para mejor lectura?
+        var times = $("#"+timesContainer.id).children();
+        times.each(function(divIndex){
+          // Esta div es un bloque de horario
           var div = $("#"+$("#"+td).children()[0].id).children()[divIndex];
           var oldX = $("#"+div.id)[0].offsetLeft;
           var oldW = $("#"+div.id)[0].offsetWidth;
@@ -599,8 +618,9 @@
           }
         });
         if (superposition === false){
+          // La div donde se va a guardar el elemento actual es la misma que se verifica, porque no hay superposición
           tdId = td;
-        }
+        } //else la div es null y se debe generar otra (o verificar otra tr si ya se han agregado)
         return tdId;
       };
 
