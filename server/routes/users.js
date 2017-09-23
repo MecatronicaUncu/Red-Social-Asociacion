@@ -3,7 +3,7 @@
 
 var User = require('./_users.js');
 var path = require('path');
-var cookies = require('cookies');
+var Cookies = require('cookies');
 var fs = require('fs'); //FILESYSTEM
 var nodemailer = require('nodemailer');
 var EmailTemplate = require('email-templates').EmailTemplate;
@@ -560,7 +560,7 @@ exports.login = function (req, res, next) {
 
         if (results['idNEO']) {
             if (!secur.loggedIn(req, res)) {
-                var cook = new cookies(req, res, secur.cookKeys);
+                var cook = new Cookies(req, res, secur.cookKeys);
                 cook.set('RedSocialAsociacionID', results.idNEO, {signed: true, maxAge: 9000000});
                 cook.set('RedSocialAsociacionLANG', results.lang, {signed: true, maxAge: 9000000});
                 secur.isAdmin(results.idNEO,function(is){
@@ -671,7 +671,7 @@ exports.changeProperty = function (req, res, next) {
             return;
         }else{
             if(tmp.field === 'lang'){
-                var cook = new cookies(req, res, secur.cookKeys);
+                var cook = new Cookies(req, res, secur.cookKeys);
                 cook.set('RedSocialAsociacionLANG', tmp.value, {signed: true, maxAge: 9000000, overwrite: true});
                 res.sendStatus(200);
                 return;
