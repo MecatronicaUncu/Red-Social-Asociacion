@@ -101,7 +101,7 @@ exports.isAdmin = isAdmin;
  */
 exports.extractCookieData = function (req, res, next) {
 
-    var cook = new Cookies(req, res, keys);
+    var cook = new Cookies(req, res, {keys: keys});
     var idCookie = cook.get('RedSocialAsociacionID');
     var langCookie = cook.get('RedSocialAsociacionLANG');
 

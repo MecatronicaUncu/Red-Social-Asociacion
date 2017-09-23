@@ -49,3 +49,9 @@ script/Datasets/userBase/people_email_pass.csv
 script/Datasets/userBase/people_email_pass_salt.csv
 script/Datasets/userBase/usersIDs.csv
 
+# Jasmine files
+_SpecRunner.html
+require.js
+
+# Grunt
+.grunt

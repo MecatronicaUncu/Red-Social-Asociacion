@@ -12,7 +12,8 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
+  //grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-jasmine-nodejs');
   grunt.loadNpmTasks('grunt-conventional-changelog');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-coffeelint');
@@ -294,20 +295,43 @@ module.exports = function ( grunt ) {
     /**
      * Jasmine config for server-side unit testing.
      */
-
-	jasmine: {
-        unit: {
-            options: {
-                specs: [
-                    '<%= server_files.jsunit %>'
-                ],
-                template: require('grunt-template-jasmine-requirejs')
-            },
-            // spec files
-            src: [
-                '<%= server_files.js %>'
-            ]
-        }
+    jasmine_nodejs: {
+      // task specific (default) options
+      options: {
+        specNameSuffix: "spec.js",
+        helperNameSuffix: "helper.js",
+        useHelpers: false,
+        random: false,
+        seed: null,
+        defaultTimeout: 20000, // defaults to 5000
+        stopOnFailure: false,
+        traceFatal: true,
+        // configure one or more built-in reporters
+        reporters: {
+          console: {
+            colors: true,        // (0|false)|(1|true)|2
+            cleanStack: 1,       // (0|false)|(1|true)|2|3
+            verbosity: 4,        // (0|false)|1|2|3|(4|true)
+            listStyle: "indent", // "flat"|"indent"
+            activity: false
+          },
+        },
+        // add custom Jasmine reporter(s)
+        customReporters: []
+      },
+      unit: {
+        // target specific options
+        options: {
+          useHelpers: true
+        },
+        // spec files
+        specs: [
+          '<%= server_files.jsunit %>'
+        ]
+        //helpers: [
+        //    "test/helpers/**"
+        //]
+      }
     },
 
     /**
@@ -554,7 +578,7 @@ module.exports = function ( grunt ) {
         files: [
           '<%= server_files.js %>'
         ],
-        tasks: [ 'jshint:server', 'express:dev:stop', 'uncache:srvunit', 'jasmine:unit', 'express:dev' ],
+        tasks: [ 'jshint:server', 'express:dev:stop', 'uncache:srvunit', 'jasmine_nodejs:unit', 'express:dev' ],
         options: {
           spawn: false
         }
@@ -632,7 +656,7 @@ module.exports = function ( grunt ) {
           '<%= server_files.jsunit %>',
           '<%= server_files.jsmock %>'
         ],
-        tasks: [ 'jshint:server_test', 'express:dev:stop', 'uncache:srvunit', 'jasmine', 'express:dev' ],
+        tasks: [ 'jshint:server_test', 'express:dev:stop', 'uncache:srvunit', 'jasmine_nodejs', 'express:dev' ],
         options: {
           livereload: false,
           spawn: false
@@ -679,7 +703,7 @@ module.exports = function ( grunt ) {
     'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'sass:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
     'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_vendorcss', 'copy:favicon', 'index:build',
-    'jasmine', 'karmaconfig', 'karma:unit'
+    'jasmine_nodejs', 'karmaconfig', 'karma:unit'
   ]);
 
   /**
