@@ -38,7 +38,7 @@ This method is a little bit more complicated and requires the following
 dependencies.
 
 - git
-- nodejs (version > 4.2)
+- nodejs (version >= 8.3)
 - npm (version > 3.5)
 - ruby and ruby-dev (version > 2.3)
 - curl
@@ -192,4 +192,4 @@ To clean your database, execute the following query in the Neo4J browser: ```MAT
 
 ## Contribute
 
-Don't hesitate to submit your issue or pull request!
+Do not hesitate to submit your issue or pull request!
