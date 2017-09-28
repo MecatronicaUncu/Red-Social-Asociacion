@@ -26,7 +26,6 @@
       updateConfig: function(next){
         $http({method:'GET', url:'/edtconfig'})
         .success(function(data){
-          console.log(data.config);
           setConfig(data.config);
           return next(null,data.config);
         })
@@ -38,7 +37,6 @@
         $http({ method:'GET', url:'/acttypes',
                 params:{parent: parent}})
         .success(function(data){
-          console.log(data.activityTypes);
           return next(null,data.activityTypes);
         })
         .error(function(err){
@@ -48,7 +46,6 @@
       getAssociations: function(next){
         $http({method:'GET', url:'/asocs'})
         .success(function(data){
-          console.log(data.asocs);
           return next(null, data.asocs);
         })
         .error(function(err){

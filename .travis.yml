@@ -3,7 +3,7 @@ language: node_js
 services:
   - docker
 node_js:
-    - "4.2"
+    - "8"
 env:
   global:
     - secure: "lTadBxa/idJ/ulP1QQN3NDVIWxFsfCbnSDqKVBBYxHMOe0zTs5818ssHhUjWE/nqBRSL5ou0vFcX9HK1N5Viw1NpYtlMqQ1YRfOrheUHEnkJChGjvWb4Ejzox9WGLuERBHIeaV98cI/CkhA7YS7ygnW54Cj0uDX5MvTple4L3wKwy6i6upMQv6riJMgoPu2l+7MlGLFns81C/Th4MzSlYvEZB6o81deGZ4rO3krsi3OuC4kDvNja21/Cm5f+Z97HPksDU0FshODmlA2jvTiQ4jiLftneMkDIz/is5VCnZZ8vnobmEBCcb4D8zJojLIF4RHy/cZIcLUZmSrbaZYLDBT8C3ErZNHLZ3X5oIayepoQp3JPepqNHg5o+FcALzepRSOgr9p+rctSobKGGdnz6oEPYbIips2I/m8l/4iGKtA1bF4ePu40kLK+sIStQan9KpParvl3sFPQn5r4X4lFsXNM7EVaG4BFpwBtSFuyyqqUXpmLSERL9w5ye5j/1Kv5A6KneyO445P4rGz2TNTHK8j8l2mDDryAEXdLrApWv101Gus+W0dV39Udif60a5EDUGVpBIP9w3lC4Kupe0/up0aEAvVlz23q/TPQN430RRLfwDitvO6KYhjB5btlcmPkJ+ACmwqDZ2SgnJcJdQPgFowT4ahw8Bw0peOAblBKLK1g=" # Docker Email
@@ -12,6 +12,7 @@ env:
     - COMMIT=${TRAVIS_COMMIT::8}
 before_install:
     - rvm install 2.1.5
+    - gem install compass
     - ./script/bootstrap
     - ./script/config -p asoc -h LAN -nomail
     - ./script/Datasets/userBase/userBase no-wait

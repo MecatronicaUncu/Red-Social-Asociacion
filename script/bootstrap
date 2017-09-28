@@ -173,7 +173,7 @@ done
 cd ..
 loggerGreen "Installing Npm and Bower dependencies...\n"
 if [ "$VERBOSE" = false ]; then
-  npm install . >> $LOG_FILE 2>&1
+  npm install -q . >> $LOG_FILE 2>&1
   bower install -F >> $LOG_FILE 2>&1
 else
   npm install .

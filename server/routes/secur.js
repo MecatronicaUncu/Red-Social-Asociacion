@@ -1,5 +1,5 @@
 var Secur = require('./_secur.js');
-var cookies = require('cookies');
+var Cookies = require('cookies');
 var crypto = require('crypto');
 var keygrip = require('keygrip');
 var keys = keygrip(["Andres", "Franco"]);
@@ -101,7 +101,7 @@ exports.isAdmin = isAdmin;
  */
 exports.extractCookieData = function (req, res, next) {
 
-    var cook = new cookies(req, res, keys);
+    var cook = new Cookies(req, res, {keys: keys});
     var idCookie = cook.get('RedSocialAsociacionID');
     var langCookie = cook.get('RedSocialAsociacionLANG');
 
