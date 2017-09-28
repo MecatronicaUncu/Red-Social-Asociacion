@@ -12,6 +12,7 @@ env:
     - COMMIT=${TRAVIS_COMMIT::8}
 before_install:
     - rvm install 2.1.5
+    - gem install compass
     - ./script/bootstrap
     - ./script/config -p asoc -h LAN -nomail
     - ./script/Datasets/userBase/userBase no-wait
